@@ -10,6 +10,7 @@
 <meta property="og:title" content="구미 꿈이 있는 교회 | 아름다운발걸음선교회">
 <meta property="og:description" content="말씀과 기도로 세워지는 교회. 평일 저녁 8시 30분 라이브 예배.">
 <meta property="og:type" content="website">
+<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 <script src="https://cdn.tailwindcss.com"></script>
 <script>
 tailwind.config = {
@@ -741,6 +742,17 @@ tailwind.config = {
   renderCarousel();
   window.addEventListener('resize', () => goTo(curIdx));
   resetAutoSlide();
+</script>
+  <script>
+  if (window.netlifyIdentity) {
+    window.netlifyIdentity.on("init", user => {
+      if (!user) {
+        window.netlifyIdentity.on("login", () => {
+          document.location.href = "/admin/";
+        });
+      }
+    });
+  }
 </script>
 </body>
 </html>
