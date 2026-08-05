@@ -192,7 +192,7 @@ tailwind.config = {
             </p>
           </div>
         </div>
-        <a href="https://www.youtube.com/@%EA%B5%AC%EB%AF%B8%EA%BF%88%EC%9D%B4%EC%9E%88%EB%8A%94%EA%B5%90%ED%9A%8C%EC%95%84%EB%A6%84/posts" 
+        <a href="https://www.youtube.com/@%EA%B5%AC%EB%AF%B8%EA%BF%88%EC%9D%B4%EC%9E%88%EB%8A%94%EA%B5%0%ED%9A%8C%EC%95%84%EB%A6%84/posts" 
            target="_blank" 
            rel="noopener" 
            class="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-navy-900 hover:bg-gold-600 text-white font-extrabold px-5 py-3 rounded-xl transition shadow-md text-xs sm:text-sm shrink-0">
@@ -656,9 +656,49 @@ tailwind.config = {
     grid.innerHTML = vids.map(v => `<a href="${v.link}" target="_blank" rel="noopener" class="group block rounded-2xl overflow-hidden bg-white border border-navy-100 hover:border-gold-500/60 hover:shadow-lg hover:-translate-y-0.5 transition"><div class="relative aspect-video overflow-hidden"><img src="https://i.ytimg.com/vi/${v.id}/hqdefault.jpg" alt="${escapeHtml(v.title)}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition duration-500"><div class="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 group-hover:opacity-100 transition"><span class="w-12 h-12 rounded-full bg-red-600 text-white flex items-center justify-center shadow-xl"><i class="fa-solid fa-play ml-0.5 text-sm"></i></span></div></div><div class="p-4"><div class="text-[10px] font-bold text-gold-600 mb-1 uppercase tracking-wider">Sermon</div><div class="font-bold text-navy-900 line-clamp-2 text-xs sm:text-sm leading-snug">${escapeHtml(v.title)}</div><div class="mt-2.5 flex items-center gap-1.5 text-[11px] text-navy-700/60"><i class="fa-regular fa-calendar"></i> ${formatDate(v.pubDate)}</div></div></a>`).join('');
   }
 
-  // 함께한 순간들(갤러리) 9개 페이징 처리 함수
+  // 함께한 순간들(갤러리) 9개 페이징 처리 및 GitHub API 이미지 로드 함수
   let galleryItems = [];
   const galleryItemsPerPage = 9;
+
+  async function loadGallery() {
+    const grid = document.getElementById('gallery-container') || document.getElementById('galleryGrid');
+    if (!grid) return;
+
+    try {
+      let response = await fetch('https://api.github.com/repos/gumivision/gumidreamchurch/contents/gallery');
+      if (!response.ok) {
+        response = await fetch('https://api.github.com/repos/gumivision/gumidreamchurch/contents/images/gallery');
+      }
+
+      if (!response.ok) {
+        grid.innerHTML = '<div class="col-span-full text-center text-gray-500 py-8">등록된 사진이 없습니다.</div>';
+        return;
+      }
+
+      const files = await response.json();
+      if (!Array.isArray(files)) {
+        grid.innerHTML = '<div class="col-span-full text-center text-gray-500 py-8">등록된 사진이 없습니다.</div>';
+        return;
+      }
+
+      const imageFiles = files.filter(f => f.name && /\.(jpg|jpeg|png|webp|gif)$/i.test(f.name));
+
+      if (imageFiles.length === 0) {
+        grid.innerHTML = '<div class="col-span-full text-center text-gray-500 py-8">등록된 사진이 없습니다.</div>';
+        return;
+      }
+
+      galleryItems = imageFiles.map(f => ({
+        imageUrl: `https://raw.githubusercontent.com/gumivision/gumidreamchurch/main/${f.path}?t=${new Date().getTime()}`,
+        title: f.name.replace(/\.[^/.]+$/, "")
+      }));
+
+      renderGalleryPage(1);
+    } catch (error) {
+      console.error('갤러리 로드 실패:', error);
+      grid.innerHTML = '<div class="col-span-full text-center text-gray-500 py-8">사진을 불러오지 못했습니다.</div>';
+    }
+  }
 
   function renderGalleryPage(page) {
     const grid = document.getElementById('gallery-container') || document.getElementById('galleryGrid');
