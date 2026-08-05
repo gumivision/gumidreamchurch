@@ -216,7 +216,18 @@ tailwind.config = {
 </section>
 
 
-  <!-- ================= 게시판 영역 시작 ================= -->
+ <!-- ================= 게시판 영역 시작 ================= -->
+<section id="board-section" style="padding: 50px 20px; background-color: #f9fafb;">
+  <div style="max-width: 800px; margin: 0 auto;">
+    <h2 style="font-size: 24px; font-weight: bold; color: #111827; margin-bottom: 24px; text-align: center;">교회 소식 및 공지사항</h2>
+    
+    <!-- 게시글이 출력되는 영역 -->
+    <div id="posts-container" style="display: flex; flex-direction: column; gap: 16px;">
+      <p style="text-align: center; color: #6b7280;">게시글을 불러오는 중입니다...</p>
+    </div>
+  </div>
+</section>
+
 <script>
   async function loadPosts() {
     const container = document.getElementById('posts-container');
@@ -243,26 +254,25 @@ tailwind.config = {
           
           let bodyContent = text.split('---').slice(2).join('---').trim();
 
-          const title = titleMatch ? (titleMatch[1] || titleMatch[2]) : '제목 없음';
-          const date = dateMatch ? dateMatch[1].substring(0, 10) : '';
+          const title = titleMatch ? (titleMatch[1] || titleMatch[2]).trim() : '제목 없음';
+          const date = dateMatch ? dateMatch[1].trim().substring(0, 10) : '';
           
-          // 1. Frontmatter에 등록된 대표 이미지 처리
+          // 1. 대표/첨부 이미지 (Frontmatter의 image)
           let headerImageUrl = '';
           if (imageMatch) {
             let rawImgPath = (imageMatch[1] || imageMatch[2]).trim();
             if (rawImgPath && rawImgPath !== '""' && rawImgPath !== "''") {
-              // Relative 경로를 GitHub raw URL 경로로 변환
               headerImageUrl = `https://raw.githubusercontent.com/gumivision/gumidreamchurch/main/${rawImgPath.replace(/^\//, '')}`;
             }
           }
 
-          // 2. 본문(Body) 마크다운 내부 이미지 ![alt](/images/...) 변환
+          // 2. 본문 마크다운 이미지 변환
           bodyContent = bodyContent.replace(/!\[(.*?)\]\(\/(.*?)\)/g, (match, alt, src) => {
             const rawUrl = `https://raw.githubusercontent.com/gumivision/gumidreamchurch/main/${src}`;
             return `<img src="${rawUrl}" alt="${alt}" style="max-width: 100%; height: auto; border-radius: 8px; margin: 12px 0;" />`;
           });
 
-          // 카드 생성
+          // 게시글 카드 생성
           const postCard = document.createElement('div');
           postCard.style.cssText = 'background: #ffffff; padding: 20px; border-radius: 8px; border: 1px solid #e5e7eb; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 16px;';
           
