@@ -1,6 +1,7 @@
 backend:
-  name: git-gateway
-  branch: main
+  name: github
+  repo: gumivision/gumidreamchurch
+  branch: main # 또는 master (사용 중인 기본 브랜치명)
 
 media_folder: "images"
 public_folder: "images"
