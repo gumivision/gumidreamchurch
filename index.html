@@ -350,7 +350,7 @@ tailwind.config = {
       modalImg.src = imgUrl;
       modalCaption.textContent = caption || '';
       modal.classList.remove('hidden');
-      document.body.style.overflow = 'hidden'; // 배경 스크롤 방지
+      document.body.style.overflow = 'hidden';
     }
   }
 
@@ -359,7 +359,7 @@ tailwind.config = {
     const modal = document.getElementById('lightboxModal');
     if (modal) {
       modal.classList.add('hidden');
-      document.body.style.overflow = 'auto'; // 배경 스크롤 복구
+      document.body.style.overflow = 'auto';
     }
   }
 
@@ -383,27 +383,38 @@ tailwind.config = {
           const text = await res.text();
 
           const titleMatch = text.match(/title:\s*"(.*?)"|title:\s*(.*)/);
-          const imageMatch = text.match(/image:\s*"(.*?)"|image:\s*(.*)/);
-
           const title = titleMatch ? (titleMatch[1] || titleMatch[2]).trim() : '';
+
+          // images 항목 파싱 (단일 및 다중 목록 모두 대응)
+          const imageList = [];
           
-          let imageUrl = '';
-          if (imageMatch) {
-            let rawImgPath = (imageMatch[1] || imageMatch[2]).trim();
-            if (rawImgPath && rawImgPath !== '""' && rawImgPath !== "''") {
-              imageUrl = `https://raw.githubusercontent.com/gumivision/gumidreamchurch/main/${rawImgPath.replace(/^\//, '')}`;
+          // 1) images: [ "/images/a.jpg", "/images/b.jpg" ] 형태 파싱
+          const listBlockMatch = text.match(/images:\s*\n((?:\s*-\s*.*\n?)+)/);
+          if (listBlockMatch) {
+            const lines = listBlockMatch[1].split('\n');
+            lines.forEach(line => {
+              const cleanLine = line.replace(/^\s*-\s*["']?/, '').replace(/["']?\s*$/, '').trim();
+              if (cleanLine) imageList.push(cleanLine);
+            });
+          } else {
+            // 2) 단일 image: "/images/a.jpg" 형태 예외 처리
+            const singleImgMatch = text.match(/image:\s*"(.*?)"|image:\s*(.*)/);
+            if (singleImgMatch) {
+              const path = (singleImgMatch[1] || singleImgMatch[2]).trim();
+              if (path && path !== '""' && path !== "''") imageList.push(path);
             }
           }
 
-          if (imageUrl) {
+          // 이미지 카드 출력
+          imageList.forEach(imgPath => {
+            if (!imgPath) return;
+            const imageUrl = `https://raw.githubusercontent.com/gumivision/gumidreamchurch/main/${imgPath.replace(/^\//, '')}`;
+
             const card = document.createElement('div');
             card.style.cssText = 'overflow: hidden; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); background: #fff; text-align: center; cursor: pointer; transition: transform 0.2s;';
             
-            // 마우스 올렸을 때 살짝 커지는 효과
             card.onmouseover = () => card.style.transform = 'translateY(-4px)';
             card.onmouseout = () => card.style.transform = 'translateY(0)';
-            
-            // 클릭 시 모달 열기 연결
             card.onclick = () => openLightbox(imageUrl, title);
 
             card.innerHTML = `
@@ -411,7 +422,7 @@ tailwind.config = {
               ${title ? `<div style="padding: 12px; font-size: 14px; font-weight: 500; color: #374151;">${title}</div>` : ''}
             `;
             container.appendChild(card);
-          }
+          });
         }
       }
     } catch (error) {
@@ -420,14 +431,13 @@ tailwind.config = {
     }
   }
 
-  // ESC 키 누르면 모달 닫기 기능 추가
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') closeLightbox();
   });
 
   document.addEventListener('DOMContentLoaded', () => {
-    if (typeof loadPosts === 'function') loadPosts(); // 기존 게시판 로드
-    loadGallery(); // 갤러리 로드
+    if (typeof loadPosts === 'function') loadPosts();
+    loadGallery();
   });
 </script>
 
