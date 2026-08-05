@@ -53,13 +53,6 @@ tailwind.config = {
   }
   .glass{ background: rgba(255,255,255,.85); backdrop-filter: saturate(140%) blur(14px); -webkit-backdrop-filter: saturate(140%) blur(14px); }
   .glass-dark{ background: rgba(11,31,58,.55); backdrop-filter: saturate(140%) blur(14px); -webkit-backdrop-filter: saturate(140%) blur(14px); }
-  .carousel-track{ display:flex; gap:1rem; will-change:transform; transition: transform .6s cubic-bezier(.22,.61,.36,1); user-select: none; }
-  .carousel-track.dragging { transition: none !important; cursor: grabbing; }
-  .carousel-card{ flex: 0 0 auto; }
-  @media (min-width: 768px){ .carousel-card-md{ width: 60vw; max-width: 520px; } }
-  @media (max-width: 767px){ .carousel-card-md{ width: 86vw; } }
-  .dot{ width:7px; height:7px; border-radius:99px; background: rgba(255,255,255,.35); transition: width .3s ease, background .3s ease; }
-  .dot.active{ width:26px; background: #d4a373; }
   .no-scrollbar::-webkit-scrollbar{ display:none; }
   .no-scrollbar{ -ms-overflow-style:none; scrollbar-width:none; }
   .safe-bottom{ padding-bottom: calc(env(safe-area-inset-bottom) + 0.75rem); }
@@ -88,8 +81,9 @@ tailwind.config = {
       <ul class="hidden lg:flex items-center gap-9 text-[15px] font-semibold text-navy-700">
         <li><a href="#about" class="hover:text-navy-900 transition">교회 소개</a></li>
         <li><a href="#live" class="hover:text-navy-900 transition flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span> 라이브 예배</a></li>
+        <li><a href="#board-section" class="hover:text-navy-900 transition">교회 소식</a></li>
         <li><a href="#sermons" class="hover:text-navy-900 transition">최근 말씀</a></li>
-        <li><a href="#gallery" class="hover:text-navy-900 transition">갤러리</a></li>
+        <li><a href="#gallery-section" class="hover:text-navy-900 transition">갤러리</a></li>
         <li><a href="#visit" class="hover:text-navy-900 transition">첫 방문 안내</a></li>
         <li><a href="#giving" class="hover:text-navy-900 transition">온라인 헌금</a></li>
         <li><a href="#contact" class="hover:text-navy-900 transition">오시는 길</a></li>
@@ -116,8 +110,9 @@ tailwind.config = {
     <ul class="flex-1 overflow-y-auto px-6 py-6 space-y-2 text-white text-lg font-bold">
       <li><a href="#about" class="block py-2.5 border-b border-white/10">교회 소개</a></li>
       <li><a href="#live" class="flex items-center gap-3 py-2.5 border-b border-white/10"><span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span> 라이브 예배</a></li>
+      <li><a href="#board-section" class="block py-2.5 border-b border-white/10">교회 소식</a></li>
       <li><a href="#sermons" class="block py-2.5 border-b border-white/10">최근 말씀</a></li>
-      <li><a href="#gallery" class="block py-2.5 border-b border-white/10">갤러리</a></li>
+      <li><a href="#gallery-section" class="block py-2.5 border-b border-white/10">갤러리</a></li>
       <li><a href="#visit" class="block py-2.5 border-b border-white/10">첫 방문 안내</a></li>
       <li><a href="#giving" class="block py-2.5 border-b border-white/10">찬양·온라인 헌금</a></li>
       <li><a href="#contact" class="block py-2.5">오시는 길</a></li>
@@ -173,7 +168,7 @@ tailwind.config = {
       <div class="inline-flex items-center gap-2 bg-white border border-navy-100 text-navy-700 px-3.5 py-1.5 rounded-lg text-xs sm:text-sm shadow-sm"><i class="fa-solid fa-signal text-gold-600"></i> YouTube Live · Shorts 피드</div>
     </div>
     
-    <!-- Shorts 그리드 (3개) -->
+    <!-- Shorts 그리드 -->
     <div class="mt-8 max-w-5xl mx-auto reveal">
       <div class="flex items-center justify-between mb-3">
         <h3 class="text-navy-900 font-bold flex items-center gap-2 text-sm sm:text-base"><i class="fa-solid fa-clapperboard text-gold-600"></i> Shorts 피드</h3>
@@ -215,92 +210,17 @@ tailwind.config = {
   </div>
 </section>
 
-
- <!-- ================= 게시판 영역 시작 ================= -->
-<section id="board-section" style="padding: 50px 20px; background-color: #f9fafb;">
-  <div style="max-width: 800px; margin: 0 auto;">
-    <h2 style="font-size: 24px; font-weight: bold; color: #111827; margin-bottom: 24px; text-align: center;">교회 소식 및 공지사항</h2>
-    
-    <!-- 게시글이 출력되는 영역 -->
-    <div id="posts-container" style="display: flex; flex-direction: column; gap: 16px;">
-      <p style="text-align: center; color: #6b7280;">게시글을 불러오는 중입니다...</p>
+<!-- 3. 게시판 영역 -->
+<section id="board-section" class="py-12 sm:py-16 bg-gray-50">
+  <div class="max-w-4xl mx-auto px-5 sm:px-8">
+    <h2 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-6 text-center">교회 소식 및 공지사항</h2>
+    <div id="posts-container" class="flex flex-col gap-4">
+      <p class="text-center text-gray-500">게시글을 불러오는 중입니다...</p>
     </div>
   </div>
 </section>
 
-<script>
-  async function loadPosts() {
-    const container = document.getElementById('posts-container');
-    try {
-      const response = await fetch('https://api.github.com/repos/gumivision/gumidreamchurch/contents/posts');
-      
-      if (!response.ok) {
-        container.innerHTML = '<p style="text-align: center; color: #9ca3af;">등록된 게시글이 없습니다.</p>';
-        return;
-      }
-
-      const files = await response.json();
-      container.innerHTML = '';
-
-      for (const file of files.reverse()) {
-        if (file.name.endsWith('.md')) {
-          const res = await fetch(file.download_url);
-          const text = await res.text();
-
-          // Title, Date, Image(Frontmatter), Body 파싱
-          const titleMatch = text.match(/title:\s*"(.*?)"|title:\s*(.*)/);
-          const dateMatch = text.match(/date:\s*(.*)/);
-          const imageMatch = text.match(/image:\s*"(.*?)"|image:\s*(.*)/);
-          
-          let bodyContent = text.split('---').slice(2).join('---').trim();
-
-          const title = titleMatch ? (titleMatch[1] || titleMatch[2]).trim() : '제목 없음';
-          const date = dateMatch ? dateMatch[1].trim().substring(0, 10) : '';
-          
-          // 1. 대표/첨부 이미지 (Frontmatter의 image)
-          let headerImageUrl = '';
-          if (imageMatch) {
-            let rawImgPath = (imageMatch[1] || imageMatch[2]).trim();
-            if (rawImgPath && rawImgPath !== '""' && rawImgPath !== "''") {
-              headerImageUrl = `https://raw.githubusercontent.com/gumivision/gumidreamchurch/main/${rawImgPath.replace(/^\//, '')}`;
-            }
-          }
-
-          // 2. 본문 마크다운 이미지 변환
-          bodyContent = bodyContent.replace(/!\[(.*?)\]\(\/(.*?)\)/g, (match, alt, src) => {
-            const rawUrl = `https://raw.githubusercontent.com/gumivision/gumidreamchurch/main/${src}`;
-            return `<img src="${rawUrl}" alt="${alt}" style="max-width: 100%; height: auto; border-radius: 8px; margin: 12px 0;" />`;
-          });
-
-          // 게시글 카드 생성
-          const postCard = document.createElement('div');
-          postCard.style.cssText = 'background: #ffffff; padding: 20px; border-radius: 8px; border: 1px solid #e5e7eb; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 16px;';
-          
-          let imageHTML = headerImageUrl ? `<img src="${headerImageUrl}" alt="${title}" style="width: 100%; max-height: 400px; object-fit: cover; border-radius: 8px; margin-bottom: 12px;" />` : '';
-
-          postCard.innerHTML = `
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-              <h3 style="font-size: 18px; font-weight: bold; color: #1f2937; margin: 0;">${title}</h3>
-              <span style="font-size: 12px; color: #9ca3af;">${date}</span>
-            </div>
-            ${imageHTML}
-            <div style="font-size: 14px; color: #4b5563; line-height: 1.6; white-space: pre-line;">${bodyContent}</div>
-          `;
-          container.appendChild(postCard);
-        }
-      }
-    } catch (error) {
-      console.error(error);
-      container.innerHTML = '<p style="text-align: center; color: #ef4444;">게시글을 불러오지 못했습니다.</p>';
-    }
-  }
-
-  document.addEventListener('DOMContentLoaded', loadPosts);
-</script>
-<!-- ================= 게시판 영역 끝 ================= -->
-
-  
-<!-- 3. 최근 말씀 섹션 -->
+<!-- 4. 최근 말씀 섹션 -->
 <section id="sermons" class="py-12 sm:py-16 bg-[#fafaf7]">
   <div class="max-w-7xl mx-auto px-5 sm:px-8">
     <div class="text-center max-w-2xl mx-auto reveal">
@@ -315,15 +235,12 @@ tailwind.config = {
   </div>
 </section>
 
-<!-- 4. 갤러리 섹션 -->
-<!-- ================= 함께한 순간들 (갤러리) 영역 ================= -->
-<section id="gallery-section" style="padding: 50px 20px; background-color: #ffffff;">
-  <div style="max-width: 1000px; margin: 0 auto;">
-    <h2 style="font-size: 24px; font-weight: bold; color: #111827; margin-bottom: 24px; text-align: center;">함께한 순간들</h2>
-    
-    <!-- 사진들이 격자(Grid) 형태로 출력되는 영역 -->
-    <div id="gallery-container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px;">
-      <p style="text-align: center; color: #6b7280; grid-column: 1 / -1;">사진을 불러오는 중입니다...</p>
+<!-- 5. 갤러리 섹션 -->
+<section id="gallery-section" class="py-12 sm:py-16 bg-white">
+  <div class="max-w-5xl mx-auto px-5 sm:px-8">
+    <h2 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-6 text-center">함께한 순간들</h2>
+    <div id="gallery-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
+      <p class="text-center text-gray-500 col-span-full">사진을 불러오는 중입니다...</p>
     </div>
   </div>
 </section>
@@ -339,109 +256,7 @@ tailwind.config = {
   </div>
 </div>
 
-<script>
-  // 1. 모달 열기 함수
-  function openLightbox(imgUrl, caption) {
-    const modal = document.getElementById('lightboxModal');
-    const modalImg = document.getElementById('lightboxImg');
-    const modalCaption = document.getElementById('lightboxCaption');
-
-    if (modal && modalImg) {
-      modalImg.src = imgUrl;
-      modalCaption.textContent = caption || '';
-      modal.classList.remove('hidden');
-      document.body.style.overflow = 'hidden';
-    }
-  }
-
-  // 2. 모달 닫기 함수
-  function closeLightbox() {
-    const modal = document.getElementById('lightboxModal');
-    if (modal) {
-      modal.classList.add('hidden');
-      document.body.style.overflow = 'auto';
-    }
-  }
-
-  // 3. 갤러리 불러오기
-  async function loadGallery() {
-    const container = document.getElementById('gallery-container');
-    try {
-      const response = await fetch('https://api.github.com/repos/gumivision/gumidreamchurch/contents/gallery');
-      
-      if (!response.ok) {
-        container.innerHTML = '<p style="text-align: center; color: #9ca3af; grid-column: 1 / -1;">등록된 사진이 없습니다.</p>';
-        return;
-      }
-
-      const files = await response.json();
-      container.innerHTML = '';
-
-      for (const file of files.reverse()) {
-        if (file.name.endsWith('.md')) {
-          const res = await fetch(file.download_url);
-          const text = await res.text();
-
-          const titleMatch = text.match(/title:\s*"(.*?)"|title:\s*(.*)/);
-          const title = titleMatch ? (titleMatch[1] || titleMatch[2]).trim() : '';
-
-          // images 항목 파싱 (단일 및 다중 목록 모두 대응)
-          const imageList = [];
-          
-          // 1) images: [ "/images/a.jpg", "/images/b.jpg" ] 형태 파싱
-          const listBlockMatch = text.match(/images:\s*\n((?:\s*-\s*.*\n?)+)/);
-          if (listBlockMatch) {
-            const lines = listBlockMatch[1].split('\n');
-            lines.forEach(line => {
-              const cleanLine = line.replace(/^\s*-\s*["']?/, '').replace(/["']?\s*$/, '').trim();
-              if (cleanLine) imageList.push(cleanLine);
-            });
-          } else {
-            // 2) 단일 image: "/images/a.jpg" 형태 예외 처리
-            const singleImgMatch = text.match(/image:\s*"(.*?)"|image:\s*(.*)/);
-            if (singleImgMatch) {
-              const path = (singleImgMatch[1] || singleImgMatch[2]).trim();
-              if (path && path !== '""' && path !== "''") imageList.push(path);
-            }
-          }
-
-          // 이미지 카드 출력
-          imageList.forEach(imgPath => {
-            if (!imgPath) return;
-            const imageUrl = `https://raw.githubusercontent.com/gumivision/gumidreamchurch/main/${imgPath.replace(/^\//, '')}`;
-
-            const card = document.createElement('div');
-            card.style.cssText = 'overflow: hidden; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); background: #fff; text-align: center; cursor: pointer; transition: transform 0.2s;';
-            
-            card.onmouseover = () => card.style.transform = 'translateY(-4px)';
-            card.onmouseout = () => card.style.transform = 'translateY(0)';
-            card.onclick = () => openLightbox(imageUrl, title);
-
-            card.innerHTML = `
-              <img src="${imageUrl}" alt="${title}" style="width: 100%; height: 220px; object-fit: cover; display: block;" />
-              ${title ? `<div style="padding: 12px; font-size: 14px; font-weight: 500; color: #374151;">${title}</div>` : ''}
-            `;
-            container.appendChild(card);
-          });
-        }
-      }
-    } catch (error) {
-      console.error(error);
-      container.innerHTML = '<p style="text-align: center; color: #ef4444; grid-column: 1 / -1;">사진을 불러오지 못했습니다.</p>';
-    }
-  }
-
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') closeLightbox();
-  });
-
-  document.addEventListener('DOMContentLoaded', () => {
-    if (typeof loadPosts === 'function') loadPosts();
-    loadGallery();
-  });
-</script>
-
-<!-- 5. 교회 소개 섹션 -->
+<!-- 6. 교회 소개 섹션 -->
 <section id="about" class="relative py-12 sm:py-16 bg-[#f4efe6] text-navy-900 overflow-hidden border-y border-navy-100/40">
   <div class="max-w-7xl mx-auto px-5 sm:px-8 relative z-10">
     <div class="grid lg:grid-cols-12 gap-8 lg:gap-12 items-center">
@@ -490,7 +305,7 @@ tailwind.config = {
   </div>
 </section>
 
-<!-- 6. 첫 방문 안내 섹션 -->
+<!-- 7. 첫 방문 안내 섹션 -->
 <section id="visit" class="py-12 sm:py-16 bg-[#fafaf7]">
   <div class="max-w-3xl mx-auto px-5 sm:px-8">
     <div class="reveal">
@@ -514,7 +329,7 @@ tailwind.config = {
   </div>
 </section>
 
-<!-- 7. 찬양과 헌금 섹션 -->
+<!-- 8. 찬양과 헌금 섹션 -->
 <section id="giving" class="relative py-12 sm:py-16 bg-navy-900 text-white overflow-hidden">
   <div class="absolute inset-0 opacity-[0.05]" style="background-image: radial-gradient(circle at 1px 1px, white 1px, transparent 0); background-size: 28px 28px;"></div>
   <div class="relative max-w-5xl mx-auto px-5 sm:px-8">
@@ -558,7 +373,7 @@ tailwind.config = {
   </div>
 </section>
 
-<!-- 8. 오시는 길 섹션 -->
+<!-- 9. 오시는 길 섹션 -->
 <section id="contact" class="py-12 sm:py-16 bg-[#fafaf7]">
   <div class="max-w-7xl mx-auto px-5 sm:px-8">
     <div class="text-center max-w-2xl mx-auto reveal">
@@ -601,7 +416,7 @@ tailwind.config = {
   </div>
 </section>
 
-<!-- 9. 푸터 섹션 -->
+<!-- 10. 푸터 섹션 -->
 <footer class="bg-navy-950 text-white/60 pb-20 lg:pb-0">
   <div class="max-w-7xl mx-auto px-5 sm:px-8 py-10 grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
     <div>
@@ -612,7 +427,7 @@ tailwind.config = {
         <a href="https://youtube.com/channel/UCHCcttgFDXkLClVeuQxNaMw" target="_blank" rel="noopener" class="w-7 h-7 rounded-full bg-white/10 hover:bg-red-600 text-white flex items-center justify-center transition text-xs"><i class="fa-brands fa-youtube"></i></a>
       </div>
     </div>
-    <div><div class="text-white font-bold text-xs sm:text-sm mb-3">바로가기</div><ul class="space-y-1.5 text-xs"><li><a href="#about" class="hover:text-white">교회 소개</a></li><li><a href="#live" class="hover:text-white">라이브 예배</a></li><li><a href="#sermons" class="hover:text-white">최근 말씀</a></li><li><a href="#gallery" class="hover:text-white">갤러리</a></li></ul></div>
+    <div><div class="text-white font-bold text-xs sm:text-sm mb-3">바로가기</div><ul class="space-y-1.5 text-xs"><li><a href="#about" class="hover:text-white">교회 소개</a></li><li><a href="#live" class="hover:text-white">라이브 예배</a></li><li><a href="#board-section" class="hover:text-white">교회 소식</a></li><li><a href="#sermons" class="hover:text-white">최근 말씀</a></li><li><a href="#gallery-section" class="hover:text-white">갤러리</a></li></ul></div>
     <div><div class="text-white font-bold text-xs sm:text-sm mb-3">참여</div><ul class="space-y-1.5 text-xs"><li><a href="#visit" class="hover:text-white">첫 방문 안내</a></li><li><a href="#giving" class="hover:text-white">찬양·온라인 헌금</a></li><li><a href="#contact" class="hover:text-white">오시는 길</a></li></ul></div>
     <div><div class="text-white font-bold text-xs sm:text-sm mb-3">연락</div><ul class="space-y-1.5 text-xs"><li>경상북도 구미시 금오대로 12길 25 2층</li><li>010-2258-4827</li><li>lovekyk79@naver.com</li></ul></div>
   </div>
@@ -635,63 +450,82 @@ tailwind.config = {
       <li><a href="#home" class="flex flex-col items-center py-2 gap-0.5"><i class="fa-solid fa-house text-sm"></i>홈</a></li>
       <li><a href="#live" class="flex flex-col items-center py-2 gap-0.5"><i class="fa-solid fa-tower-broadcast text-sm text-red-400"></i>라이브</a></li>
       <li><a href="#visit" class="-mt-6 mx-auto w-12 h-12 rounded-full bg-gradient-to-br from-gold-500 to-gold-600 text-navy-900 flex items-center justify-center shadow-lg shadow-gold-500/40 border-2 border-navy-900"><i class="fa-solid fa-hand-wave text-base"></i></a><span class="block text-center mt-0.5">방문</span></li>
-      <li><a href="#gallery" class="flex flex-col items-center py-2 gap-0.5"><i class="fa-regular fa-images text-sm"></i>갤러리</a></li>
+      <li><a href="#gallery-section" class="flex flex-col items-center py-2 gap-0.5"><i class="fa-regular fa-images text-sm"></i>갤러리</a></li>
       <li><a href="#contact" class="flex flex-col items-center py-2 gap-0.5"><i class="fa-solid fa-map-pin text-sm"></i>길찾기</a></li>
     </ul>
   </div>
 </nav>
 
+<!-- 메인 스크립트 -->
 <script>
   const YT_CHANNEL = 'UCHCcttgFDXkLClVeuQxNaMw';
+  const KAKAO_CHAT_URL = 'https://open.kakao.com/o/sWASfhHi';
 
+  // 1. 헤더 스크롤 제어
   const header = document.getElementById('header');
-  const onScroll = () => { if (window.scrollY > 30) { header.classList.add('glass','shadow-md'); } else { header.classList.remove('glass','shadow-md'); } };
+  const onScroll = () => { 
+    if (window.scrollY > 30) { 
+      header.classList.add('glass','shadow-md'); 
+    } else { 
+      header.classList.remove('glass','shadow-md'); 
+    } 
+  };
   document.addEventListener('scroll', onScroll, {passive:true});
   onScroll();
 
+  // 2. 모바일 메뉴
   const menuBtn = document.getElementById('menuBtn');
   const menuClose = document.getElementById('menuClose');
   const mobileMenu = document.getElementById('mobileMenu');
   const openMenu = () => { mobileMenu.classList.remove('hidden'); document.body.classList.add('nav-open'); };
   const closeMenu = () => { mobileMenu.classList.add('hidden'); document.body.classList.remove('nav-open'); };
-  menuBtn.addEventListener('click', openMenu);
-  menuClose.addEventListener('click', closeMenu);
-  mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMenu));
+  
+  if (menuBtn) menuBtn.addEventListener('click', openMenu);
+  if (menuClose) menuClose.addEventListener('click', closeMenu);
+  if (mobileMenu) {
+    mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMenu));
+  }
 
+  // 3. Scroll Reveal 애니메이션
   const io = new IntersectionObserver(entries => {
-    entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+    entries.forEach(e => { 
+      if(e.isIntersecting){ 
+        e.target.classList.add('in'); 
+        io.unobserve(e.target); 
+      } 
+    });
   }, { threshold:.12, rootMargin:'0px 0px -60px 0px' });
   document.querySelectorAll('.reveal, .fade-up').forEach(el => io.observe(el));
 
+  // 4. 카카오톡 방문 신청 폼
   const visitForm = document.getElementById('visitForm');
-  
-  // 👇 요청하신 카카오톡 오픈채팅 주소로 변경 되었습니다.
-  const KAKAO_CHAT_URL = 'https://open.kakao.com/o/sWASfhHi';
+  if (visitForm) {
+    visitForm.addEventListener('submit', function(e) {
+      e.preventDefault();
 
-  visitForm.addEventListener('submit', function(e) {
-    e.preventDefault();
+      const name = document.getElementById('visitName').value.trim();
+      const tel = document.getElementById('visitTel').value.trim();
+      const date = document.getElementById('visitDate').value;
+      const group = document.getElementById('visitGroup').value.trim();
+      const memo = document.getElementById('visitMemo').value.trim();
 
-    const name = document.getElementById('visitName').value.trim();
-    const tel = document.getElementById('visitTel').value.trim();
-    const date = document.getElementById('visitDate').value;
-    const group = document.getElementById('visitGroup').value.trim();
-    const memo = document.getElementById('visitMemo').value.trim();
+      let message = `[구미 꿈이 있는 교회 첫 방문 신청]\n\n`;
+      message += `• 성함: ${name}\n`;
+      message += `• 연락처: ${tel}\n`;
+      if(date) message += `• 방문 예정일: ${date}\n`;
+      if(group) message += `• 인원/구성: ${group}\n`;
+      if(memo) message += `• 문의사항: ${memo}\n`;
 
-    let message = `[구미 꿈이 있는 교회 첫 방문 신청]\n\n`;
-    message += `• 성함: ${name}\n`;
-    message += `• 연락처: ${tel}\n`;
-    if(date) message += `• 방문 예정일: ${date}\n`;
-    if(group) message += `• 인원/구성: ${group}\n`;
-    if(memo) message += `• 문의사항: ${memo}\n`;
-
-    navigator.clipboard.writeText(message).then(() => {
-      alert('신청 내용이 클립보드에 복사되었습니다.\n열리는 카카오톡 대화창에 [붙여넣기]해서 보내주세요!');
-      location.href = KAKAO_CHAT_URL;
-    }).catch(() => {
-      location.href = KAKAO_CHAT_URL;
+      navigator.clipboard.writeText(message).then(() => {
+        alert('신청 내용이 클립보드에 복사되었습니다.\n열리는 카카오톡 대화창에 [붙여넣기]해서 보내주세요!');
+        location.href = KAKAO_CHAT_URL;
+      }).catch(() => {
+        location.href = KAKAO_CHAT_URL;
+      });
     });
-  });
+  }
 
+  // 5. 계좌번호 복사
   function copyAccount(btn, txt){
     navigator.clipboard.writeText(txt).then(()=>{
       const o = btn.innerHTML;
@@ -700,10 +534,57 @@ tailwind.config = {
     });
   }
 
+  // 6. 이미지 팝업(라이트박스) 제어
+  function openLightbox(imgUrl, caption) {
+    const modal = document.getElementById('lightboxModal');
+    const modalImg = document.getElementById('lightboxImg');
+    const modalCaption = document.getElementById('lightboxCaption');
+
+    if (modal && modalImg) {
+      modalImg.src = imgUrl;
+      modalCaption.textContent = caption || '';
+      modal.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+      history.pushState({ modalOpen: true }, '');
+    }
+  }
+
+  function closeLightbox(isPopState = false) {
+    const modal = document.getElementById('lightboxModal');
+    if (!modal || modal.classList.contains('hidden')) return;
+
+    modal.classList.add('hidden');
+    document.body.style.overflow = 'auto';
+
+    if (!isPopState && history.state && history.state.modalOpen) {
+      history.back();
+    }
+  }
+
+  window.addEventListener('popstate', function () {
+    const modal = document.getElementById('lightboxModal');
+    if (modal && !modal.classList.contains('hidden')) {
+      closeLightbox(true);
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeLightbox();
+  });
+
+  // 7. 유튜브 RSS 데이터 가져오기
   async function fetchRssJson(url){
     const api = 'https://api.rss2json.com/v1/api.json?rss_url=' + encodeURIComponent(url);
-    try{ const r = await fetch(api); if(!r.ok) throw 0; const j = await r.json(); return j.items || []; }catch(e){ return []; }
+    try{ 
+      const r = await fetch(api); 
+      if(!r.ok) throw 0; 
+      const j = await r.json(); 
+      return j.items || []; 
+    } catch(e){ 
+      return []; 
+    }
   }
+
   function ytIdFromUrl(u){
     try{
       const url = new URL(u);
@@ -714,11 +595,24 @@ tailwind.config = {
     }catch(_){}
     return null;
   }
-  function escapeHtml(s){ return (s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-  function formatDate(s){ try{ const d = new Date(s); return d.toLocaleDateString('ko-KR',{year:'numeric',month:'2-digit',day:'2-digit'}); }catch(_){ return ''; } }
+
+  function escapeHtml(s){ 
+    return (s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); 
+  }
+  
+  function formatDate(s){ 
+    try{ 
+      const d = new Date(s); 
+      return d.toLocaleDateString('ko-KR',{year:'numeric',month:'2-digit',day:'2-digit'}); 
+    }catch(_){ 
+      return ''; 
+    } 
+  }
 
   function renderShorts(items){
     const grid = document.getElementById('shortsGrid');
+    if (!grid) return;
+
     const shorts = items.map(i => ({...i, id: ytIdFromUrl(i.link || i.guid)})).filter(i=>i.id).slice(0, 3);
     if(!shorts.length){
       grid.innerHTML = '<div class="col-span-full aspect-[16/9] rounded-2xl border border-navy-200 bg-white flex flex-col items-center justify-center text-center p-6 text-navy-600 text-xs sm:text-sm"><i class="fa-brands fa-youtube text-3xl text-red-500 mb-2"></i>Shorts 피드를 불러오는 중입니다.<br>잠시 후 다시 방문해 주세요.</div>';
@@ -729,6 +623,8 @@ tailwind.config = {
   
   function renderSermons(items){
     const grid = document.getElementById('sermonsGrid');
+    if (!grid) return;
+
     const vids = items.map(i => ({...i, id: ytIdFromUrl(i.link || i.guid)})).filter(i=>i.id && !/(shorts|\/short\/)/.test(i.link || '')).slice(0,6);
     if(!vids.length){
       grid.innerHTML = '<div class="col-span-full p-6 rounded-2xl bg-white border border-navy-100 text-center text-navy-700/70 text-xs sm:text-sm">최근 말씀 영상을 불러오는 중입니다.</div>';
@@ -737,189 +633,157 @@ tailwind.config = {
     grid.innerHTML = vids.map(v => `<a href="${v.link}" target="_blank" rel="noopener" class="group block rounded-2xl overflow-hidden bg-white border border-navy-100 hover:border-gold-500/60 hover:shadow-lg hover:-translate-y-0.5 transition"><div class="relative aspect-video overflow-hidden"><img src="https://i.ytimg.com/vi/${v.id}/hqdefault.jpg" alt="${escapeHtml(v.title)}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition duration-500"><div class="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 group-hover:opacity-100 transition"><span class="w-12 h-12 rounded-full bg-red-600 text-white flex items-center justify-center shadow-xl"><i class="fa-solid fa-play ml-0.5 text-sm"></i></span></div></div><div class="p-4"><div class="text-[10px] font-bold text-gold-600 mb-1 uppercase tracking-wider">Sermon</div><div class="font-bold text-navy-900 line-clamp-2 text-xs sm:text-sm leading-snug">${escapeHtml(v.title)}</div><div class="mt-2.5 flex items-center gap-1.5 text-[11px] text-navy-700/60"><i class="fa-regular fa-calendar"></i> ${formatDate(v.pubDate)}</div></div></a>`).join('');
   }
 
-  (async () => {
-    const uploads = fetchRssJson(`https://www.youtube.com/feeds/videos.xml?channel_id=${YT_CHANNEL}`);
-    const shorts  = fetchRssJson(`https://www.youtube.com/feeds/videos.xml?channel_id=${YT_CHANNEL}&filter=shorts`).catch(()=>[]);
-    const [upItems, shItems] = await Promise.all([uploads, shorts]);
-    let shortsFinal = shItems && shItems.length ? shItems : upItems.filter(i => /shorts/.test(i.link || ''));
-    if(!shortsFinal.length){ shortsFinal = upItems; }
-    renderShorts(shortsFinal);
-    renderSermons(upItems);
-  })();
+  // 8. 게시판 소식 가져오기 (GitHub API)
+  async function loadPosts() {
+    const container = document.getElementById('posts-container');
+    if (!container) return;
 
-  const galleryImages = [
-    { src: '1.png', caption: '꿈이 있는 교회 순간 1' },
-    { src: '2.png', caption: '꿈이 있는 교회 순간 2' },
-    { src: '3.png', caption: '꿈이 있는 교회 순간 3' },
-    { src: '4.png', caption: '꿈이 있는 교회 순간 4' },
-    { src: '5.png', caption: '꿈이 있는 교회 순간 5' }
-  ];
-
-  const carouselContainer = document.getElementById('carousel');
-  const track = document.getElementById('track');
-  const dotsWrap = document.getElementById('dots');
-  let curIdx = 0;
-  let autoSlideTimer = null;
-
-  function openLightbox(src, caption) {
-    document.getElementById('lightboxImg').src = src;
-    document.getElementById('lightboxCaption').innerText = caption;
-    document.getElementById('lightboxModal').classList.remove('hidden');
-    document.body.classList.add('nav-open');
-
-    history.pushState({ modalOpen: true }, '');
-  }
-
-  function closeLightbox(isPopState = false) {
-    const modal = document.getElementById('lightboxModal');
-    if (modal.classList.contains('hidden')) return;
-
-    modal.classList.add('hidden');
-    document.body.classList.remove('nav-open');
-
-    if (!isPopState && history.state && history.state.modalOpen) {
-      history.back();
-    }
-  }
-
-  window.addEventListener('popstate', function (e) {
-    const modal = document.getElementById('lightboxModal');
-    if (!modal.classList.contains('hidden')) {
-      closeLightbox(true);
-    }
-  });
-
-  function renderCarousel(){
-    const items = [...galleryImages, ...galleryImages];
-    track.innerHTML = items.map((g, i) => `
-      <div class="carousel-card carousel-card-md relative group rounded-2xl overflow-hidden border border-white/10 bg-navy-950 cursor-pointer" data-src="${g.src}" data-caption="${g.caption}">
-        <div class="aspect-[4/3] overflow-hidden flex items-center justify-center bg-navy-800 pointer-events-none">
-          <img src="${g.src}" alt="${g.caption}" loading="lazy" 
-               class="w-full h-full object-cover transition duration-700 group-hover:scale-105"
-               onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');">
-          <div class="hidden flex-col items-center justify-center text-white/40 p-6 text-center">
-            <i class="fa-solid fa-image text-4xl mb-2 text-gold-500/50"></i>
-            <span class="text-xs">${g.caption}</span>
-          </div>
-        </div>
-        <div class="absolute inset-0 bg-gradient-to-t from-navy-950/80 via-transparent to-transparent pointer-events-none"></div>
-        <div class="absolute bottom-0 inset-x-0 p-4 pointer-events-none">
-          <div class="text-[10px] text-gold-400 font-bold uppercase tracking-wider mb-0.5">Photo (터치 시 확대)</div>
-          <div class="text-white font-bold text-sm sm:text-base leading-snug">${g.caption}</div>
-        </div>
-      </div>
-    `).join('');
-
-    dotsWrap.innerHTML = galleryImages.map((_, i) => `<button class="dot ${i===0?'active':''}" data-i="${i}" aria-label="슬라이드 ${i+1}"></button>`).join('');
-    dotsWrap.querySelectorAll('.dot').forEach(d => d.addEventListener('click', () => goTo(parseInt(d.dataset.i))));
-  }
-
-  function slideWidth(){
-    const el = track.querySelector('.carousel-card-md');
-    if(!el) return 0;
-    const style = getComputedStyle(track);
-    const gap = parseInt(style.columnGap || style.gap || 16);
-    return el.offsetWidth + gap;
-  }
-
-  function goTo(i){
-    const max = galleryImages.length;
-    curIdx = ((i % max) + max) % max;
-    track.style.transform = `translateX(${-curIdx * slideWidth()}px)`;
-    dotsWrap.querySelectorAll('.dot').forEach((d,idx) => d.classList.toggle('active', idx===curIdx));
-  }
-
-  let isDragging = false;
-  let startX = 0;
-  let startY = 0;
-  let currentTranslate = 0;
-  let prevTranslate = 0;
-  let touchMoved = false;
-
-  function resetAutoSlide() {
-    clearInterval(autoSlideTimer);
-    autoSlideTimer = setInterval(() => goTo(curIdx + 1), 6000);
-  }
-
-  function getPositionX(e) {
-    return e.type.includes('mouse') ? e.pageX : e.touches[0].clientX;
-  }
-
-  function getPositionY(e) {
-    return e.type.includes('mouse') ? e.pageY : e.touches[0].clientY;
-  }
-
-  function dragStart(e) {
-    isDragging = true;
-    touchMoved = false;
-    startX = getPositionX(e);
-    startY = getPositionY(e);
-    prevTranslate = -curIdx * slideWidth();
-    track.classList.add('dragging');
-    clearInterval(autoSlideTimer);
-  }
-
-  function dragMove(e) {
-    if (!isDragging) return;
-    const currentX = getPositionX(e);
-    const currentY = getPositionY(e);
-    const diffX = currentX - startX;
-    const diffY = currentY - startY;
-
-    if (Math.abs(diffX) > 8 || Math.abs(diffY) > 8) {
-      touchMoved = true;
-    }
-
-    if (touchMoved) {
-      currentTranslate = prevTranslate + diffX;
-      track.style.transform = `translateX(${currentTranslate}px)`;
-    }
-  }
-
-  function dragEnd(e) {
-    if (!isDragging) return;
-    isDragging = false;
-    track.classList.remove('dragging');
-
-    if (!touchMoved) {
-      const card = e.target.closest('.carousel-card');
-      if (card) {
-        const src = card.getAttribute('data-src');
-        const caption = card.getAttribute('data-caption');
-        openLightbox(src, caption);
+    try {
+      const response = await fetch('https://api.github.com/repos/gumivision/gumidreamchurch/contents/posts');
+      
+      if (!response.ok) {
+        container.innerHTML = '<p style="text-align: center; color: #9ca3af;">등록된 게시글이 없습니다.</p>';
+        return;
       }
-      resetAutoSlide();
-      return;
-    }
 
-    const movedBy = currentTranslate - prevTranslate;
-    if (movedBy < -50) {
-      goTo(curIdx + 1);
-    } else if (movedBy > 50) {
-      goTo(curIdx - 1);
-    } else {
-      goTo(curIdx);
+      const files = await response.json();
+      container.innerHTML = '';
+
+      for (const file of files.reverse()) {
+        if (file.name.endsWith('.md')) {
+          const res = await fetch(file.download_url);
+          const text = await res.text();
+
+          const titleMatch = text.match(/title:\s*"(.*?)"|title:\s*(.*)/);
+          const dateMatch = text.match(/date:\s*(.*)/);
+          const imageMatch = text.match(/image:\s*"(.*?)"|image:\s*(.*)/);
+          
+          let bodyContent = text.split('---').slice(2).join('---').trim();
+
+          const title = titleMatch ? (titleMatch[1] || titleMatch[2]).trim() : '제목 없음';
+          const date = dateMatch ? dateMatch[1].trim().substring(0, 10) : '';
+          
+          let headerImageUrl = '';
+          if (imageMatch) {
+            let rawImgPath = (imageMatch[1] || imageMatch[2]).trim();
+            if (rawImgPath && rawImgPath !== '""' && rawImgPath !== "''") {
+              headerImageUrl = `https://raw.githubusercontent.com/gumivision/gumidreamchurch/main/${rawImgPath.replace(/^\//, '')}`;
+            }
+          }
+
+          bodyContent = bodyContent.replace(/!\[(.*?)\]\(\/(.*?)\)/g, (match, alt, src) => {
+            const rawUrl = `https://raw.githubusercontent.com/gumivision/gumidreamchurch/main/${src}`;
+            return `<img src="${rawUrl}" alt="${alt}" style="max-width: 100%; height: auto; border-radius: 8px; margin: 12px 0;" />`;
+          });
+
+          const postCard = document.createElement('div');
+          postCard.style.cssText = 'background: #ffffff; padding: 20px; border-radius: 8px; border: 1px solid #e5e7eb; box-shadow: 0 1px 3px rgba(0,0,0,0.05);';
+          
+          let imageHTML = headerImageUrl ? `<img src="${headerImageUrl}" alt="${title}" style="width: 100%; max-height: 400px; object-fit: cover; border-radius: 8px; margin-bottom: 12px;" />` : '';
+
+          postCard.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+              <h3 style="font-size: 18px; font-weight: bold; color: #1f2937; margin: 0;">${title}</h3>
+              <span style="font-size: 12px; color: #9ca3af;">${date}</span>
+            </div>
+            ${imageHTML}
+            <div style="font-size: 14px; color: #4b5563; line-height: 1.6; white-space: pre-line;">${bodyContent}</div>
+          `;
+          container.appendChild(postCard);
+        }
+      }
+    } catch (error) {
+      console.error(error);
+      container.innerHTML = '<p style="text-align: center; color: #ef4444;">게시글을 불러오지 못했습니다.</p>';
     }
-    resetAutoSlide();
   }
 
-  carouselContainer.addEventListener('touchstart', dragStart, {passive: true});
-  carouselContainer.addEventListener('touchmove', dragMove, {passive: true});
-  carouselContainer.addEventListener('touchend', dragEnd);
+  // 9. 갤러리 목록 가져오기 (GitHub API)
+  async function loadGallery() {
+    const container = document.getElementById('gallery-container');
+    if (!container) return;
 
-  carouselContainer.addEventListener('mousedown', dragStart);
-  carouselContainer.addEventListener('mousemove', dragMove);
-  carouselContainer.addEventListener('mouseup', dragEnd);
-  carouselContainer.addEventListener('mouseleave', () => { if(isDragging) dragEnd(); });
+    try {
+      const response = await fetch('https://api.github.com/repos/gumivision/gumidreamchurch/contents/gallery');
+      
+      if (!response.ok) {
+        container.innerHTML = '<p style="text-align: center; color: #9ca3af; grid-column: 1 / -1;">등록된 사진이 없습니다.</p>';
+        return;
+      }
 
-  document.getElementById('prevBtn').addEventListener('click', () => { goTo(curIdx - 1); resetAutoSlide(); });
-  document.getElementById('nextBtn').addEventListener('click', () => { goTo(curIdx + 1); resetAutoSlide(); });
+      const files = await response.json();
+      container.innerHTML = '';
 
-  renderCarousel();
-  window.addEventListener('resize', () => goTo(curIdx));
-  resetAutoSlide();
+      for (const file of files.reverse()) {
+        if (file.name.endsWith('.md')) {
+          const res = await fetch(file.download_url);
+          const text = await res.text();
+
+          const titleMatch = text.match(/title:\s*"(.*?)"|title:\s*(.*)/);
+          const title = titleMatch ? (titleMatch[1] || titleMatch[2]).trim() : '';
+
+          const imageList = [];
+          const listBlockMatch = text.match(/images:\s*\n((?:\s*-\s*.*\n?)+)/);
+          
+          if (listBlockMatch) {
+            const lines = listBlockMatch[1].split('\n');
+            lines.forEach(line => {
+              const cleanLine = line.replace(/^\s*-\s*["']?/, '').replace(/["']?\s*$/, '').trim();
+              if (cleanLine) imageList.push(cleanLine);
+            });
+          } else {
+            const singleImgMatch = text.match(/image:\s*"(.*?)"|image:\s*(.*)/);
+            if (singleImgMatch) {
+              const path = (singleImgMatch[1] || singleImgMatch[2]).trim();
+              if (path && path !== '""' && path !== "''") imageList.push(path);
+            }
+          }
+
+          imageList.forEach(imgPath => {
+            if (!imgPath) return;
+            const imageUrl = `https://raw.githubusercontent.com/gumivision/gumidreamchurch/main/${imgPath.replace(/^\//, '')}`;
+
+            const card = document.createElement('div');
+            card.style.cssText = 'overflow: hidden; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); background: #fff; text-align: center; cursor: pointer; transition: transform 0.2s;';
+            
+            card.onmouseover = () => card.style.transform = 'translateY(-4px)';
+            card.onmouseout = () => card.style.transform = 'translateY(0)';
+            card.onclick = () => openLightbox(imageUrl, title);
+
+            card.innerHTML = `
+              <img src="${imageUrl}" alt="${title}" style="width: 100%; height: 220px; object-fit: cover; display: block;" />
+              ${title ? `<div style="padding: 12px; font-size: 14px; font-weight: 500; color: #374151;">${title}</div>` : ''}
+            `;
+            container.appendChild(card);
+          });
+        }
+      }
+    } catch (error) {
+      console.error(error);
+      container.innerHTML = '<p style="text-align: center; color: #ef4444; grid-column: 1 / -1;">사진을 불러오지 못했습니다.</p>';
+    }
+  }
+
+  // 10. 초기 실행 로직
+  document.addEventListener('DOMContentLoaded', () => {
+    // 유튜브 연동
+    (async () => {
+      const uploads = fetchRssJson(`https://www.youtube.com/feeds/videos.xml?channel_id=${YT_CHANNEL}`);
+      const shorts  = fetchRssJson(`https://www.youtube.com/feeds/videos.xml?channel_id=${YT_CHANNEL}&filter=shorts`).catch(()=>[]);
+      const [upItems, shItems] = await Promise.all([uploads, shorts]);
+      let shortsFinal = shItems && shItems.length ? shItems : upItems.filter(i => /shorts/.test(i.link || ''));
+      if(!shortsFinal.length){ shortsFinal = upItems; }
+      renderShorts(shortsFinal);
+      renderSermons(upItems);
+    })();
+
+    // 게시판 및 갤러리 로드
+    loadPosts();
+    loadGallery();
+  });
 </script>
-  <script>
+
+<script>
   if (window.netlifyIdentity) {
     window.netlifyIdentity.on("init", user => {
       if (!user) {
