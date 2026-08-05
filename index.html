@@ -699,71 +699,75 @@ tailwind.config = {
     }
   }
 
-  // 9. 갤러리 목록 가져오기 (GitHub API)
-  async function loadGallery() {
-    const container = document.getElementById('gallery-container');
-    if (!container) return;
+ // 9. 갤러리 목록 가져오기 (GitHub API)
+async function loadGallery() {
+  const container = document.getElementById('gallery-container');
+  if (!container) return;
 
-    try {
-      const response = await fetch('https://api.github.com/repos/gumivision/gumidreamchurch/contents/gallery');
-      
-      if (!response.ok) {
-        container.innerHTML = '<p style="text-align: center; color: #9ca3af; grid-column: 1 / -1;">등록된 사진이 없습니다.</p>';
-        return;
-      }
-
-      const files = await response.json();
-      container.innerHTML = '';
-
-      for (const file of files.reverse()) {
-        if (file.name.endsWith('.md')) {
-          const res = await fetch(file.download_url);
-          const text = await res.text();
-
-          const titleMatch = text.match(/title:\s*"(.*?)"|title:\s*(.*)/);
-          const title = titleMatch ? (titleMatch[1] || titleMatch[2]).trim() : '';
-
-          const imageList = [];
-          const listBlockMatch = text.match(/images:\s*\n((?:\s*-\s*.*\n?)+)/);
-          
-          if (listBlockMatch) {
-            const lines = listBlockMatch[1].split('\n');
-            lines.forEach(line => {
-              const cleanLine = line.replace(/^\s*-\s*["']?/, '').replace(/["']?\s*$/, '').trim();
-              if (cleanLine) imageList.push(cleanLine);
-            });
-          } else {
-            const singleImgMatch = text.match(/image:\s*"(.*?)"|image:\s*(.*)/);
-            if (singleImgMatch) {
-              const path = (singleImgMatch[1] || singleImgMatch[2]).trim();
-              if (path && path !== '""' && path !== "''") imageList.push(path);
-            }
-          }
-
-          imageList.forEach(imgPath => {
-            if (!imgPath) return;
-            const imageUrl = `https://raw.githubusercontent.com/gumivision/gumidreamchurch/main/${imgPath.replace(/^\//, '')}?t=${new Date().getTime()}`;
-
-            const card = document.createElement('div');
-            card.style.cssText = 'overflow: hidden; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); background: #fff; text-align: center; cursor: pointer; transition: transform 0.2s;';
-            
-            card.onmouseover = () => card.style.transform = 'translateY(-4px)';
-            card.onmouseout = () => card.style.transform = 'translateY(0)';
-            card.onclick = () => openLightbox(imageUrl, title);
-
-            card.innerHTML = `
-              <img src="${imageUrl}" alt="${title}" style="width: 100%; height: 220px; object-fit: cover; display: block;" />
-              ${title ? `<div style="padding: 12px; font-size: 14px; font-weight: 500; color: #374151;">${title}</div>` : ''}
-            `;
-            container.appendChild(card);
-          });
-        }
-      }
-    } catch (error) {
-      console.error(error);
-      container.innerHTML = '<p style="text-align: center; color: #ef4444; grid-column: 1 / -1;">사진을 불러오지 못했습니다.</p>';
+  try {
+    const response = await fetch('https://api.github.com/repos/gumivision/gumidreamchurch/contents/gallery');
+    
+    if (!response.ok) {
+      container.innerHTML = '<p style="text-align: center; color: #9ca3af; grid-column: 1 / -1;">등록된 사진이 없습니다.</p>';
+      return;
     }
+
+    const files = await response.json();
+    container.innerHTML = '';
+
+    for (const file of files.reverse()) {
+      if (file.name.endsWith('.md')) {
+        const res = await fetch(file.download_url);
+        const text = await res.text();
+
+        const titleMatch = text.match(/title:\s*"(.*?)"|title:\s*(.*)/);
+        const title = titleMatch ? (titleMatch[1] || titleMatch[2]).trim() : '';
+
+        const imageList = [];
+        const listBlockMatch = text.match(/images:\s*\n((?:\s*-\s*.*\n?)+)/);
+        
+        if (listBlockMatch) {
+          const lines = listBlockMatch[1].split('\n');
+          lines.forEach(line => {
+            const cleanLine = line.replace(/^\s*-\s*["']?/, '').replace(/["']?\s*$/, '').trim();
+            // 유효성 체크 강화: 따옴표나 공백만 있는 경우 제외
+            if (cleanLine && cleanLine !== '""' && cleanLine !== "''") imageList.push(cleanLine);
+          });
+        } else {
+          const singleImgMatch = text.match(/image:\s*"(.*?)"|image:\s*(.*)/);
+          if (singleImgMatch) {
+            const path = (singleImgMatch[1] || singleImgMatch[2]).trim();
+            if (path && path !== '""' && path !== "''") imageList.push(path);
+          }
+        }
+
+        imageList.forEach(imgPath => {
+          // 빈 경로 거르기
+          if (!imgPath || imgPath === '""' || imgPath === "''") return;
+          
+          const imageUrl = `https://raw.githubusercontent.com/gumivision/gumidreamchurch/main/${imgPath.replace(/^\//, '')}?t=${new Date().getTime()}`;
+
+          const card = document.createElement('div');
+          card.style.cssText = 'overflow: hidden; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); background: #fff; text-align: center; cursor: pointer; transition: transform 0.2s;';
+          
+          card.onmouseover = () => card.style.transform = 'translateY(-4px)';
+          card.onmouseout = () => card.style.transform = 'translateY(0)';
+          card.onclick = () => openLightbox(imageUrl, title);
+
+          // onerror 추가: 이미지를 불러오지 못하면 빈 카드를 화면에서 삭제함
+          card.innerHTML = `
+            <img src="${imageUrl}" alt="${title}" style="width: 100%; height: 220px; object-fit: cover; display: block;" onerror="this.closest('div').remove();" />
+            ${title ? `<div style="padding: 12px; font-size: 14px; font-weight: 500; color: #374151;">${title}</div>` : ''}
+          `;
+          container.appendChild(card);
+        });
+      }
+    }
+  } catch (error) {
+    console.error(error);
+    container.innerHTML = '<p style="text-align: center; color: #ef4444; grid-column: 1 / -1;">사진을 불러오지 못했습니다.</p>';
   }
+}
 
   // 10. 초기 실행 로직
   document.addEventListener('DOMContentLoaded', () => {
