@@ -645,24 +645,36 @@ tailwind.config = {
     grid.innerHTML = vids.map(v => `<a href="${v.link}" target="_blank" rel="noopener" class="group block rounded-2xl overflow-hidden bg-white border border-navy-100 hover:border-gold-500/60 hover:shadow-lg hover:-translate-y-0.5 transition"><div class="relative aspect-video overflow-hidden"><img src="https://i.ytimg.com/vi/${v.id}/hqdefault.jpg" alt="${escapeHtml(v.title)}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition duration-500"><div class="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 group-hover:opacity-100 transition"><span class="w-12 h-12 rounded-full bg-red-600 text-white flex items-center justify-center shadow-xl"><i class="fa-solid fa-play ml-0.5 text-sm"></i></span></div></div><div class="p-4"><div class="text-[10px] font-bold text-gold-600 mb-1 uppercase tracking-wider">Sermon</div><div class="font-bold text-navy-900 line-clamp-2 text-xs sm:text-sm leading-snug">${escapeHtml(v.title)}</div><div class="mt-2.5 flex items-center gap-1.5 text-[11px] text-navy-700/60"><i class="fa-regular fa-calendar"></i> ${formatDate(v.pubDate)}</div></div></a>`).join('');
   }
 
-// 8. 게시판 소식 가져오기 (GitHub API)
+// 페이지 로드가 완료되면 게시글을 불러옵니다.
+document.addEventListener('DOMContentLoaded', () => {
+  loadPosts();
+});
+
+// 게시판 소식 가져오기 (GitHub API)
 async function loadPosts() {
-  const container = document.getElementById('posts-container');
+  // HTML의 id인 'latest-post-container'로 변경했습니다.
+  const container = document.getElementById('latest-post-container');
   if (!container) return;
 
   try {
     const response = await fetch('https://api.github.com/repos/gumivision/gumidreamchurch/contents/posts');
     
     if (!response.ok) {
-      container.innerHTML = '<p style="text-align: center; color: #9ca3af; grid-column: 1 / -1;">등록된 게시글이 없습니다.</p>';
+      container.innerHTML = '<p style="text-align: center; color: #9ca3af; padding: 20px;">등록된 게시글이 없거나 불러올 수 없습니다.</p>';
       return;
     }
 
     const files = await response.json();
-    const mdFiles = files.filter(f => f.name.endsWith('.md'));
+    
+    if (!Array.isArray(files)) {
+      container.innerHTML = '<p style="text-align: center; color: #9ca3af; padding: 20px;">게시글 폴더 경로를 확인해 주세요.</p>';
+      return;
+    }
+
+    const mdFiles = files.filter(f => f.name && f.name.endsWith('.md'));
 
     if (mdFiles.length === 0) {
-      container.innerHTML = '<p style="text-align: center; color: #9ca3af; grid-column: 1 / -1;">등록된 게시글이 없습니다.</p>';
+      container.innerHTML = '<p style="text-align: center; color: #9ca3af; padding: 20px;">등록된 게시글이 없습니다.</p>';
       return;
     }
 
@@ -701,26 +713,25 @@ async function loadPosts() {
     // 날짜 기준 최신순 정렬 (최신글이 맨 위로)
     posts.sort((a, b) => new Date(b.date) - new Date(a.date));
 
-    // ★ 최신글 최대 3개만 잘라서 사용 ★
+    // 최신글 최대 3개만 자르기
     const displayPosts = posts.slice(0, 3);
 
-    // 화면 초기화
+    // 기존 "소식을 불러오는 중입니다..." 메시지 제거
     container.innerHTML = '';
 
-    // 1. 최신글 1개 상단 노출 (3줄 분량 자바스크립트 직접 요약)
+    // 1. 최신글 1개 상단 노출 (3줄 요약)
     const latest = displayPosts[0];
     const latestCard = document.createElement('div');
     latestCard.style.cssText = 'background: #ffffff; padding: 24px; border-radius: 12px; border: 1px solid #e5e7eb; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 20px; cursor: pointer; transition: border-color 0.2s;';
     latestCard.onmouseover = () => latestCard.style.borderColor = '#d97706';
     latestCard.onmouseout = () => latestCard.style.borderColor = '#e5e7eb';
     
-    // 본문에서 HTML 태그 제거 및 줄바꿈/공백 정제
+    // 본문 태그 및 줄바꿈 정제 후 약 110자 요약
     let plainText = latest.bodyContent
-      .replace(/<[^>]*>?/gm, '') // HTML 태그 제거
-      .replace(/\s+/g, ' ')       // 줄바꿈 및 다중 공백을 1개의 공백으로 변경
+      .replace(/<[^>]*>?/gm, '')
+      .replace(/\s+/g, ' ')
       .trim();
 
-    // 약 110자 내외로 절삭 처리하여 3줄 분량 유지
     const summaryText = plainText.length > 110 ? plainText.slice(0, 110) + '...' : plainText;
 
     latestCard.onclick = () => openPostModal(latest.title, latest.date, latest.bodyContent, latest.headerImageUrl);
@@ -737,7 +748,7 @@ async function loadPosts() {
     `;
     container.appendChild(latestCard);
 
-    // 2. 지난 소식 목록 (2번째, 3번째 글: 날짜와 제목만)
+    // 2. 지난 소식 목록 (2번째, 3번째 글: 제목과 날짜만)
     const previousPosts = displayPosts.slice(1);
     if (previousPosts.length > 0) {
       const listWrapper = document.createElement('div');
@@ -763,12 +774,12 @@ async function loadPosts() {
     }
 
   } catch (error) {
-    console.error(error);
-    container.innerHTML = '<p style="text-align: center; color: #ef4444;">게시글을 불러오지 못했습니다.</p>';
+    console.error('게시글 로드 실패:', error);
+    container.innerHTML = '<p style="text-align: center; color: #ef4444; padding: 20px;">소식을 불러오는데 실패했습니다.</p>';
   }
 }
 
-// 3. 게시글 전체보기 모달(팝업) 열기 함수
+// 게시글 전체보기 모달(팝업) 열기 함수
 function openPostModal(title, date, bodyContent, headerImageUrl) {
   title = title.includes('%') ? decodeURIComponent(title) : title;
   bodyContent = bodyContent.includes('%') ? decodeURIComponent(bodyContent) : bodyContent;
