@@ -262,12 +262,25 @@ tailwind.config = {
   </div>
 </div>
 
-<!-- 6. 교회 소개 섹션 -->
+<!-- 6. 교회 소개 섹션 (About Us 상단 배치) -->
 <section id="about" class="relative py-12 sm:py-16 bg-[#f4efe6] text-navy-900 overflow-hidden border-y border-navy-100/40">
-  <div class="inline-flex items-center gap-2 text-gold-600 text-xs sm:text-sm font-bold uppercase tracking-[0.2em]"><span class="w-6 h-px bg-gold-500"></span> About Us</div>
   <div class="max-w-7xl mx-auto px-5 sm:px-8 relative z-10">
-    <div class="grid lg:grid-cols-12 gap-8 lg:gap-12 items-center">
-      <div class="lg:col-span-5 reveal">
+    <!-- 1) 상단: About Us 소개 문구 -->
+    <div class="reveal text-center max-w-3xl mx-auto mb-10">
+      <div class="inline-flex items-center justify-center gap-2 text-gold-600 text-xs sm:text-sm font-bold uppercase tracking-[0.2em]">
+        <span class="w-6 h-px bg-gold-500"></span> About Us <span class="w-6 h-px bg-gold-500"></span>
+      </div>
+      <h2 class="mt-3 font-serif text-2xl sm:text-3xl md:text-4xl text-navy-900 leading-tight tracking-tight">
+        모든 세대가 함께 예배하며,<br><span class="text-gold-600">참된 삶의 가치</span>를 찾아갑니다.
+      </h2>
+      <p class="mt-4 text-navy-700 leading-relaxed text-xs sm:text-sm">
+        구미 꿈이 있는 교회는 모든 세대가 마음을 모아 예배하며, 하나님의 말씀을 통해 삶의 참된 지혜와 가치를 발견합니다. 따뜻한 교제와 사랑의 실천을 통해 이웃과 세상을 더욱 아름답게 섬기고자 합니다.
+      </p>
+    </div>
+
+    <!-- 2) 하단: 교회 사진 & 핵심 가치 그리드 -->
+    <div class="grid lg:grid-cols-12 gap-8 items-center">
+      <div class="lg:col-span-6 reveal">
         <div class="relative">
           <div class="rounded-2xl overflow-hidden shadow-xl bg-white border border-navy-200/60 p-2">
             <img src="church1.png?v=3" alt="구미 꿈이 있는 교회 전경" 
@@ -285,26 +298,29 @@ tailwind.config = {
           </div>
         </div>
       </div>
-      <div class="lg:col-span-7 reveal">
-        
-        <h2 class="mt-2 font-serif text-2xl sm:text-3xl md:text-4xl text-navy-900 leading-tight tracking-tight">모든 세대가 함께 예배하며,<br><span class="text-gold-600">참된 삶의 가치</span>를 찾아갑니다.</h2>
-        <p class="mt-3 text-navy-700 leading-relaxed text-xs sm:text-sm">구미 꿈이 있는 교회는 모든 세대가 마음을 모아 예배하며, 하나님의 말씀을 통해 삶의 참된 지혜와 가치를 발견합니다. 따뜻한 교제와 사랑의 실천을 통해 이웃과 세상을 더욱 아름답게 섬기고자 합니다.</p>
-        
-        <div class="mt-6 grid grid-cols-3 gap-2 sm:gap-3">
-          <div class="group p-3 rounded-xl bg-white border border-navy-200/80 shadow-sm hover:border-gold-500/60 transition text-center sm:text-left">
-            <div class="w-8 h-8 rounded-lg bg-gold-500/10 text-gold-600 flex items-center justify-center text-sm mb-2 mx-auto sm:mx-0 group-hover:bg-gold-500 group-hover:text-white transition"><i class="fa-solid fa-heart"></i></div>
-            <h4 class="text-navy-900 font-bold text-xs sm:text-sm">사랑 <span class="hidden sm:inline font-normal text-[11px] text-navy-500">(Love)</span></h4>
-            <p class="mt-0.5 text-[11px] text-navy-600 leading-tight hidden sm:block">하나님과 이웃을 사랑하는 마음을 나눕니다.</p>
+
+      <div class="lg:col-span-6 reveal">
+        <div class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-1 gap-3">
+          <div class="group p-4 rounded-xl bg-white border border-navy-200/80 shadow-sm hover:border-gold-500/60 transition flex flex-col lg:flex-row items-center lg:items-start text-center lg:text-left gap-3">
+            <div class="w-10 h-10 rounded-lg bg-gold-500/10 text-gold-600 flex items-center justify-center text-base shrink-0 group-hover:bg-gold-500 group-hover:text-white transition"><i class="fa-solid fa-heart"></i></div>
+            <div>
+              <h4 class="text-navy-900 font-bold text-sm">사랑 <span class="font-normal text-xs text-navy-500">(Love)</span></h4>
+              <p class="mt-1 text-xs text-navy-600 leading-relaxed">하나님과 이웃을 사랑하는 마음을 나눕니다.</p>
+            </div>
           </div>
-          <div class="group p-3 rounded-xl bg-white border border-navy-200/80 shadow-sm hover:border-gold-500/60 transition text-center sm:text-left">
-            <div class="w-8 h-8 rounded-lg bg-gold-500/10 text-gold-600 flex items-center justify-center text-sm mb-2 mx-auto sm:mx-0 group-hover:bg-gold-500 group-hover:text-white transition"><i class="fa-solid fa-seedling"></i></div>
-            <h4 class="text-navy-900 font-bold text-xs sm:text-sm">성장 <span class="hidden sm:inline font-normal text-[11px] text-navy-500">(Growth)</span></h4>
-            <p class="mt-0.5 text-[11px] text-navy-600 leading-tight hidden sm:block">말씀과 기도로 매일의 믿음을 키워갑니다.</p>
+          <div class="group p-4 rounded-xl bg-white border border-navy-200/80 shadow-sm hover:border-gold-500/60 transition flex flex-col lg:flex-row items-center lg:items-start text-center lg:text-left gap-3">
+            <div class="w-10 h-10 rounded-lg bg-gold-500/10 text-gold-600 flex items-center justify-center text-base shrink-0 group-hover:bg-gold-500 group-hover:text-white transition"><i class="fa-solid fa-seedling"></i></div>
+            <div>
+              <h4 class="text-navy-900 font-bold text-sm">성장 <span class="font-normal text-xs text-navy-500">(Growth)</span></h4>
+              <p class="mt-1 text-xs text-navy-600 leading-relaxed">말씀과 기도로 매일의 믿음을 키워갑니다.</p>
+            </div>
           </div>
-          <div class="group p-3 rounded-xl bg-white border border-navy-200/80 shadow-sm hover:border-gold-500/60 transition text-center sm:text-left">
-            <div class="w-8 h-8 rounded-lg bg-gold-500/10 text-gold-600 flex items-center justify-center text-sm mb-2 mx-auto sm:mx-0 group-hover:bg-gold-500 group-hover:text-white transition"><i class="fa-solid fa-hand-holding-heart"></i></div>
-            <h4 class="text-navy-900 font-bold text-xs sm:text-sm">섬김 <span class="hidden sm:inline font-normal text-[11px] text-navy-500">(Mission)</span></h4>
-            <p class="mt-0.5 text-[11px] text-navy-600 leading-tight hidden sm:block">세상을 향한 따뜻한 손길과 섬김을 실천합니다.</p>
+          <div class="group p-4 rounded-xl bg-white border border-navy-200/80 shadow-sm hover:border-gold-500/60 transition flex flex-col lg:flex-row items-center lg:items-start text-center lg:text-left gap-3">
+            <div class="w-10 h-10 rounded-lg bg-gold-500/10 text-gold-600 flex items-center justify-center text-base shrink-0 group-hover:bg-gold-500 group-hover:text-white transition"><i class="fa-solid fa-hand-holding-heart"></i></div>
+            <div>
+              <h4 class="text-navy-900 font-bold text-sm">섬김 <span class="font-normal text-xs text-navy-500">(Mission)</span></h4>
+              <p class="mt-1 text-xs text-navy-600 leading-relaxed">세상을 향한 따뜻한 손길과 섬김을 실천합니다.</p>
+            </div>
           </div>
         </div>
       </div>
@@ -364,6 +380,7 @@ tailwind.config = {
             </div>
           </li>
         </ul>
+        <p class="mt-3 text-[10px] text-white/45 leading-relaxed">* 헌금 시 입금자명을 확인해 주세요. 기부금영수증 문의: 010-2258-4827</p>
       </div>
       
       <div class="reveal bg-gradient-to-br from-gold-500 to-gold-600 rounded-2xl p-5 text-navy-900 shadow-lg flex flex-col justify-between">
@@ -819,7 +836,7 @@ tailwind.config = {
 
     modal.innerHTML = `
       <div style="background: #ffffff; border-radius: 16px; max-width: 600px; width: 100%; max-height: 85vh; display: flex; flex-direction: column; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); overflow: hidden;">
-        <div style="padding: 20px; border-bottom: 1px solid #f3f4f6; display: flex; justify-content: space-between; align-items: center; background: #f9fafb;">
+        <div style="padding: 20px; border-bottom: 1px solid #f3f4f6; display: flex; justify-between; align-items: center; background: #f9fafb;">
           <div>
             <span style="font-size: 12px; color: #d97706; font-weight: 600;">${date}</span>
             <h2 style="font-size: 18px; font-weight: bold; color: #111827; margin: 4px 0 0 0;">${title}</h2>
