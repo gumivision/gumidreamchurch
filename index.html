@@ -701,25 +701,26 @@ async function loadPosts() {
     // 날짜 기준 최신순 정렬 (최신글이 맨 위로)
     posts.sort((a, b) => new Date(b.date) - new Date(a.date));
 
-    // ★ 최신 3개 글만 잘라내기 ★
+    // ★ 최신글 최대 3개만 잘라서 사용 ★
     const displayPosts = posts.slice(0, 3);
 
     // 화면 초기화
     container.innerHTML = '';
 
-    // 1. 최신글 1개 상단 노출 (텍스트 직접 요약 처리)
+    // 1. 최신글 1개 상단 노출 (3줄 분량 자바스크립트 직접 요약)
     const latest = displayPosts[0];
     const latestCard = document.createElement('div');
     latestCard.style.cssText = 'background: #ffffff; padding: 24px; border-radius: 12px; border: 1px solid #e5e7eb; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 20px; cursor: pointer; transition: border-color 0.2s;';
     latestCard.onmouseover = () => latestCard.style.borderColor = '#d97706';
     latestCard.onmouseout = () => latestCard.style.borderColor = '#e5e7eb';
     
-    // HTML 태그 제거 및 줄바꿈/공백 정리를 통한 요약문 생성
+    // 본문에서 HTML 태그 제거 및 줄바꿈/공백 정제
     let plainText = latest.bodyContent
       .replace(/<[^>]*>?/gm, '') // HTML 태그 제거
-      .replace(/\s+/g, ' ')       // 연속된 공백 및 줄바꿈을 1개의 공백으로 변경
+      .replace(/\s+/g, ' ')       // 줄바꿈 및 다중 공백을 1개의 공백으로 변경
       .trim();
 
+    // 약 110자 내외로 절삭 처리하여 3줄 분량 유지
     const summaryText = plainText.length > 110 ? plainText.slice(0, 110) + '...' : plainText;
 
     latestCard.onclick = () => openPostModal(latest.title, latest.date, latest.bodyContent, latest.headerImageUrl);
@@ -769,7 +770,6 @@ async function loadPosts() {
 
 // 3. 게시글 전체보기 모달(팝업) 열기 함수
 function openPostModal(title, date, bodyContent, headerImageUrl) {
-  // URL 인코딩된 값 디코딩
   title = title.includes('%') ? decodeURIComponent(title) : title;
   bodyContent = bodyContent.includes('%') ? decodeURIComponent(bodyContent) : bodyContent;
   headerImageUrl = headerImageUrl.includes('%') ? decodeURIComponent(headerImageUrl) : headerImageUrl;
@@ -784,7 +784,7 @@ function openPostModal(title, date, bodyContent, headerImageUrl) {
   let imageHTML = headerImageUrl ? `<img src="${headerImageUrl}" alt="${title}" style="width: 100%; max-height: 350px; object-fit: cover; border-radius: 8px; margin-bottom: 16px;" />` : '';
 
   modal.innerHTML = `
-    <div style="background: #ffffff; border-radius: 16px; max-width: 600px; width: 100%; max-height: 85vh; display: flex; flex-direction: column; shadow: 0 20px 25px -5px rgba(0,0,0,0.1); overflow: hidden;">
+    <div style="background: #ffffff; border-radius: 16px; max-width: 600px; width: 100%; max-height: 85vh; display: flex; flex-direction: column; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); overflow: hidden;">
       <div style="padding: 20px; border-bottom: 1px solid #f3f4f6; display: flex; justify-content: space-between; align-items: center; background: #f9fafb;">
         <div>
           <span style="font-size: 12px; color: #d97706; font-weight: 600;">${date}</span>
