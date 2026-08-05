@@ -6,6 +6,17 @@
   <title>꿈이 있는 교회 - 게시판 관리자</title>
   <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 </head>
+  <script>
+  if (window.netlifyIdentity) {
+    window.netlifyIdentity.on("init", user => {
+      if (!user) {
+        window.netlifyIdentity.on("login", () => {
+          document.location.href = "/admin/";
+        });
+      }
+    });
+  }
+</script>
 <body>
   <!-- Decap CMS 스크립트 불러오기 -->
   <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
