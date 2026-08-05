@@ -701,18 +701,26 @@ async function loadPosts() {
     // 날짜 기준 최신순 정렬 (최신글이 맨 위로)
     posts.sort((a, b) => new Date(b.date) - new Date(a.date));
 
+    // ★ 최신 3개 글만 잘라내기 ★
+    const displayPosts = posts.slice(0, 3);
+
     // 화면 초기화
     container.innerHTML = '';
 
-    // 1. 최신글 1개 상단 노출 (3줄 요약)
-    const latest = posts[0];
+    // 1. 최신글 1개 상단 노출 (텍스트 직접 요약 처리)
+    const latest = displayPosts[0];
     const latestCard = document.createElement('div');
-    latestCard.style.cssText = 'background: #ffffff; padding: 24px; border-radius: 12px; border: 1px solid #e5e7eb; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 24px; cursor: pointer; transition: border-color 0.2s;';
+    latestCard.style.cssText = 'background: #ffffff; padding: 24px; border-radius: 12px; border: 1px solid #e5e7eb; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 20px; cursor: pointer; transition: border-color 0.2s;';
     latestCard.onmouseover = () => latestCard.style.borderColor = '#d97706';
     latestCard.onmouseout = () => latestCard.style.borderColor = '#e5e7eb';
     
-    // 본문에서 HTML 태그 제거 후 텍스트만 추출
-    const plainText = latest.bodyContent.replace(/<[^>]*>?/gm, '');
+    // HTML 태그 제거 및 줄바꿈/공백 정리를 통한 요약문 생성
+    let plainText = latest.bodyContent
+      .replace(/<[^>]*>?/gm, '') // HTML 태그 제거
+      .replace(/\s+/g, ' ')       // 연속된 공백 및 줄바꿈을 1개의 공백으로 변경
+      .trim();
+
+    const summaryText = plainText.length > 110 ? plainText.slice(0, 110) + '...' : plainText;
 
     latestCard.onclick = () => openPostModal(latest.title, latest.date, latest.bodyContent, latest.headerImageUrl);
     latestCard.innerHTML = `
@@ -721,26 +729,26 @@ async function loadPosts() {
         <span style="font-size: 12px; color: #9ca3af;">${latest.date}</span>
       </div>
       <h3 style="font-size: 18px; font-weight: bold; color: #1f2937; margin: 0 0 8px 0;">${latest.title}</h3>
-      <p style="font-size: 14px; color: #4b5563; line-height: 1.6; margin: 0 0 12px 0; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis;">
-        ${plainText}
+      <p style="font-size: 14px; color: #4b5563; line-height: 1.6; margin: 0 0 12px 0;">
+        ${summaryText}
       </p>
       <span style="font-size: 12px; color: #d97706; font-weight: 600;">전체보기 ></span>
     `;
     container.appendChild(latestCard);
 
-    // 2. 지난 소식 목록 (2번째 글부터: 날짜와 제목만)
-    const previousPosts = posts.slice(1);
+    // 2. 지난 소식 목록 (2번째, 3번째 글: 날짜와 제목만)
+    const previousPosts = displayPosts.slice(1);
     if (previousPosts.length > 0) {
       const listWrapper = document.createElement('div');
-      listWrapper.style.cssText = 'background: #f9fafb; padding: 20px; border-radius: 12px; border: 1px solid #f3f4f6;';
+      listWrapper.style.cssText = 'background: #f9fafb; padding: 16px 20px; border-radius: 12px; border: 1px solid #f3f4f6;';
       
-      let listHTML = `<h4 style="font-size: 12px; font-weight: bold; color: #6b7280; margin: 0 0 12px 0; text-transform: uppercase;">지난 소식 목록</h4>`;
+      let listHTML = `<h4 style="font-size: 12px; font-weight: bold; color: #6b7280; margin: 0 0 8px 0; text-transform: uppercase;">지난 소식 목록</h4>`;
       listHTML += `<ul style="list-style: none; padding: 0; margin: 0;">`;
 
-      previousPosts.forEach((post, index) => {
+      previousPosts.forEach((post) => {
         listHTML += `
           <li onclick="openPostModal('${encodeURIComponent(post.title)}', '${post.date}', '${encodeURIComponent(post.bodyContent)}', '${encodeURIComponent(post.headerImageUrl)}')" 
-              style="display: flex; justify-content: space-between; align-items: center; padding: 10px 8px; border-bottom: 1px solid #e5e7eb; cursor: pointer;"
+              style="display: flex; justify-content: space-between; align-items: center; padding: 10px 4px; border-bottom: 1px solid #e5e7eb; cursor: pointer;"
               onmouseover="this.style.backgroundColor='#ffffff'" onmouseout="this.style.backgroundColor='transparent'">
             <span style="font-size: 14px; color: #1f2937; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding-right: 16px;">${post.title}</span>
             <span style="font-size: 12px; color: #9ca3af; flex-shrink: 0;">${post.date}</span>
