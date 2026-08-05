@@ -263,7 +263,7 @@ tailwind.config = {
       <div class="lg:col-span-5 reveal">
         <div class="relative">
           <div class="aspect-[4/3] sm:aspect-[4/5] rounded-2xl overflow-hidden shadow-xl bg-white border border-navy-200/60 flex items-center justify-center text-gold-600">
-            <img src="church1.png" alt="구미 꿈이 있는 교회 전경" 
+            <img src="church1.png?v=2" alt="구미 꿈이 있는 교회 전경" 
                  class="w-full h-full object-cover"
                  onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');">
             <div class="hidden flex-col items-center justify-center text-gold-600 p-6 text-center">
@@ -667,7 +667,7 @@ tailwind.config = {
           if (imageMatch) {
             let rawImgPath = (imageMatch[1] || imageMatch[2]).trim();
             if (rawImgPath && rawImgPath !== '""' && rawImgPath !== "''") {
-              headerImageUrl = `https://raw.githubusercontent.com/gumivision/gumidreamchurch/main/${rawImgPath.replace(/^\//, '')}`;
+              headerImageUrl = `https://raw.githubusercontent.com/gumivision/gumidreamchurch/main/${rawImgPath.replace(/^\//, '')}?t=${new Date().getTime()}`;
             }
           }
 
@@ -741,7 +741,7 @@ tailwind.config = {
 
           imageList.forEach(imgPath => {
             if (!imgPath) return;
-            const imageUrl = `https://raw.githubusercontent.com/gumivision/gumidreamchurch/main/${imgPath.replace(/^\//, '')}`;
+            const imageUrl = `https://raw.githubusercontent.com/gumivision/gumidreamchurch/main/${imgPath.replace(/^\//, '')}?t=${new Date().getTime()}`;
 
             const card = document.createElement('div');
             card.style.cssText = 'overflow: hidden; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); background: #fff; text-align: center; cursor: pointer; transition: transform 0.2s;';
