@@ -585,7 +585,7 @@ tailwind.config = {
     if (e.key === 'Escape') closeLightbox();
   });
 
-  // 7. 유튜브 RSS 데이터 가져오기
+// 7. 유튜브 RSS 데이터 가져오기
   async function fetchRssJson(url){
     const api = 'https://api.rss2json.com/v1/api.json?rss_url=' + encodeURIComponent(url);
     try{ 
@@ -622,6 +622,7 @@ tailwind.config = {
     } 
   }
 
+  // ★ [수정됨] Shorts 피드 영역 - 세로 높이를 약 절반 수준(aspect-[9/10])으로 축소
   function renderShorts(items){
     const grid = document.getElementById('shortsGrid');
     if (!grid) return;
@@ -631,7 +632,8 @@ tailwind.config = {
       grid.innerHTML = '<div class="col-span-full aspect-[16/9] rounded-2xl border border-navy-200 bg-white flex flex-col items-center justify-center text-center p-6 text-navy-600 text-xs sm:text-sm"><i class="fa-brands fa-youtube text-3xl text-red-500 mb-2"></i>Shorts 피드를 불러오는 중입니다.<br>잠시 후 다시 방문해 주세요.</div>';
       return;
     }
-    grid.innerHTML = shorts.map(s => `<a href="${s.link}" target="_blank" rel="noopener" class="group relative rounded-xl overflow-hidden bg-black aspect-[9/16] border border-navy-200/60 shadow-sm hover:border-gold-500/60 transition"><img src="https://i.ytimg.com/vi/${s.id}/hqdefault.jpg" alt="${escapeHtml(s.title)}" loading="lazy" class="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition"><div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent"></div><div class="absolute top-2 left-2 inline-flex items-center gap-1 bg-red-600/90 text-white text-[9px] font-bold px-1.5 py-0.5 rounded"><i class="fa-solid fa-bolt"></i> Shorts</div><div class="absolute bottom-0 inset-x-0 p-2.5"><div class="text-white text-xs font-semibold leading-tight line-clamp-2">${escapeHtml(s.title)}</div></div></a>`).join('');
+    // aspect-[9/16]에서 aspect-[9/10] 및 max-h-[260px]로 변경하여 세로 길이를 축소
+    grid.innerHTML = shorts.map(s => `<a href="${s.link}" target="_blank" rel="noopener" class="group relative rounded-xl overflow-hidden bg-black aspect-[9/10] max-h-[260px] border border-navy-200/60 shadow-sm hover:border-gold-500/60 transition"><img src="https://i.ytimg.com/vi/${s.id}/hqdefault.jpg" alt="${escapeHtml(s.title)}" loading="lazy" class="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition"><div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent"></div><div class="absolute top-2 left-2 inline-flex items-center gap-1 bg-red-600/90 text-white text-[9px] font-bold px-1.5 py-0.5 rounded"><i class="fa-solid fa-bolt"></i> Shorts</div><div class="absolute bottom-0 inset-x-0 p-2.5"><div class="text-white text-xs font-semibold leading-tight line-clamp-2">${escapeHtml(s.title)}</div></div></a>`).join('');
   }
   
   function renderSermons(items){
@@ -646,10 +648,61 @@ tailwind.config = {
     grid.innerHTML = vids.map(v => `<a href="${v.link}" target="_blank" rel="noopener" class="group block rounded-2xl overflow-hidden bg-white border border-navy-100 hover:border-gold-500/60 hover:shadow-lg hover:-translate-y-0.5 transition"><div class="relative aspect-video overflow-hidden"><img src="https://i.ytimg.com/vi/${v.id}/hqdefault.jpg" alt="${escapeHtml(v.title)}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition duration-500"><div class="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 group-hover:opacity-100 transition"><span class="w-12 h-12 rounded-full bg-red-600 text-white flex items-center justify-center shadow-xl"><i class="fa-solid fa-play ml-0.5 text-sm"></i></span></div></div><div class="p-4"><div class="text-[10px] font-bold text-gold-600 mb-1 uppercase tracking-wider">Sermon</div><div class="font-bold text-navy-900 line-clamp-2 text-xs sm:text-sm leading-snug">${escapeHtml(v.title)}</div><div class="mt-2.5 flex items-center gap-1.5 text-[11px] text-navy-700/60"><i class="fa-regular fa-calendar"></i> ${formatDate(v.pubDate)}</div></div></a>`).join('');
   }
 
-// 페이지 로드가 완료되면 게시글을 불러옵니다.
-document.addEventListener('DOMContentLoaded', () => {
-  loadPosts();
-});
+  // ★ [신규] 함께한 순간들(갤러리) 9개 페이징 처리 함수
+  let galleryItems = [];
+  const galleryItemsPerPage = 9;
+
+  function renderGalleryPage(page) {
+    const grid = document.getElementById('gallery-container') || document.getElementById('galleryGrid');
+    const pagination = document.getElementById('gallery-pagination');
+    if (!grid) return;
+
+    grid.innerHTML = '';
+    const totalPages = Math.ceil(galleryItems.length / galleryItemsPerPage);
+    const startIndex = (page - 1) * galleryItemsPerPage;
+    const pageItems = galleryItems.slice(startIndex, startIndex + galleryItemsPerPage);
+
+    if (pageItems.length === 0) {
+      grid.innerHTML = '<div class="col-span-full text-center text-gray-400 py-8">등록된 사진이 없습니다.</div>';
+      if (pagination) pagination.innerHTML = '';
+      return;
+    }
+
+    // 갤러리 9개 항목 노출
+    pageItems.forEach(item => {
+      const card = document.createElement('div');
+      card.className = 'relative rounded-xl overflow-hidden aspect-square bg-gray-100 cursor-pointer group shadow-sm';
+      card.onclick = () => openImageModal(item.imageUrl, item.title);
+      card.innerHTML = `<img src="${item.imageUrl}" alt="${escapeHtml(item.title)}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">`;
+      grid.appendChild(card);
+    });
+
+    // 9개 초과 시 하단에 [1] [2] [3] 버튼 생성
+    if (pagination) {
+      pagination.innerHTML = '';
+      if (totalPages > 1) {
+        const nav = document.createElement('div');
+        nav.className = 'flex justify-center items-center gap-2 mt-6 w-full';
+
+        for (let i = 1; i <= totalPages; i++) {
+          const btn = document.createElement('button');
+          btn.innerText = i;
+          btn.className = `px-3 py-1 rounded-md text-xs font-semibold transition ${i === page ? 'bg-amber-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`;
+          btn.onclick = () => {
+            renderGalleryPage(i);
+            grid.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          };
+          nav.appendChild(btn);
+        }
+        pagination.appendChild(nav);
+      }
+    }
+  }
+
+  // 페이지 로드가 완료되면 초기화 및 실행
+  document.addEventListener('DOMContentLoaded', () => {
+    loadPosts();
+  });
 
 // 게시판 소식 가져오기 (GitHub API)
 async function loadPosts() {
