@@ -210,7 +210,7 @@ tailwind.config = {
   </div>
 </section>
 
-<!-- 3. 게시판 영역 -->
+<!-- 3. 게시판 영역 (단일 컨테이너로 정리) -->
 <section id="board" class="py-12 sm:py-16 bg-white border-b border-gray-100">
   <div class="max-w-4xl mx-auto px-5 sm:px-8">
     <div class="text-center mb-8">
@@ -247,7 +247,7 @@ tailwind.config = {
     <div id="gallery-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
       <p class="text-center text-gray-500 col-span-full">사진을 불러오는 중입니다...</p>
     </div>
-    <div id="gallery-pagination" class="mt-6"></div>
+    <div id="gallery-pagination"></div>
   </div>
 </section>
 
@@ -262,7 +262,7 @@ tailwind.config = {
   </div>
 </div>
 
-<!-- 6. 교회 소개 섹션 -->
+<!-- 6. 교회 소개 섹션 (About Us 상단 배치) -->
 <section id="about" class="relative py-12 sm:py-16 bg-[#f4efe6] text-navy-900 overflow-hidden border-y border-navy-100/40">
   <div class="max-w-7xl mx-auto px-5 sm:px-8 relative z-10">
     <!-- 1) 상단: About Us 소개 문구 -->
@@ -656,59 +656,52 @@ tailwind.config = {
     grid.innerHTML = vids.map(v => `<a href="${v.link}" target="_blank" rel="noopener" class="group block rounded-2xl overflow-hidden bg-white border border-navy-100 hover:border-gold-500/60 hover:shadow-lg hover:-translate-y-0.5 transition"><div class="relative aspect-video overflow-hidden"><img src="https://i.ytimg.com/vi/${v.id}/hqdefault.jpg" alt="${escapeHtml(v.title)}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition duration-500"><div class="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 group-hover:opacity-100 transition"><span class="w-12 h-12 rounded-full bg-red-600 text-white flex items-center justify-center shadow-xl"><i class="fa-solid fa-play ml-0.5 text-sm"></i></span></div></div><div class="p-4"><div class="text-[10px] font-bold text-gold-600 mb-1 uppercase tracking-wider">Sermon</div><div class="font-bold text-navy-900 line-clamp-2 text-xs sm:text-sm leading-snug">${escapeHtml(v.title)}</div><div class="mt-2.5 flex items-center gap-1.5 text-[11px] text-navy-700/60"><i class="fa-regular fa-calendar"></i> ${formatDate(v.pubDate)}</div></div></a>`).join('');
   }
 
-  // 8. 갤러리 불러오기 (Decap CMS collection 구조 대응)
+  // 8. 갤러리 로드 및 페이징 처리 (GitHub API 연동)
   let galleryItems = [];
   const galleryItemsPerPage = 9;
 
   async function loadGallery() {
-    const grid = document.getElementById('gallery-container');
+    const grid = document.getElementById('gallery-container') || document.getElementById('galleryGrid');
     if (!grid) return;
 
     try {
       const response = await fetch('https://api.github.com/repos/gumivision/gumidreamchurch/contents/gallery');
       if (!response.ok) {
-        grid.innerHTML = '<p class="text-center text-gray-400 col-span-full">갤러리 사진을 불러올 수 없습니다.</p>';
+        grid.innerHTML = '<p class="text-center text-gray-400 col-span-full py-8">갤러리 사진을 불러올 수 없습니다.</p>';
         return;
       }
 
       const files = await response.json();
-      const mdFiles = files.filter(f => f.name && f.name.endsWith('.md'));
-
-      if (mdFiles.length === 0) {
-        grid.innerHTML = '<p class="text-center text-gray-400 col-span-full">등록된 갤러리 사진이 없습니다.</p>';
+      if (!Array.isArray(files)) {
+        grid.innerHTML = '<p class="text-center text-gray-400 col-span-full py-8">갤러리 경로를 확인해 주세요.</p>';
         return;
       }
 
-      let allImages = [];
+      // 이미지 확장자 필터링
+      const imageFiles = files.filter(f => f.name && /\.(jpg|jpeg|png|gif|webp)$/i.test(f.name));
 
-      await Promise.all(mdFiles.map(async (file) => {
-        const res = await fetch(file.download_url);
-        const text = await res.text();
+      if (imageFiles.length === 0) {
+        grid.innerHTML = '<p class="text-center text-gray-400 col-span-full py-8">등록된 사진이 없습니다.</p>';
+        return;
+      }
 
-        // 마크다운 내 - image: 경로 추출
-        const imgMatches = text.match(/image:\s*["']?(.*?)["']?$/gm);
-        if (imgMatches) {
-          imgMatches.forEach(m => {
-            let imgPath = m.replace(/image:\s*["']?/, '').replace(/["']?$/, '').trim();
-            if (imgPath) {
-              const fullUrl = `https://raw.githubusercontent.com/gumivision/gumidreamchurch/main/${imgPath.replace(/^\//, '')}?t=${new Date().getTime()}`;
-              allImages.push({ imageUrl: fullUrl, title: '갤러리 사진' });
-            }
-          });
-        }
-      }));
+      // 파일명 내 일자 패턴 추출 후 최신순 정렬
+      galleryItems = imageFiles.map(file => {
+        const title = file.name.replace(/\.[^/.]+$/, "");
+        const rawUrl = `https://raw.githubusercontent.com/gumivision/gumidreamchurch/main/gallery/${encodeURIComponent(file.name)}`;
+        return { title, imageUrl: rawUrl, fileName: file.name };
+      }).sort((a, b) => b.fileName.localeCompare(a.fileName));
 
-      galleryItems = allImages;
       renderGalleryPage(1);
 
     } catch (error) {
       console.error('갤러리 로드 실패:', error);
-      grid.innerHTML = '<p class="text-center text-red-500 col-span-full">갤러리를 불러오는 데 실패했습니다.</p>';
+      grid.innerHTML = '<p class="text-center text-red-500 col-span-full py-8">사진을 불러오는 데 실패했습니다.</p>';
     }
   }
 
   function renderGalleryPage(page) {
-    const grid = document.getElementById('gallery-container');
+    const grid = document.getElementById('gallery-container') || document.getElementById('galleryGrid');
     const pagination = document.getElementById('gallery-pagination');
     if (!grid) return;
 
@@ -890,9 +883,9 @@ tailwind.config = {
           </div>
           <button onclick="document.getElementById('post-modal').remove()" style="background: none; border: none; font-size: 24px; color: #9ca3af; cursor: pointer;">&times;</button>
         </div>
-        <div style="padding: 20px; overflow-y: auto; font-size: 14px; color: #374151; line-height: 1.6;">
+        <div style="padding: 20px; overflow-y: auto; font-size: 14px; color: #374151; line-height: 1.6; white-space: pre-line;">
           ${imageHTML}
-          <div>${bodyContent}</div>
+          ${bodyContent}
         </div>
         <div style="padding: 12px 20px; border-top: 1px solid #f3f4f6; background: #f9fafb; text-align: right;">
           <button onclick="document.getElementById('post-modal').remove()" style="padding: 8px 16px; background: #111827; color: #ffffff; font-size: 12px; font-weight: 600; border: none; border-radius: 8px; cursor: pointer;">닫기</button>
