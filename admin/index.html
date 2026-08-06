@@ -30,10 +30,9 @@
     </div>
   </header>
 
-  <!-- 메인 히어로 이미지 영역 (main1.png 적용) -->
+  <!-- 메인 히어로 이미지 영역 -->
   <section class="relative w-full max-w-6xl mx-auto mt-4 px-4">
     <div class="relative overflow-hidden rounded-2xl shadow-lg group">
-      <!-- main.png -> main1.png 변경 -->
       <img src="images/main1.png" alt="구미드림교회 메인 이미지" class="w-full h-[320px] sm:h-[450px] object-cover" />
       <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent flex flex-col justify-end p-6 sm:p-10 text-white">
         <h2 class="text-2xl sm:text-4xl font-extrabold mb-2 leading-tight">꿈이 있는 교회, 행복한 성도</h2>
@@ -43,11 +42,10 @@
   </section>
 
 
-  <!-- ================= 2. 교회 소개 영역 (church1.png 적용) ================= -->
+  <!-- ================= 2. 교회 소개 영역 ================= -->
   <section class="max-w-6xl mx-auto px-4 py-12">
     <div class="bg-white rounded-2xl p-6 sm:p-10 shadow-sm border border-gray-100 flex flex-col md:flex-row items-center gap-8">
       <div class="w-full md:w-1/2">
-        <!-- church.png -> church1.png 변경 -->
         <img src="images/church1.png" alt="교회 전경" class="w-full h-64 sm:h-80 object-cover rounded-xl shadow-md" />
       </div>
       <div class="w-full md:w-1/2 space-y-4">
@@ -195,7 +193,7 @@
       }
     }
 
-    // 3. 갤러리 불러오기
+    // 3. 갤러리 불러오기 (수정 완료)
     async function loadGallery() {
       const container = document.getElementById('gallery-container');
       try {
@@ -214,25 +212,22 @@
             const res = await fetch(file.download_url);
             const text = await res.text();
 
+            // 제목 추출
             const titleMatch = text.match(/title:\s*"(.*?)"|title:\s*(.*)/);
             const title = titleMatch ? (titleMatch[1] || titleMatch[2]).trim() : '';
 
+            // 이미지 경로 추출 (Decap CMS 중첩 리스트 파싱)
             const imageList = [];
-            const listBlockMatch = text.match(/images:\s*\n((?:\s*-\s*.*\n?)+)/);
-            if (listBlockMatch) {
-              const lines = listBlockMatch[1].split('\n');
-              lines.forEach(line => {
-                const cleanLine = line.replace(/^\s*-\s*["']?/, '').replace(/["']?\s*$/, '').trim();
-                if (cleanLine) imageList.push(cleanLine);
-              });
-            } else {
-              const singleImgMatch = text.match(/image:\s*"(.*?)"|image:\s*(.*)/);
-              if (singleImgMatch) {
-                const path = (singleImgMatch[1] || singleImgMatch[2]).trim();
-                if (path && path !== '""' && path !== "''") imageList.push(path);
+            const imageMatches = text.matchAll(/image:\s*["']?(.*?)["']?$/gm);
+            
+            for (const match of imageMatches) {
+              const imgPath = match[1].trim();
+              if (imgPath && imgPath !== '""' && imgPath !== "''") {
+                imageList.push(imgPath);
               }
             }
 
+            // 이미지 카드 렌더링
             imageList.forEach(imgPath => {
               if (!imgPath) return;
               const imageUrl = `https://raw.githubusercontent.com/gumivision/gumidreamchurch/main/${imgPath.replace(/^\//, '')}`;
@@ -248,6 +243,10 @@
               container.appendChild(card);
             });
           }
+        }
+
+        if (container.children.length === 0) {
+          container.innerHTML = '<p class="text-center text-gray-400 col-span-full py-4">등록된 사진이 없습니다.</p>';
         }
       } catch (error) {
         console.error(error);
