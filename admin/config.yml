@@ -21,14 +21,13 @@ collections:
       - { label: "대표/첨부 이미지", name: "image", widget: "image", required: false }
       - { label: "내용", name: "body", widget: "markdown" }
 
-  # 2. 함께한 순간들 (갤러리) - 사진만 선택
+    # 2. 함께한 순간들 (갤러리) - 게시물 1개당 사진 1개 관리
   - name: "gallery"
     label: "함께한 순간들 (갤러리)"
-    folder: "gallery"
+    folder: "public/images"  # CMS에서 업로드 시 public/images 폴더로 바로 저장되도록 설정
     create: true
     slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
     fields:
-      - label: "갤러리 사진 목록 (다중 선택/추가)"
-        name: "images"
-        widget: "list"
-        field: { label: "사진", name: "image", widget: "image" }
+      - { label: "사진 제목", name: "title", widget: "string" }
+      - { label: "사진", name: "image", widget: "image" }
+
