@@ -37,15 +37,6 @@ tailwind.config = {
 <style>
   :root{ --navy:#0b1f3a; --gold:#d4a373; }
   *{ -webkit-tap-highlight-color: transparent; }
-  html, body {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    overflow-x: hidden;
-  }
-  
-  html{ scroll-behavior: smooth; }
-  body{ font-family:'Pretendard','Noto Sans KR',sans-serif; letter-spacing:-0.02em; background:#fafaf7; color:#0b1f3a; }
   html{ scroll-behavior: smooth; }
   body{ font-family:'Pretendard','Noto Sans KR',sans-serif; letter-spacing:-0.02em; background:#fafaf7; color:#0b1f3a; }
   body.nav-open{ overflow:hidden; }
@@ -593,73 +584,53 @@ tailwind.config = {
     if (e.key === 'Escape') closeLightbox();
   });
 
-// 7. 유튜브 RSS 데이터 가져오기
-async function fetchRssJson(url) {
-  const api = 'https://api.rss2json.com/v1/api.json?rss_url=' + encodeURIComponent(url);
-  try { 
-    const r = await fetch(api); 
-    if(!r.ok) throw 0; 
-    const j = await r.json(); 
-    return j.items || []; 
-  } catch(e) { 
-    return []; 
+  // 7. 유튜브 RSS 데이터 가져오기
+  async function fetchRssJson(url){
+    const api = 'https://api.rss2json.com/v1/api.json?rss_url=' + encodeURIComponent(url);
+    try{ 
+      const r = await fetch(api); 
+      if(!r.ok) throw 0; 
+      const j = await r.json(); 
+      return j.items || []; 
+    } catch(e){ 
+      return []; 
+    }
   }
-}
 
-function ytIdFromUrl(u) {
-  try {
-    const url = new URL(u);
-    if(url.hostname.includes('youtu.be')) return url.pathname.slice(1);
-    if(url.searchParams.get('v')) return url.searchParams.get('v');
-    const m = url.pathname.match(/\/shorts\/([\w-]+)/);
-    if(m) return m[1];
-  } catch(_) {}
-  return null;
-}
+  function ytIdFromUrl(u){
+    try{
+      const url = new URL(u);
+      if(url.hostname.includes('youtu.be')) return url.pathname.slice(1);
+      if(url.searchParams.get('v')) return url.searchParams.get('v');
+      const m = url.pathname.match(/\/shorts\/([\w-]+)/);
+      if(m) return m[1];
+    }catch(_){}
+    return null;
+  }
 
-function escapeHtml(s) { 
-  return (s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); 
-}
-
-function formatDate(s) { 
-  try { 
-    const d = new Date(s); 
-    return d.toLocaleDateString('ko-KR', {year:'numeric', month:'2-digit', day:'2-digit'}); 
-  } catch(_) { 
-    return ''; 
-  } 
-}
-
-// 중복 제거 및 썸네일 비율 최적화된 renderShorts 함수
-function renderShorts(items) {
-  const grid = document.getElementById('shortsGrid');
-  if (!grid) return;
-
-  const shorts = items.map(i => ({...i, id: ytIdFromUrl(i.link || i.guid)})).filter(i => i.id).slice(0, 3);
-  
-  if (!shorts.length) {
-    grid.innerHTML = '<div class="col-span-full aspect-[16/9] rounded-2xl border border-navy-200 bg-white flex flex-col items-center justify-center text-center p-6 text-navy-600 text-xs sm:text-sm"><i class="fa-brands fa-youtube text-3xl text-red-500 mb-2"></i>Shorts 피드를 불러오는 중입니다.<br>잠시 후 다시 방문해 주세요.</div>';
-    return;
+  function escapeHtml(s){ 
+    return (s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); 
   }
   
-  // hq720.jpg 활용 및 scale-125로 레터박스 여백을 자연스럽게 제거
-  grid.innerHTML = shorts.map(s => `
-    <a href="${s.link}" target="_blank" rel="noopener" class="group relative w-full aspect-[9/16] rounded-xl overflow-hidden bg-black border border-navy-200/60 shadow-sm hover:border-gold-500/60 transition">
-      <img src="https://i.ytimg.com/vi/${s.id}/hq720.jpg" 
-           onerror="this.onerror=null; this.src='https://i.ytimg.com/vi/${s.id}/hqdefault.jpg';" 
-           alt="${escapeHtml(s.title)}" 
-           loading="lazy" 
-           class="w-full h-full object-cover scale-125 opacity-90 group-hover:opacity-100 group-hover:scale-130 transition duration-300">
-      <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent"></div>
-      <div class="absolute top-2.5 left-2.5 inline-flex items-center gap-1 bg-red-600/90 text-white text-[10px] font-bold px-2 py-0.5 rounded-md backdrop-blur-sm z-10">
-        <i class="fa-solid fa-bolt"></i> Shorts
-      </div>
-      <div class="absolute bottom-0 inset-x-0 p-3 z-10">
-        <div class="text-white text-xs font-semibold leading-snug line-clamp-2">${escapeHtml(s.title)}</div>
-      </div>
-    </a>
-  `).join('');
-}
+  function formatDate(s){ 
+    try{ 
+      const d = new Date(s); 
+      return d.toLocaleDateString('ko-KR',{year:'numeric',month:'2-digit',day:'2-digit'}); 
+    }catch(_){ 
+      return ''; 
+    } 
+  }
+
+  function renderShorts(items){
+    const grid = document.getElementById('shortsGrid');
+    if (!grid) return;
+
+    const shorts = items.map(i => ({...i, id: ytIdFromUrl(i.link || i.guid)})).filter(i=>i.id).slice(0, 3);
+    if(!shorts.length){
+      grid.innerHTML = '<div class="col-span-full aspect-[16/9] rounded-2xl border border-navy-200 bg-white flex flex-col items-center justify-center text-center p-6 text-navy-600 text-xs sm:text-sm"><i class="fa-brands fa-youtube text-3xl text-red-500 mb-2"></i>Shorts 피드를 불러오는 중입니다.<br>잠시 후 다시 방문해 주세요.</div>';
+      return;
+    }
+    grid.innerHTML = shorts.map(s => `<a href="${s.link}" target="_blank" rel="noopener" class="group relative rounded-xl overflow-hidden bg-black aspect-[9/10] max-h-[260px] border border-navy-200/60 shadow-sm hover:border-gold-500/60 transition"><img src="https://i.ytimg.com/vi/${s.id}/hqdefault.jpg" alt="${escapeHtml(s.title)}" loading="lazy" class="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition"><div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent"></div><div class="absolute top-2 left-2 inline-flex items-center gap-1 bg-red-600/90 text-white text-[9px] font-bold px-1.5 py-0.5 rounded"><i class="fa-solid fa-bolt"></i> Shorts</div><div class="absolute bottom-0 inset-x-0 p-2.5"><div class="text-white text-xs font-semibold leading-tight line-clamp-2">${escapeHtml(s.title)}</div></div></a>`).join('');
   }
   
   function renderSermons(items){
