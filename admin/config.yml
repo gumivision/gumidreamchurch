@@ -1,6 +1,6 @@
 
 Backend:
-  name: github
+  name: git-gateway
   repo: gumivision/gumidreamchurch
   branch: main
 
