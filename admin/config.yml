@@ -3,29 +3,48 @@ backend:
   repo: gumivision/gumidreamchurch
   branch: main
 
-# 정적 이미지 파일 저장 위치
-media_folder: "public/images"
+# 커밋 메시지 (선택) - 관리자 로그에서 무슨 작업인지 알기 쉽게
+commit_messages:
+  create: "Create {{collection}} “{{slug}}”"
+  update: "Update {{collection}} “{{slug}}”"
+  delete: "Delete {{collection}} “{{slug}}”"
+  uploadMedia: "Upload “{{path}}”"
+  deleteMedia: "Delete “{{path}}”"
+
+# 미리보기 비활성 (custom preview 없어서 깨짐 방지)
+show_preview_links: false
+
+# ✅ 이미지 저장 위치 = 저장소 루트 /images
+#    기존 "public/images" 는 저장소에 public/ 폴더가 없어서 반영이 안 됐음
+media_folder: "images"
 public_folder: "/images"
 
 collections:
-  # 1. 게시판 글 (posts 폴더에 .md 문서 저장)
+  # 1. 게시판 글
   - name: "posts"
     label: "게시판 글"
     folder: "posts"
     create: true
     slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    extension: "md"
+    format: "frontmatter"
     fields:
       - { label: "제목", name: "title", widget: "string" }
       - { label: "작성일자", name: "date", widget: "datetime" }
       - { label: "대표/첨부 이미지", name: "image", widget: "image", required: false }
       - { label: "내용", name: "body", widget: "markdown" }
 
-  # 2. 함께한 순간들 (gallery 폴더에 .md 문서 저장)
+  # 2. 함께한 순간들 (갤러리)
+  #    index.html 이 단수 image: 필드를 읽도록 수정되었으므로
+  #    한 문서 = 한 사진 구조 그대로 유지
   - name: "gallery"
     label: "함께한 순간들 (갤러리)"
-    folder: "gallery"  # 마크다운 문서는 gallery 폴더에 저장 (이미지는 media_folder 설정에 의해 public/images 로 자동 업로드됨)
+    folder: "gallery"
     create: true
     slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    extension: "md"
+    format: "frontmatter"
     fields:
       - { label: "사진 제목", name: "title", widget: "string" }
       - { label: "사진", name: "image", widget: "image" }
+      - { label: "촬영/등록 일자", name: "date", widget: "datetime", required: false, default: "" }
