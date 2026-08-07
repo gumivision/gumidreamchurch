@@ -24,6 +24,8 @@
       color: #0b1f3a;
     }
     .post-body img { max-width: 100%; height: auto; border-radius: 8px; margin: 12px 0; display: block; }
+    .post-body p { margin: 0 0 10px 0; }
+    .post-body p:last-child { margin-bottom: 0; }
     .line-clamp-3 {
       display: -webkit-box;
       -webkit-line-clamp: 3;
@@ -79,7 +81,7 @@
   </section>
 
 
-  <section class="max-w-6xl mx-auto px-4 py-10 sm:py-12">
+  <section class="maxw-6xl mx-auto px-4 py-10 sm:py-12">
     <div class="bg-white rounded-2xl p-5 sm:p-10 shadow-sm border border-gray-100 flex flex-col md:flex-row items-center gap-6 sm:gap-8">
       <div class="w-full md:w-1/2 space-y-3 order-1">
         <span class="inline-flex items-center gap-2 text-amber-600 font-bold text-xs sm:text-sm tracking-wide uppercase">
@@ -132,7 +134,7 @@
   </section>
 
 
-  <div id="postModal" class="hidden fixed inset-0 z-[110] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4" onclick="if(event.target.id==='postModal') closePostModal()">
+  <div id="postModal" class="hidden fixed inset-0 z-[110] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4" onclick="if(event.target===this) closePostModal()">
     <div class="bg-white w-full max-w-2xl max-h-[90vh] rounded-2xl shadow-2xl overflow-hidden flex flex-col" onclick="event.stopPropagation()">
       <div class="px-5 py-4 border-b border-gray-100 flex items-start justify-between gap-3">
         <div class="min-w-0">
@@ -143,7 +145,7 @@
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
-      <div class="p-5 overflow-y-auto post-body text-sm sm:text-base text-gray-700 leading-relaxed whitespace-pre-line break-words" id="postModalBody"></div>
+      <div class="p-5 overflow-y-auto post-body text-sm sm:text-base text-gray-700 leading-relaxed break-words" id="postModalBody"></div>
       <div class="px-5 py-3 border-t border-gray-100 bg-gray-50 text-right">
         <button onclick="closePostModal()" class="px-4 py-2 bg-[#0b1f3a] hover:bg-[#172e4d] text-white text-xs sm:text-sm font-bold rounded-lg transition">닫기</button>
       </div>
@@ -178,21 +180,58 @@
       return (s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
     }
 
-    function toRawImageUrl(path) {
-      if (!path) return '';
-      let p = String(path).trim().replace(/^\//, '').replace(/^public\//, '');
-      if (!p) return '';
-      if (!/^images\//.test(p)) p = 'images/' + p;
-      return `https://raw.githubusercontent.com/${GH_REPO}/${GH_BRANCH}/public/${p}?t=${new Date().getTime()}`;
+    function normalizeCmsPath(p){
+      if(!p) return '';
+      let s = String(p).trim().replace(/^\/+/, '').replace(/^public\//, '');
+      if(!/^images\//.test(s) && /\.(png|jpe?g|gif|webp|svg|avif|bmp)$/i.test(s)){
+        s = 'images/' + s;
+      }
+      return s;
+    }
+    function toRawImageUrl(path){
+      const rel = normalizeCmsPath(path);
+      if(!rel) return '';
+      return `https://raw.githubusercontent.com/${GH_REPO}/${GH_BRANCH}/${rel}?t=${Date.now()}`;
     }
 
-    function bodyHtmlWithImages(bodyMd) {
-      return bodyMd.replace(/!\[(.*?)\]\((\/?(?:images\/)?(.*?))\)/g, (m, alt, src) => {
-        const clean = src.replace(/^\//, '');
-        const finalPath = /^images\//.test(clean) ? clean : 'images/' + clean;
-        const rawUrl = `https://raw.githubusercontent.com/${GH_REPO}/${GH_BRANCH}/public/${finalPath}?t=${new Date().getTime()}`;
-        return `<img src="${rawUrl}" alt="${escapeHtml(alt)}" />`;
+    function parseFrontmatter(rawText){
+      if(!rawText) return { body:'', title:'', date:'', image:'' };
+      const text = rawText.replace(/\r\n?/g, '\n');
+      const lines = text.split('\n');
+      if(lines[0].trim() !== '---') return { body: text.trim(), title:'', date:'', image:'' };
+      let endIdx = -1;
+      for(let i = 1; i < lines.length; i++){
+        if(lines[i].trim() === '---'){ endIdx = i; break; }
+      }
+      if(endIdx === -1) return { body: text.trim(), title:'', date:'', image:'' };
+      const fmLines = lines.slice(1, endIdx);
+      const body = lines.slice(endIdx + 1).join('\n').trim();
+      let title = '', date = '', image = '';
+      fmLines.forEach(line => {
+        const m = line.match(/^([A-Za-z_][\w-]*)\s*:\s*(.*)$/);
+        if(!m) return;
+        const key = m[1].toLowerCase();
+        let val = (m[2] || '').trim().replace(/^["']/, '').replace(/["']$/, '').trim();
+        if(key === 'title') title = val;
+        else if(key === 'date') date = val;
+        else if(key === 'image') image = val;
       });
+      return { body, title, date, image };
+    }
+
+    function safeDate(str, fallbackName){
+      if(str){
+        const d = new Date(str);
+        if(!isNaN(d.getTime())) return d.getTime();
+      }
+      if(fallbackName){
+        const m = fallbackName.match(/(\d{4})-(\d{2})-(\d{2})/);
+        if(m){
+          const d = new Date(`${m[1]}-${m[2]}-${m[3]}T00:00:00Z`);
+          if(!isNaN(d.getTime())) return d.getTime();
+        }
+      }
+      return 0;
     }
 
     async function loadPosts() {
@@ -202,7 +241,7 @@
       if (!container) return;
 
       try {
-        const response = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/posts?t=${new Date().getTime()}`);
+        const response = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/posts?t=${Date.now()}`);
         if (!response.ok) {
           container.innerHTML = '<p class="text-center text-gray-400 py-6">등록된 게시글이 없습니다.</p>';
           return;
@@ -218,44 +257,37 @@
           return;
         }
         const posts = await Promise.all(mdFiles.map(async (file) => {
-          const res = await fetch(`${file.download_url}?t=${new Date().getTime()}`);
+          const res = await fetch(`${file.download_url}?t=${Date.now()}`);
           const text = await res.text();
-          const titleMatch = text.match(/^title:\s*"(.*?)"\s*$/m) || text.match(/^title:\s*(.*?)\s*$/m);
-          const dateMatch = text.match(/^date:\s*(.*?)\s*$/m);
-          const imageMatch = text.match(/^image:\s*"(.*?)"\s*$/m) || text.match(/^image:\s*(.*?)\s*$/m);
-          const title = titleMatch ? (titleMatch[1] || '').trim() : '제목 없음';
-          const dateStr = dateMatch ? (dateMatch[1] || '').trim() : '';
-          const date = dateStr ? dateStr.substring(0, 10) : '';
-          let bodyContent = text.split('---').slice(2).join('---').trim();
-          let headerImageUrl = '';
-          if (imageMatch) {
-            let rawImgPath = (imageMatch[1] || '').trim();
-            if (rawImgPath && rawImgPath !== '""' && rawImgPath !== "''") {
-              headerImageUrl = toRawImageUrl(rawImgPath);
-            }
-          }
-          bodyContent = bodyHtmlWithImages(bodyContent);
-          return { title, date, bodyContent, headerImageUrl };
+          const fm = parseFrontmatter(text);
+          const title = fm.title || file.name.replace(/\.md$/, '');
+          const date = fm.date || '';
+          const headerImageUrl = fm.image ? toRawImageUrl(fm.image) : '';
+          const bodyHtml = fm.body;  // 관리자 페이지는 raw markdown 그대로 노출도 OK
+          return { title, date, bodyHtml, headerImageUrl, rawDate: safeDate(fm.date, file.name), src: file.name };
         }));
-        posts.sort((a, b) => new Date(b.date) - new Date(a.date));
+        posts.sort((a, b) => b.rawDate - a.rawDate);
 
-        const displayPosts = posts.slice(0, 5);
+        const displayPosts = posts.slice(0, 6);
         container.innerHTML = '';
 
         const latest = displayPosts[0];
         const latestCard = document.createElement('div');
         latestCard.className = 'fade-up bg-white rounded-2xl border border-amber-200 shadow-sm overflow-hidden hover:shadow-md transition';
         const hasImage = !!latest.headerImageUrl;
+        const plainText = (latest.bodyHtml || '').replace(/<[^>]*>?/gm, '').replace(/\s+/g, ' ').trim();
+        const summary = plainText.length > 120 ? plainText.slice(0, 120) + '…' : plainText;
 
         latestCard.innerHTML = `
           <div class="flex items-center justify-between px-4 sm:px-5 pt-4 pb-2">
             <span class="inline-flex items-center gap-1.5 bg-amber-500 text-white text-[11px] font-extrabold px-2.5 py-1 rounded-full">
               <i class="fa-solid fa-star text-[10px]"></i> 최신소식
             </span>
-            <span class="text-xs text-gray-400 font-medium">${latest.date}</span>
+            <span class="text-xs text-gray-400 font-medium">${latest.date || ''}</span>
           </div>
-          <button type="button" class="w-full text-left px-4 sm:px-5 pb-5 group" onclick="openPostModal(${JSON.stringify(latest.title)}, ${JSON.stringify(latest.date)}, document.getElementById('latest-body').innerHTML)">
+          <button type="button" class="w-full text-left px-4 sm:px-5 pb-5 group">
             <h3 class="text-lg sm:text-xl font-bold text-[#0b1f3a] leading-snug group-hover:text-amber-600 transition">${escapeHtml(latest.title)}</h3>
+            ${summary ? `<p class="mt-2 text-sm text-gray-600 leading-relaxed line-clamp-3">${escapeHtml(summary)}</p>` : ''}
             ${hasImage ? `
               <div class="mt-3 -mx-4 sm:mx-0 sm:rounded-xl overflow-hidden">
                 <img src="${latest.headerImageUrl}" alt="${escapeHtml(latest.title)}" class="w-full max-h-72 object-cover" loading="lazy" onerror="this.parentElement.style.display='none';" />
@@ -265,8 +297,8 @@
               전체 글 보기 <i class="fa-solid fa-arrow-right text-xs"></i>
             </div>
           </button>
-          <div id="latest-body" class="hidden">${latest.bodyContent}</div>
         `;
+        latestCard.querySelector('button').onclick = () => openPostModal(latest.title, latest.date, latest.bodyHtml, latest.headerImageUrl);
         container.appendChild(latestCard);
 
         const previousPosts = displayPosts.slice(1);
@@ -275,13 +307,13 @@
           previousPosts.forEach((post) => {
             const li = document.createElement('li');
             li.className = 'flex items-center justify-between gap-3 py-3 px-2 cursor-pointer hover:bg-white transition-colors rounded-lg';
-            li.onclick = () => openPostModal(post.title, post.date, post.bodyContent);
+            li.onclick = () => openPostModal(post.title, post.date, post.bodyHtml, post.headerImageUrl);
             li.innerHTML = `
               <div class="flex items-center gap-2 min-w-0">
                 <i class="fa-regular fa-newspaper text-amber-500 text-sm shrink-0"></i>
                 <span class="text-sm sm:text-[15px] text-gray-800 font-medium truncate">${escapeHtml(post.title)}</span>
               </div>
-              <span class="text-[11px] sm:text-xs text-gray-400 shrink-0">${post.date}</span>
+              <span class="text-[11px] sm:text-xs text-gray-400 shrink-0">${post.date || ''}</span>
             `;
             listContainer.appendChild(li);
           });
@@ -295,12 +327,21 @@
       }
     }
 
-    function openPostModal(title, date, bodyContent) {
-      const modal = document.getElementById('postModal');
-      document.getElementById('postModalTitle').textContent = title;
-      document.getElementById('postModalDate').textContent = date;
-      document.getElementById('postModalBody').innerHTML = bodyContent;
-      modal.classList.remove('hidden');
+    function openPostModal(title, date, bodyContent, headerImageUrl) {
+      document.getElementById('postModalTitle').textContent = title || '제목 없음';
+      document.getElementById('postModalDate').textContent = date || '';
+      const bodyEl = document.getElementById('postModalBody');
+      let html = '';
+      if (headerImageUrl) {
+        html += `<img src="${headerImageUrl}" alt="${escapeHtml(title)}" class="w-full max-h-72 object-cover rounded-lg mb-4" loading="lazy" onerror="this.style.display='none'" />`;
+      }
+      if (bodyContent && bodyContent.trim()) {
+        html += `<div class="whitespace-pre-line">${escapeHtml(bodyContent)}</div>`;
+      } else {
+        html += `<p class="text-gray-500 text-sm">본문이 비어있습니다. 관리자 페이지에서 내용을 입력해 주세요.</p>`;
+      }
+      bodyEl.innerHTML = html;
+      document.getElementById('postModal').classList.remove('hidden');
       document.body.style.overflow = 'hidden';
     }
     function closePostModal() {
@@ -376,41 +417,39 @@
       const container = document.getElementById('gallery-container');
       if (!container) return;
       try {
-        const response = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/gallery?t=${new Date().getTime()}`);
+        const response = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/gallery?t=${Date.now()}`);
         if (!response.ok) {
           container.innerHTML = '<p class="text-center text-gray-400 col-span-full py-6">등록된 사진이 없습니다.</p>';
           return;
         }
         const files = await response.json();
         const tempItems = [];
-        for (const file of files.reverse()) {
-          if (file.name.endsWith('.md')) {
-            const res = await fetch(`${file.download_url}?t=${new Date().getTime()}`);
-            const text = await res.text();
-            const titleMatch = text.match(/^title:\s*"(.*?)"\s*$/m) || text.match(/^title:\s*(.*?)\s*$/m);
-            const title = titleMatch ? (titleMatch[1] || '').trim() : '';
-            const imageList = [];
-            const listBlockMatch = text.match(/images:\s*\n((?:\s*-\s*.*\n?)+)/);
-            if (listBlockMatch) {
-              const lines = listBlockMatch[1].split('\n');
-              lines.forEach(line => {
-                const cleanLine = line.replace(/^\s*-\s*["']?/, '').replace(/["']?\s*$/, '').trim();
-                if (cleanLine && cleanLine !== '""' && cleanLine !== "''") imageList.push(cleanLine);
-              });
-            } else {
-              const singleImgMatch = text.match(/^image:\s*"(.*?)"\s*$/m) || text.match(/^image:\s*(.*?)\s*$/m);
-              if (singleImgMatch) {
-                const path = (singleImgMatch[1] || '').trim();
-                if (path && path !== '""' && path !== "''") imageList.push(path);
-              }
-            }
-            imageList.forEach(imgPath => {
-              if (!imgPath || imgPath === '""' || imgPath === "''") return;
-              const imageUrl = toRawImageUrl(imgPath);
-              tempItems.push({ imageUrl, title });
+        for (const file of files) {
+          if (!file.name.endsWith('.md')) continue;
+          const res = await fetch(`${file.download_url}?t=${Date.now()}`);
+          const text = await res.text();
+          const fm = parseFrontmatter(text);
+          const title = fm.title || '';
+          const imageList = [];
+          const listBlockMatch = text.match(/^images:\s*\n((?:\s*-\s*.*\n?)+)/m);
+          if (listBlockMatch) {
+            const lines = listBlockMatch[1].split('\n');
+            lines.forEach(line => {
+              const cleanLine = line.replace(/^\s*-\s*["']?/, '').replace(/["']?\s*$/, '').trim();
+              if (cleanLine && cleanLine !== '""' && cleanLine !== "''") imageList.push(cleanLine);
             });
           }
+          if (imageList.length === 0 && fm.image) {
+            imageList.push(fm.image);
+          }
+          imageList.forEach(imgPath => {
+            if (!imgPath || imgPath === '""' || imgPath === "''") return;
+            const imageUrl = toRawImageUrl(imgPath);
+            if (!imageUrl) return;
+            tempItems.push({ imageUrl, title, src: file.name, rawDate: safeDate('', file.name) });
+          });
         }
+        tempItems.sort((a, b) => (b.rawDate - a.rawDate) || (a.src < b.src ? 1 : -1));
         galleryItems = tempItems;
         renderGalleryPage(1);
       } catch (error) {
