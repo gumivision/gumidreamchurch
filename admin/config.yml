@@ -1,9 +1,24 @@
 backend:
   name: git-gateway
   repo: gumivision/gumidreamchurch
+...
+    fields:
+      - { label: "사진 제목", name: "title", widget: "string" }
+      - { label: "사진", name: "image", widget: "image" }
+      - { label: "촬영/등록 일자", name: "date", widget: "datetime", required: false, default: "" }
+Tool Call
+Function Name:
+Write
+Arguments:
+file_path:
+/home/user/church/config.yml
+content:
+backend:
+  name: git-gateway
+  repo: gumivision/gumidreamchurch
   branch: main
 
-# 커밋 메시지 (선택) - 관리자 로그에서 무슨 작업인지 알기 쉽게
+# 커밋 메시지
 commit_messages:
   create: "Create {{collection}} “{{slug}}”"
   update: "Update {{collection}} “{{slug}}”"
@@ -11,11 +26,9 @@ commit_messages:
   uploadMedia: "Upload “{{path}}”"
   deleteMedia: "Delete “{{path}}”"
 
-# 미리보기 비활성 (custom preview 없어서 깨짐 방지)
 show_preview_links: false
 
 # ✅ 이미지 저장 위치 = 저장소 루트 /images
-#    기존 "public/images" 는 저장소에 public/ 폴더가 없어서 반영이 안 됐음
 media_folder: "images"
 public_folder: "/images"
 
@@ -32,11 +45,16 @@ collections:
       - { label: "제목", name: "title", widget: "string" }
       - { label: "작성일자", name: "date", widget: "datetime" }
       - { label: "대표/첨부 이미지", name: "image", widget: "image", required: false }
-      - { label: "내용", name: "body", widget: "markdown" }
+      # ✅ 한글 IME 조합 오류 해결: markdown → text 위젯으로 변경
+      #    순수 textarea 사용 → "누"를 쳐도 "ㄴㅜ"로 분리되지 않음
+      #    본문에 이미지 넣을 땐: ![설명](/images/파일명.jpg)
+      #    강조: **굵게**, *기울임*, ## 소제목
+      - label: "내용"
+        name: "body"
+        widget: "text"
+        hint: "마크다운 문법 사용 가능. 이미지 넣기: ![설명](/images/파일명.jpg) / 굵게: **텍스트** / 소제목: ## 텍스트"
 
   # 2. 함께한 순간들 (갤러리)
-  #    index.html 이 단수 image: 필드를 읽도록 수정되었으므로
-  #    한 문서 = 한 사진 구조 그대로 유지
   - name: "gallery"
     label: "함께한 순간들 (갤러리)"
     folder: "gallery"
