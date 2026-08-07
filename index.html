@@ -903,18 +903,17 @@ tailwind.config = {
 
         // images: 블록 (다중 이미지) 또는 image: 단일 이미지 모두 지원
         const imageList = [];
-        const listBlockMatch = text.match(/^images:\s*\n((?:\s*-\s*.*\n?)+)/m);
-        if (listBlockMatch) {
-          const lines = listBlockMatch[1].split('\n');
-          lines.forEach(line => {
-            const cleanLine = line.replace(/^\s*-\s*["']?/, '').replace(/["']?\s*$/, '').trim();
-            if (cleanLine && cleanLine !== '""' && cleanLine !== "''") imageList.push(cleanLine);
-          });
-        }
-        if (imageList.length === 0 && fm.image) {
-          imageList.push(fm.image);
-        }
-
+        const listBlockMatch = text.match(/images:\s*\n((?:\s*-\s+\S.*\n?)+)/);
+                  if (listBlockMatch) {
+            const lines = listBlockMatch[1].split('\n');
+            lines.forEach(line => {
+              const cleanLine = line.replace(/^\s*-\s*["']?/, '').replace(/["']?\s*$/, '').trim();
+              if (!cleanLine) return;
+              if (cleanLine === '""' || cleanLine === "''") return;
+              if (cleanLine === '--' || cleanLine === '---') return;
+              if (cleanLine.startsWith('-')) return;
+              imageList.push(cleanLine);
+            });
         imageList.forEach(imgPath => {
           if (!imgPath || imgPath === '""' || imgPath === "''") return;
           const imageUrl = toRawImageUrl(imgPath);
