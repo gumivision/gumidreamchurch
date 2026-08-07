@@ -483,110 +483,44 @@ tailwind.config = {
 </nav>
 
 <script>
+window.__INLINE_DATA__ = {
+  "posts": [
+    { "src": "2026-08-07-testing.md",   "title": "Testing",  "date": "2026-08-07T09:34:00+09:00", "image": "images/1785895136741.jpg", "body": "테스트 본문입니다." },
+    { "src": "2026-08-07-testing2.md",  "title": "Testing2", "date": "2026-08-07T09:37:00+09:00", "image": "", "body": "테스트 본문입니다." },
+    { "src": "2026-08-07-testing2-1.md","title": "Testing2", "date": "2026-08-07T09:37:00+09:00", "image": "", "body": "테스트 본문입니다." }
+  ],
+  "gallery": [
+    "images/58170.jpg","images/58169.jpg","images/58171.jpg","images/58166.jpg","images/58167.jpg",
+    "images/58172.jpg","images/58168.jpg","images/58174.jpg","images/58173.jpg","images/58164.jpg"
+  ]
+};
+</script>
+
+<script>
   const YT_CHANNEL = 'UCHCcttgFDXkLClVeuQxNaMw';
   const KAKAO_CHAT_URL = 'https://open.kakao.com/o/sWASfhHi';
-  const GH_REPO = 'gumivision/gumidreamchurch';
-  const GH_BRANCH = 'main';
 
-  // ===== 경로 정규화 (이번 패치의 핵심) =====
-  // 저장소 구조 (스크린샷 기준):
-  //   - images/        ← 저장소 루트에 images 폴더가 존재 (public/ 없음)
-  //   - images/57938.png, images/58166.jpg, images/1785895136741.jpg 등
-  //   - gallery/*.md  ← 이미지 경로는 frontmatter "image: images/..." 형식으로 저장됨
-  // raw URL = https://raw.githubusercontent.com/gumivision/gumidreamchurch/main/images/foo.png
-  function normalizeCmsPath(p){
-    if(!p) return '';
-    let s = String(p).trim();
-    s = s.replace(/^\/+/, '');             // 앞쪽 슬래시 제거
-    s = s.replace(/^public\//, '');        // 앞에 public/ 있어도 제거
-    // images/ 접두사 보장 (확장자가 있는 파일명인 경우)
-    if(!/^images\//.test(s) && /\.(png|jpe?g|gif|webp|svg|avif|bmp)$/i.test(s)){
-      s = 'images/' + s;
-    }
-    return s;
-  }
-  function toRawImageUrl(path){
-    const rel = normalizeCmsPath(path);
-    if(!rel) return '';
-    return `https://raw.githubusercontent.com/${GH_REPO}/${GH_BRANCH}/${rel}?t=${Date.now()}`;
-  }
   function escapeHtml(s){
     return (s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   }
-
-  // ===== frontmatter 파싱 =====
-  function parseFrontmatter(rawText){
-    if(!rawText) return { body:'', title:'', date:'', image:'' };
-    const text = rawText.replace(/\r\n?/g, '\n');
-    const lines = text.split('\n');
-    if(lines[0].trim() !== '---'){
-      return { body: text.trim(), title:'', date:'', image:'' };
-    }
-    let endIdx = -1;
-    for(let i = 1; i < lines.length; i++){
-      if(lines[i].trim() === '---'){ endIdx = i; break; }
-    }
-    if(endIdx === -1){
-      return { body: text.trim(), title:'', date:'', image:'' };
-    }
-    const fmLines = lines.slice(1, endIdx);
-    const body = lines.slice(endIdx + 1).join('\n').trim();
-    let title = '', date = '', image = '';
-    fmLines.forEach(line => {
-      const m = line.match(/^([A-Za-z_][\w-]*)\s*:\s*(.*)$/);
-      if(!m) return;
-      const key = m[1].toLowerCase();
-      let val = (m[2] || '').trim().replace(/^["']/, '').replace(/["']$/, '').trim();
-      if(key === 'title') title = val;
-      else if(key === 'date') date = val;
-      else if(key === 'image') image = val;
-    });
-    return { body, title, date, image };
+  function toRawImageUrl(path){
+    if(!path) return '';
+    const rel = String(path).trim().replace(/^\/+/, '');
+    return `https://raw.githubusercontent.com/gumivision/gumidreamchurch/main/${rel}?t=${Date.now()}`;
   }
-
-  // ===== 경량 마크다운 → HTML =====
-  function mdToHtml(md){
-    if(!md) return '';
-    let text = String(md).replace(/\r\n?/g, '\n');
-    const codeBlocks = [];
-    text = text.replace(/```([\s\S]*?)```/g, (m, code) => {
-      codeBlocks.push(code);
-      return `\u0000CODE${codeBlocks.length - 1}\u0000`;
-    });
-    text = text.replace(/`([^`]+)`/g, (m, c) => `\u0000IC${escapeHtml(c)}\u0000`);
-    text = text.replace(/!\[(.*?)\]\(([^)]+)\)/g, (m, alt, src) => {
-      const raw = toRawImageUrl(src);
-      return raw ? `<img src="${raw}" alt="${escapeHtml(alt)}" loading="lazy" />` : '';
-    });
-    text = text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (m, t, u) => `<a href="${escapeHtml(u)}" target="_blank" rel="noopener">${escapeHtml(t)}</a>`);
-    text = text.replace(/^### (.*)$/gm, '<h4>$1</h4>');
-    text = text.replace(/^## (.*)$/gm, '<h3>$1</h3>');
-    text = text.replace(/^# (.*)$/gm, '<h2>$1</h2>');
-    text = text.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
-    text = text.replace(/\*([^*]+)\*/g, '<em>$1</em>');
-    text = text.replace(/^\s*---\s*$/gm, '<hr/>');
-    const blocks = text.split(/\n{2,}/).map(b => b.trim()).filter(Boolean);
-    let html = blocks.map(b => {
-      const inner = b.replace(/\n/g, '<br/>');
-      if(/^<(h\d|img|hr|ul|ol|pre|blockquote)/.test(inner)) return inner;
-      return `<p>${inner}</p>`;
-    }).join('\n');
-    html = html.replace(/\u0000IC(.+?)\u0000/g, '<code>$1</code>');
-    html = html.replace(/\u0000CODE(\d+)\u0000/g, (m, idx) => `<pre><code>${escapeHtml(codeBlocks[+idx])}</code></pre>`);
-    return html;
+  async function fetchDataJson(){
+    try{
+      const r = await fetch('data.json', { cache:'no-store' });
+      if(!r.ok) throw 0;
+      const j = await r.json();
+      if(j && Array.isArray(j.posts) && Array.isArray(j.gallery)) return j;
+    }catch(_){}
+    return window.__INLINE_DATA__;
   }
-
-  function safeDate(str, fallbackName){
+  function safeDate(str){
     if(str){
       const d = new Date(str);
       if(!isNaN(d.getTime())) return d.getTime();
-    }
-    if(fallbackName){
-      const m = fallbackName.match(/(\d{4})-(\d{2})-(\d{2})/);
-      if(m){
-        const d = new Date(`${m[1]}-${m[2]}-${m[3]}T00:00:00Z`);
-        if(!isNaN(d.getTime())) return d.getTime();
-      }
     }
     return 0;
   }
@@ -674,7 +608,6 @@ tailwind.config = {
     }catch(_){}
     return null;
   }
-
   function renderShorts(items){
     const grid = document.getElementById('shortsGrid');
     if (!grid) return;
@@ -705,7 +638,6 @@ tailwind.config = {
       </a>
     `).join('');
   }
-
   function renderSermons(items){
     const grid = document.getElementById('sermonsGrid');
     if (!grid) return;
@@ -715,6 +647,99 @@ tailwind.config = {
       return;
     }
     grid.innerHTML = vids.map(v => `<a href="${v.link}" target="_blank" rel="noopener" class="group block rounded-2xl overflow-hidden bg-white border border-navy-100 hover:border-gold-500/60 hover:shadow-lg hover:-translate-y-0.5 transition"><div class="relative aspect-video overflow-hidden"><img src="https://i.ytimg.com/vi/${v.id}/hqdefault.jpg" alt="${escapeHtml(v.title)}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition duration-500"><div class="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 group-hover:opacity-100 transition"><span class="w-12 h-12 rounded-full bg-red-600 text-white flex items-center justify-center shadow-xl"><i class="fa-solid fa-play ml-0.5 text-sm"></i></span></div></div><div class="p-4"><div class="text-[10px] font-bold text-gold-600 mb-1 uppercase tracking-wider">Sermon</div><div class="font-bold text-navy-900 line-clamp-2 text-xs sm:text-sm leading-snug">${escapeHtml(v.title)}</div><div class="mt-2.5 flex items-center gap-1.5 text-[11px] text-navy-700/60"><i class="fa-regular fa-calendar"></i> ${new Date(v.pubDate).toLocaleDateString('ko-KR')}</div></div></a>`).join('');
+  }
+
+  // ===== 게시글 =====
+  function openPostModal(title, date, bodyContent, headerImageUrl) {
+    document.getElementById('postModalTitle').textContent = title || '제목 없음';
+    document.getElementById('postModalDate').textContent = date || '';
+    const bodyEl = document.getElementById('postModalBody');
+    let html = '';
+    if (headerImageUrl) {
+      html += `<img src="${headerImageUrl}" alt="${escapeHtml(title)}" class="w-full max-h-72 object-cover rounded-lg mb-4" loading="lazy" onerror="this.style.display='none'" />`;
+    }
+    if (bodyContent && bodyContent.trim()) {
+      html += bodyContent;
+    } else {
+      html += `<p class="text-gray-500 text-sm">본문이 비어있습니다. 관리자 페이지에서 내용을 입력해 주세요.</p>`;
+    }
+    bodyEl.innerHTML = html;
+    document.getElementById('postModal').classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+  }
+  function closePostModal() {
+    const modal = document.getElementById('postModal');
+    if (!modal || modal.classList.contains('hidden')) return;
+    modal.classList.add('hidden');
+    document.body.style.overflow = '';
+  }
+
+  async function loadPosts(data){
+    const container = document.getElementById('latest-post-container');
+    const listContainer = document.getElementById('board-list-container');
+    const wrapper = document.getElementById('previous-posts-wrapper');
+    if (!container) return;
+
+    const posts = (data.posts || []).slice().sort((a,b) => safeDate(b.date) - safeDate(a.date));
+    if (!posts.length) {
+      container.innerHTML = '<p class="text-center text-gray-400 py-8">등록된 게시글이 없습니다.</p>';
+      if (wrapper) wrapper.classList.add('hidden');
+      return;
+    }
+    container.innerHTML = '';
+    const displayPosts = posts.slice(0, 6);
+
+    const latest = displayPosts[0];
+    const latestCard = document.createElement('div');
+    latestCard.className = 'bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden hover:shadow-md transition';
+    const hasImage = !!latest.image;
+    const plainText = (latest.body || '').replace(/<[^>]*>?/gm, '').replace(/\s+/g, ' ').trim();
+    const summary = plainText.length > 120 ? plainText.slice(0, 120) + '…' : plainText;
+    const latestImageUrl = hasImage ? toRawImageUrl(latest.image) : '';
+
+    latestCard.innerHTML = `
+      <div class="flex items-center justify-between px-5 pt-4 pb-2">
+        <span class="inline-flex items-center gap-1.5 bg-gold-500 text-white text-[11px] font-extrabold px-2.5 py-1 rounded-full">
+          <i class="fa-solid fa-star text-[10px]"></i> 최신소식
+        </span>
+        <span class="text-xs text-gray-400 font-medium">${latest.date || ''}</span>
+      </div>
+      <button type="button" class="w-full text-left px-5 pb-5 group">
+        <h3 class="text-lg sm:text-xl font-bold text-navy-900 leading-snug group-hover:text-gold-600 transition">${escapeHtml(latest.title || '제목 없음')}</h3>
+        ${summary ? `<p class="mt-2 text-sm text-gray-600 leading-relaxed line-clamp-3">${escapeHtml(summary)}</p>` : ''}
+        ${hasImage ? `
+          <div class="mt-3 -mx-5 sm:mx-0 sm:rounded-xl overflow-hidden">
+            <img src="${latestImageUrl}" alt="${escapeHtml(latest.title)}" class="w-full max-h-72 object-cover" loading="lazy" onerror="this.parentElement.style.display='none';" />
+          </div>
+        ` : ''}
+        <div class="mt-3 inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-gold-600">
+          전체 글 보기 <i class="fa-solid fa-arrow-right text-xs"></i>
+        </div>
+      </button>
+    `;
+    latestCard.querySelector('button').onclick = () => openPostModal(latest.title, latest.date, latest.body, latestImageUrl);
+    container.appendChild(latestCard);
+
+    const previousPosts = displayPosts.slice(1);
+    if (previousPosts.length > 0 && listContainer && wrapper) {
+      listContainer.innerHTML = '';
+      previousPosts.forEach((post) => {
+        const li = document.createElement('li');
+        li.className = 'flex items-center justify-between gap-3 py-3 px-2 cursor-pointer hover:bg-white transition-colors rounded-lg';
+        li.onclick = () => openPostModal(post.title, post.date, post.body, post.image ? toRawImageUrl(post.image) : '');
+        li.innerHTML = `
+          <div class="flex items-center gap-2 min-w-0">
+            <i class="fa-regular fa-newspaper text-gold-500 text-sm shrink-0"></i>
+            <span class="text-sm sm:text-[15px] text-gray-800 font-medium truncate">${escapeHtml(post.title || '제목 없음')}</span>
+          </div>
+          <span class="text-[11px] sm:text-xs text-gray-400 shrink-0">${post.date || ''}</span>
+        `;
+        listContainer.appendChild(li);
+      });
+      wrapper.classList.remove('hidden');
+    } else if (wrapper) {
+      wrapper.classList.add('hidden');
+    }
   }
 
   // ===== 갤러리 =====
@@ -756,185 +781,22 @@ tailwind.config = {
       }
     }
   }
-
-  // ===== 게시글 =====
-  function openPostModal(title, date, bodyContent, headerImageUrl) {
-    document.getElementById('postModalTitle').textContent = title || '제목 없음';
-    document.getElementById('postModalDate').textContent = date || '';
-    const bodyEl = document.getElementById('postModalBody');
-    let html = '';
-    if (headerImageUrl) {
-      html += `<img src="${headerImageUrl}" alt="${escapeHtml(title)}" class="w-full max-h-72 object-cover rounded-lg mb-4" loading="lazy" onerror="this.style.display='none'" />`;
-    }
-    if (bodyContent && bodyContent.trim()) {
-      html += bodyContent;
-    } else {
-      html += `<p class="text-gray-500 text-sm">본문이 비어있습니다. 관리자 페이지에서 내용을 입력해 주세요.</p>`;
-    }
-    bodyEl.innerHTML = html;
-    document.getElementById('postModal').classList.remove('hidden');
-    document.body.style.overflow = 'hidden';
-  }
-  function closePostModal() {
-    const modal = document.getElementById('postModal');
-    if (!modal || modal.classList.contains('hidden')) return;
-    modal.classList.add('hidden');
-    document.body.style.overflow = '';
-  }
-
-  async function loadPosts() {
-    const container = document.getElementById('latest-post-container');
-    const listContainer = document.getElementById('board-list-container');
-    const wrapper = document.getElementById('previous-posts-wrapper');
-    if (!container) return;
-
-    try {
-      const response = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/posts?t=${Date.now()}`);
-      if (!response.ok) {
-        container.innerHTML = '<p class="text-center text-gray-400 py-8">등록된 게시글이 없거나 불러올 수 없습니다.</p>';
-        return;
-      }
-      const files = await response.json();
-      if (!Array.isArray(files)) {
-        container.innerHTML = '<p class="text-center text-gray-400 py-8">게시글 폴더 경로를 확인해 주세요.</p>';
-        return;
-      }
-      const mdFiles = files.filter(f => f.name && f.name.endsWith('.md'));
-      if (mdFiles.length === 0) {
-        container.innerHTML = '<p class="text-center text-gray-400 py-8">등록된 게시글이 없습니다.</p>';
-        return;
-      }
-
-      const posts = await Promise.all(mdFiles.map(async (file) => {
-        const res = await fetch(`${file.download_url}?t=${Date.now()}`);
-        const text = await res.text();
-        const fm = parseFrontmatter(text);
-        const title = fm.title || file.name.replace(/\.md$/, '');
-        const date = fm.date || '';
-        const headerImageUrl = fm.image ? toRawImageUrl(fm.image) : '';
-        const bodyHtml = mdToHtml(fm.body);
-        return { title, date, bodyHtml, headerImageUrl, rawDate: safeDate(fm.date, file.name) };
-      }));
-
-      // 최신순 안정 정렬
-      posts.sort((a, b) => b.rawDate - a.rawDate);
-
-      const displayPosts = posts.slice(0, 6);
-      container.innerHTML = '';
-
-      // 최신 글 카드
-      const latest = displayPosts[0];
-      const latestCard = document.createElement('div');
-      latestCard.className = 'bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden hover:shadow-md transition';
-
-      const hasImage = !!latest.headerImageUrl;
-      const plainText = (latest.bodyHtml || '').replace(/<[^>]*>?/gm, '').replace(/\s+/g, ' ').trim();
-      const summary = plainText.length > 120 ? plainText.slice(0, 120) + '…' : plainText;
-
-      latestCard.innerHTML = `
-        <div class="flex items-center justify-between px-5 pt-4 pb-2">
-          <span class="inline-flex items-center gap-1.5 bg-gold-500 text-white text-[11px] font-extrabold px-2.5 py-1 rounded-full">
-            <i class="fa-solid fa-star text-[10px]"></i> 최신소식
-          </span>
-          <span class="text-xs text-gray-400 font-medium">${latest.date || ''}</span>
-        </div>
-        <button type="button" class="w-full text-left px-5 pb-5 group">
-          <h3 class="text-lg sm:text-xl font-bold text-navy-900 leading-snug group-hover:text-gold-600 transition">${escapeHtml(latest.title)}</h3>
-          ${summary ? `<p class="mt-2 text-sm text-gray-600 leading-relaxed line-clamp-3">${escapeHtml(summary)}</p>` : ''}
-          ${hasImage ? `
-            <div class="mt-3 -mx-5 sm:mx-0 sm:rounded-xl overflow-hidden">
-              <img src="${latest.headerImageUrl}" alt="${escapeHtml(latest.title)}" class="w-full max-h-72 object-cover" loading="lazy" onerror="this.parentElement.style.display='none';" />
-            </div>
-          ` : ''}
-          <div class="mt-3 inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-gold-600">
-            전체 글 보기 <i class="fa-solid fa-arrow-right text-xs"></i>
-          </div>
-        </button>
-      `;
-      latestCard.querySelector('button').onclick = () => openPostModal(latest.title, latest.date, latest.bodyHtml, latest.headerImageUrl);
-      container.appendChild(latestCard);
-
-      // 지난 소식 목록
-      const previousPosts = displayPosts.slice(1);
-      if (previousPosts.length > 0 && listContainer && wrapper) {
-        listContainer.innerHTML = '';
-        previousPosts.forEach((post) => {
-          const li = document.createElement('li');
-          li.className = 'flex items-center justify-between gap-3 py-3 px-2 cursor-pointer hover:bg-white transition-colors rounded-lg';
-          li.onclick = () => openPostModal(post.title, post.date, post.bodyHtml, post.headerImageUrl);
-          li.innerHTML = `
-            <div class="flex items-center gap-2 min-w-0">
-              <i class="fa-regular fa-newspaper text-gold-500 text-sm shrink-0"></i>
-              <span class="text-sm sm:text-[15px] text-gray-800 font-medium truncate">${escapeHtml(post.title)}</span>
-            </div>
-            <span class="text-[11px] sm:text-xs text-gray-400 shrink-0">${post.date || ''}</span>
-          `;
-          listContainer.appendChild(li);
-        });
-        wrapper.classList.remove('hidden');
-      } else if (wrapper) {
-        wrapper.classList.add('hidden');
-      }
-
-    } catch (error) {
-      console.error('게시글 로드 실패:', error);
-      container.innerHTML = '<p class="text-center text-red-500 py-8">소식을 불러오는데 실패했습니다.</p>';
-    }
-  }
-
-  async function loadGallery() {
+  function loadGallery(data){
     const container = document.getElementById('gallery-container');
     if (!container) return;
-    try {
-      const response = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/gallery?t=${Date.now()}`);
-      if (!response.ok) {
-        container.innerHTML = '<p class="text-center text-gray-400 col-span-full">등록된 사진이 없습니다.</p>';
-        return;
-      }
-      const files = await response.json();
-      const tempItems = [];
-
-      for (const file of files) {
-        if (!file.name.endsWith('.md')) continue;
-        const res = await fetch(`${file.download_url}?t=${Date.now()}`);
-        const text = await res.text();
-        const fm = parseFrontmatter(text);
-        const title = fm.title || '';
-
-        // images: 블록 (다중 이미지) 또는 image: 단일 이미지 모두 지원
-        const imageList = [];
-        const listBlockMatch = text.match(/^images:\s*\n((?:\s*-\s+\S.*\n?)+)/m);
-        if (listBlockMatch) {
-          const lines = listBlockMatch[1].split('\n');
-          lines.forEach(line => {
-            const cleanLine = line.replace(/^\s*-\s*["']?/, '').replace(/["']?\s*$/, '').trim();
-            if (!cleanLine) return;
-            if (cleanLine === '""' || cleanLine === "''") return;
-            if (cleanLine === '--' || cleanLine === '---') return;
-            if (cleanLine.startsWith('-')) return;
-            imageList.push(cleanLine);
-          });
-        }
-        imageList.forEach(imgPath => {
-          if (!imgPath || imgPath === '""' || imgPath === "''") return;
-          if (!/\.(png|jpe?g|gif|webp|svg|avif|bmp)(\?.*)?$/i.test(imgPath) && !/^https?:\/\//i.test(imgPath)) return;
-          const imageUrl = toRawImageUrl(imgPath);
-          if (!imageUrl) return;
-          tempItems.push({ imageUrl, title, src: file.name, rawDate: safeDate('', file.name) });
-        });
-      }
-
-      // 갤러리는 최신순 (파일 날짜 기준, 같은 날이면 이름 역순으로 안정 정렬)
-      tempItems.sort((a, b) => (b.rawDate - a.rawDate) || (a.src < b.src ? 1 : -1));
-      galleryItems = tempItems;
-      renderGalleryPage(1);
-    } catch (error) {
-      console.error(error);
-      container.innerHTML = '<p class="text-center text-red-500 col-span-full">사진을 불러오지 못했습니다.</p>';
-    }
+    const items = [];
+    (data.gallery || []).forEach((relPath) => {
+      const url = toRawImageUrl(relPath);
+      if (!url) return;
+      const fileName = relPath.split('/').pop();
+      items.push({ imageUrl: url, title: fileName, src: fileName });
+    });
+    galleryItems = items;
+    renderGalleryPage(1);
   }
 
-  document.addEventListener('DOMContentLoaded', () => {
+  document.addEventListener('DOMContentLoaded', async () => {
+    const data = await fetchDataJson();
     (async () => {
       const uploads = fetchRssJson(`https://www.youtube.com/feeds/videos.xml?channel_id=${YT_CHANNEL}`);
       const shorts  = fetchRssJson(`https://www.youtube.com/feeds/videos.xml?channel_id=${YT_CHANNEL}&filter=shorts`).catch(()=>[]);
@@ -944,8 +806,8 @@ tailwind.config = {
       renderShorts(shortsFinal);
       renderSermons(upItems);
     })();
-    loadPosts();
-    loadGallery();
+    loadPosts(data);
+    loadGallery(data);
   });
 
   document.addEventListener('keydown', (e) => {
