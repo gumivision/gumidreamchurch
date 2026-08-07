@@ -500,6 +500,7 @@ window.__INLINE_DATA__ = {
   const YT_CHANNEL = 'UCHCcttgFDXkLClVeuQxNaMw';
   const KAKAO_CHAT_URL = 'https://open.kakao.com/o/sWASfhHi';
 
+  // ===== 유틸 =====
   function escapeHtml(s){
     return (s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   }
@@ -508,9 +509,28 @@ window.__INLINE_DATA__ = {
     const rel = String(path).trim().replace(/^\/+/, '');
     return `https://raw.githubusercontent.com/gumivision/gumidreamchurch/main/${rel}?t=${Date.now()}`;
   }
+
+  // ★★★ 모든 날짜는 이 헬퍼 1개로 통일 (시/분/초 제거)
+  function formatKST(input){
+    if(input == null || input === '') return '';
+    let s = String(input).trim();
+    const m = s.match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if(m) return `${m[1]}-${m[2]}-${m[3]}`;
+    const d = new Date(s);
+    if(!isNaN(d.getTime())){
+      const y = d.getFullYear();
+      const mo = String(d.getMonth()+1).padStart(2,'0');
+      const da = String(d.getDate()).padStart(2,'0');
+      return `${y}-${mo}-${da}`;
+    }
+    return s;
+  }
+
+  // ★★★ 캐시 무력화 — 새 글/이미지 올리면 즉시 반영
   async function fetchDataJson(){
     try{
-      const r = await fetch('data.json', { cache:'no-store' });
+      const url = '/data.json?v=' + Date.now();
+      const r = await fetch(url, { cache:'no-store', headers:{ 'Cache-Control':'no-cache', 'Pragma':'no-cache' } });
       if(!r.ok) throw 0;
       const j = await r.json();
       if(j && Array.isArray(j.posts) && Array.isArray(j.gallery)) return j;
@@ -646,13 +666,13 @@ window.__INLINE_DATA__ = {
       grid.innerHTML = '<div class="col-span-full p-6 rounded-2xl bg-white border border-navy-100 text-center text-navy-700/70 text-xs sm:text-sm">최근 말씀 영상을 불러오는 중입니다.</div>';
       return;
     }
-    grid.innerHTML = vids.map(v => `<a href="${v.link}" target="_blank" rel="noopener" class="group block rounded-2xl overflow-hidden bg-white border border-navy-100 hover:border-gold-500/60 hover:shadow-lg hover:-translate-y-0.5 transition"><div class="relative aspect-video overflow-hidden"><img src="https://i.ytimg.com/vi/${v.id}/hqdefault.jpg" alt="${escapeHtml(v.title)}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition duration-500"><div class="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 group-hover:opacity-100 transition"><span class="w-12 h-12 rounded-full bg-red-600 text-white flex items-center justify-center shadow-xl"><i class="fa-solid fa-play ml-0.5 text-sm"></i></span></div></div><div class="p-4"><div class="text-[10px] font-bold text-gold-600 mb-1 uppercase tracking-wider">Sermon</div><div class="font-bold text-navy-900 line-clamp-2 text-xs sm:text-sm leading-snug">${escapeHtml(v.title)}</div><div class="mt-2.5 flex items-center gap-1.5 text-[11px] text-navy-700/60"><i class="fa-regular fa-calendar"></i> ${new Date(v.pubDate).toLocaleDateString('ko-KR')}</div></div></a>`).join('');
+    grid.innerHTML = vids.map(v => `<a href="${v.link}" target="_blank" rel="noopener" class="group block rounded-2xl overflow-hidden bg-white border border-navy-100 hover:border-gold-500/60 hover:shadow-lg hover:-translate-y-0.5 transition"><div class="relative aspect-video overflow-hidden"><img src="https://i.ytimg.com/vi/${v.id}/hqdefault.jpg" alt="${escapeHtml(v.title)}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition duration-500"><div class="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 group-hover:opacity-100 transition"><span class="w-12 h-12 rounded-full bg-red-600 text-white flex items-center justify-center shadow-xl"><i class="fa-solid fa-play ml-0.5 text-sm"></i></span></div></div><div class="p-4"><div class="text-[10px] font-bold text-gold-600 mb-1 uppercase tracking-wider">Sermon</div><div class="font-bold text-navy-900 line-clamp-2 text-xs sm:text-sm leading-snug">${escapeHtml(v.title)}</div><div class="mt-2.5 flex items-center gap-1.5 text-[11px] text-navy-700/60"><i class="fa-regular fa-calendar"></i> ${formatKST(v.pubDate)}</div></div></a>`).join('');
   }
 
   // ===== 게시글 =====
   function openPostModal(title, date, bodyContent, headerImageUrl) {
     document.getElementById('postModalTitle').textContent = title || '제목 없음';
-    document.getElementById('postModalDate').textContent = date || '';
+    document.getElementById('postModalDate').textContent = formatKST(date);
     const bodyEl = document.getElementById('postModalBody');
     let html = '';
     if (headerImageUrl) {
@@ -702,7 +722,7 @@ window.__INLINE_DATA__ = {
         <span class="inline-flex items-center gap-1.5 bg-gold-500 text-white text-[11px] font-extrabold px-2.5 py-1 rounded-full">
           <i class="fa-solid fa-star text-[10px]"></i> 최신소식
         </span>
-        <span class="text-xs text-gray-400 font-medium">${latest.date || ''}</span>
+        <span class="text-xs text-gray-400 font-medium">${formatKST(latest.date)}</span>
       </div>
       <button type="button" class="w-full text-left px-5 pb-5 group">
         <h3 class="text-lg sm:text-xl font-bold text-navy-900 leading-snug group-hover:text-gold-600 transition">${escapeHtml(latest.title || '제목 없음')}</h3>
@@ -732,7 +752,7 @@ window.__INLINE_DATA__ = {
             <i class="fa-regular fa-newspaper text-gold-500 text-sm shrink-0"></i>
             <span class="text-sm sm:text-[15px] text-gray-800 font-medium truncate">${escapeHtml(post.title || '제목 없음')}</span>
           </div>
-          <span class="text-[11px] sm:text-xs text-gray-400 shrink-0">${post.date || ''}</span>
+          <span class="text-[11px] sm:text-xs text-gray-400 shrink-0">${formatKST(post.date)}</span>
         `;
         listContainer.appendChild(li);
       });
@@ -795,6 +815,7 @@ window.__INLINE_DATA__ = {
     renderGalleryPage(1);
   }
 
+  // ===== 초기화 + 가시성 복귀 시 재로딩 =====
   document.addEventListener('DOMContentLoaded', async () => {
     const data = await fetchDataJson();
     (async () => {
@@ -808,6 +829,15 @@ window.__INLINE_DATA__ = {
     })();
     loadPosts(data);
     loadGallery(data);
+
+    // 탭 복귀/포커스 시 최신 데이터로 자동 새로고침 (관리자가 새 글을 올렸을 때 즉시 반영)
+    const reload = async () => {
+      const fresh = await fetchDataJson();
+      loadPosts(fresh);
+      loadGallery(fresh);
+    };
+    document.addEventListener('visibilitychange', () => { if(!document.hidden) reload(); });
+    window.addEventListener('focus', reload);
   });
 
   document.addEventListener('keydown', (e) => {
