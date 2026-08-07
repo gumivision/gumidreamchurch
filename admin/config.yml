@@ -15,9 +15,11 @@ collections:
     label: "게시판 글"
     folder: "posts"
     create: true
+    # slug 템플릿은 유지하되, 추가로 사용자 입력 slug 필드를 받음 (한글 X)
     slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
     fields:
       - { label: "제목", name: "title", widget: "string" }
+      - { label: "Slug (영문/숫자/- 만)", name: "slug", widget: "string", pattern: ['^[a-zA-Z0-9-]+$', '영문·숫자·하이픈(-) 만 입력 (한글 X)'] }
       - { label: "작성일자", name: "date", widget: "datetime" }
       - { label: "대표/첨부 이미지", name: "image", widget: "image", required: false }
       - { label: "내용", name: "body", widget: "markdown" }
@@ -29,5 +31,6 @@ collections:
     create: true
     slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
     fields:
+      - { label: "Slug (영문/숫자/- 만)", name: "slug", widget: "string", pattern: ['^[a-zA-Z0-9-]+$', '영문·숫자·하이픈(-) 만 입력 (한글 X)'] }
       - { label: "사진 제목", name: "title", widget: "string" }
       - { label: "사진", name: "image", widget: "image" }
