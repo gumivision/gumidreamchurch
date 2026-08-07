@@ -150,128 +150,94 @@ tailwind.config = {
 </div>
 
 <main id="main">
-
-<section id="home" class="relative min-h-[75vh] sm:min-h-[85vh] flex items-center overflow-hidden bg-navy-900 bg-cover bg-center bg-no-repeat" style="background-image: url('main1.png');">
-  <div class="absolute inset-0 bg-gradient-to-r from-navy-950/85 via-navy-900/75 to-navy-950/60"></div>
-  <div class="absolute -top-32 -right-40 w-[480px] h-[480px] rounded-full bg-gold-500/10 blur-3xl"></div>
-  <div class="absolute -bottom-32 -left-40 w-[420px] h-[420px] rounded-full bg-navy-400/10 blur-3xl"></div>
-  <div class="relative z-10 w-full max-w-6xl mx-auto px-5 sm:px-8 pt-24 pb-12 sm:pt-28 sm:pb-16">
-    <div class="fade-up inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-red-600/20 border border-red-500/40 text-red-100 text-xs sm:text-sm font-medium backdrop-blur-sm">
-      <span class="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span>
-      평일(월~금) 저녁 8:30 라이브 예배
-    </div>
-    <h1 class="fade-up mt-4 font-serif text-white text-3xl sm:text-5xl md:text-6xl tracking-tight">
-      말씀과 기도로<br><span class="text-gold-gradient">세워지는 교회</span>
-    </h1>
-    <p class="fade-up mt-4 max-w-xl text-white/85 text-sm sm:text-base leading-relaxed">
-      하나님의 따뜻한 사랑을 전하고, 이웃과 함께 동행하며 성장하는 믿음의 공동체입니다.<br class="hidden sm:block"> 당신의 첫 걸음을 언제나 환영합니다.
-    </p>
-    <div class="fade-up mt-6 flex flex-col sm:flex-row gap-3">
-      <a href="https://youtube.com/channel/UCHCcttgFDXkLClVeuQxNaMw" target="_blank" rel="noopener" class="inline-flex items-center justify-center gap-2 bg-red-600 hover:bg-red-500 text-white font-bold px-6 py-3 rounded-xl shadow-lg shadow-red-600/30 transition-all text-sm"><i class="fa-solid fa-play"></i> 라이브 예배 참여</a>
-      <a href="#about" class="inline-flex items-center justify-center gap-2 bg-white/10 hover:bg-white/15 text-white border border-white/20 px-6 py-3 rounded-xl backdrop-blur font-semibold transition-all text-sm">교회 알아보기 <i class="fa-solid fa-arrow-down text-xs"></i></a>
-    </div>
-    <div class="fade-up mt-10 grid grid-cols-3 max-w-lg gap-4 text-white/90">
-      <div><div class="font-serif text-2xl sm:text-3xl font-bold text-gold-400">2016</div><div class="mt-0.5 text-xs text-white/70">개척의 시작</div></div>
-      <div><div class="font-serif text-2xl sm:text-3xl font-bold text-gold-400">50+</div><div class="mt-0.5 text-xs text-white/70">동역하는 성도</div></div>
-      <div><div class="font-serif text-2xl sm:text-3xl font-bold text-gold-400">365</div><div class="mt-0.5 text-xs text-white/70">말씀과 기도의 날</div></div>
-    </div>
+<section id="home" class="relative pt-24 sm:pt-28 pb-10 sm:pb-16 text-white overflow-hidden bg-navy-900">
+  <div class="absolute inset-0 -z-10">
+    <img src="main1.png" alt="구미 꿈이 있는 교회 표지" class="w-full h-full object-cover kb opacity-70">
+    <div class="absolute inset-0 bg-gradient-to-b from-navy-900/60 via-navy-900/40 to-navy-900"></div>
   </div>
-</section>
-
-<section id="live" class="relative py-12 sm:py-16 bg-[#f6f4ee] text-navy-900 border-b border-navy-100/60">
-  <div class="relative max-w-7xl mx-auto px-5 sm:px-8">
-    <div class="text-center max-w-2xl mx-auto reveal">
-      <div class="inline-flex items-center gap-2 text-gold-600 text-xs sm:text-sm font-bold uppercase tracking-[0.2em]"><span class="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span> Live Worship & Shorts</div>
-      <h2 class="mt-2 font-serif text-3xl sm:text-4xl text-navy-900 tracking-tight">오늘의 <span class="text-gold-600">은혜로운 예배</span></h2>
-      <p class="mt-2 text-navy-700/70 leading-relaxed text-xs sm:text-sm">시간과 장소의 제약 없이 찬양과 말씀의 은혜를 실시간으로 함께 누릴 수 있습니다.</p>
-    </div>
-    <div class="mt-6 flex flex-wrap items-center justify-center gap-3">
-      <div class="inline-flex items-center gap-2 bg-red-50 border border-red-200 text-red-700 px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium"><i class="fa-regular fa-clock text-red-500"></i> 예배 시간: <strong class="ml-1">평일(월~금) 저녁 8:30</strong></div>
-      <div class="inline-flex items-center gap-2 bg-white border border-navy-100 text-navy-700 px-3.5 py-1.5 rounded-lg text-xs sm:text-sm shadow-sm"><i class="fa-solid fa-signal text-gold-600"></i> YouTube Live · Shorts 피드</div>
-    </div>
-
-    <div class="mt-8 max-w-5xl mx-auto reveal">
-      <div class="flex items-center justify-between mb-3">
-        <h3 class="text-navy-900 font-bold flex items-center gap-2 text-sm sm:text-base"><i class="fa-solid fa-clapperboard text-gold-600"></i> Shorts 피드</h3>
-        <span class="text-[11px] text-navy-500">최신 3개 자동 업데이트</span>
+  <div class="max-w-7xl mx-auto px-5 sm:px-8 pt-6 pb-2">
+    <div class="fade-up">
+      <div class="inline-flex items-center gap-2 bg-white/10 border border-white/20 backdrop-blur px-3.5 py-1.5 rounded-full text-[11px] sm:text-xs font-bold tracking-widest">
+        <span class="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span>
+        <span class="text-gold-300">LIVE WORSHIP &amp; SHORTS</span>
       </div>
-      <div id="shortsGrid" class="grid grid-cols-1 sm:grid-cols-3 gap-4"></div>
-
-      <div class="mt-6 p-5 sm:p-6 rounded-2xl bg-amber-50/80 border-2 border-gold-500/80 shadow-md hover:shadow-lg hover:scale-[1.01] transition-all flex flex-col sm:flex-row items-center justify-between gap-4">
-        <div class="flex items-start sm:items-center gap-4">
-          <div class="w-12 h-12 rounded-2xl bg-gold-500 text-white flex items-center justify-center text-xl shrink-0 shadow-md shadow-gold-500/30">
-            <i class="fa-solid fa-bullhorn"></i>
-          </div>
-          <div>
-            <div class="flex items-center gap-2 flex-wrap">
-              <span class="bg-red-600 text-white text-[10px] font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wide">공지 & 소식</span>
-              <h4 class="font-extrabold text-navy-900 text-base sm:text-lg">교회 소식 & 커뮤니티 게시물</h4>
-            </div>
-            <p class="text-xs sm:text-sm text-navy-800 font-medium mt-1 leading-relaxed">
-              유튜브 커뮤니티에 올라온 최신 은혜의 글과 공지사항을 확인하세요.
-            </p>
-          </div>
-        </div>
-        <a href="https://www.youtube.com/@%EA%B5%AC%EB%AF%B8%EA%BF%88%EC%9D%B4%EC%9E%88%EB%8A%94%EA%B5%90%ED%9A%8C%EC%95%84%EB%A6%84/posts" target="_blank" rel="noopener" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-navy-900 hover:bg-gold-600 text-white font-extrabold px-5 py-3 rounded-xl transition shadow-md text-xs sm:text-sm shrink-0">
-          게시물 보러가기 <i class="fa-solid fa-arrow-up-right-from-square text-xs text-gold-400"></i>
+      <h1 class="mt-5 sm:mt-7 font-serif text-[34px] sm:text-5xl md:text-6xl leading-[1.18] tracking-tight text-balance">
+        말씀과 기도로 <br class="sm:hidden"><span class="text-gold-gradient">세워지는 교회</span>
+      </h1>
+      <p class="mt-5 max-w-xl text-white/85 text-[15px] sm:text-base md:text-lg leading-relaxed">
+        아름다운발걸음선교회 — 평일 저녁 8시 30분 라이브 예배로, 말씀 안에서 함께 걸어갑니다.
+      </p>
+      <div class="mt-7 flex items-center gap-2 sm:gap-3 flex-wrap">
+        <a href="https://youtube.com/channel/UCHCcttgFDXkLClVeuQxNaMw" target="_blank" rel="noopener" class="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white text-sm font-bold px-4 sm:px-5 py-2.5 sm:py-3 rounded-full shadow-md shadow-red-600/30 transition">
+          <i class="fa-brands fa-youtube"></i> 라이브 채널 보기
+        </a>
+        <a href="#about" class="inline-flex items-center gap-2 bg-white/10 hover:bg-white/15 border border-white/20 text-white text-sm font-bold px-4 sm:px-5 py-2.5 sm:py-3 rounded-full transition">
+          교회 소개 <i class="fa-solid fa-arrow-down text-xs"></i>
         </a>
       </div>
+      <div class="mt-6 sm:mt-8 grid grid-cols-3 gap-2 sm:gap-4 max-w-xl">
+        <div class="bg-white/8 border border-white/15 rounded-xl px-3 sm:px-4 py-2.5 backdrop-blur">
+          <div class="text-[11px] sm:text-xs text-gold-300 font-bold uppercase tracking-wider">월–금</div>
+          <div class="text-[15px] sm:text-lg font-extrabold mt-0.5">20:30 KST</div>
+        </div>
+        <div class="bg-white/8 border border-white/15 rounded-xl px-3 sm:px-4 py-2.5 backdrop-blur">
+          <div class="text-[11px] sm:text-xs text-gold-300 font-bold uppercase tracking-wider">장소</div>
+          <div class="text-[13px] sm:text-base font-bold mt-0.5">온라인 YouTube</div>
+        </div>
+        <div class="bg-white/8 border border-white/15 rounded-xl px-3 sm:px-4 py-2.5 backdrop-blur">
+          <div class="text-[11px] sm:text-xs text-gold-300 font-bold uppercase tracking-wider">말씀</div>
+          <div class="text-[13px] sm:text-base font-bold mt-0.5">매주 새 영상</div>
+        </div>
+      </div>
     </div>
+  </div>
+  <div class="pointer-events-none absolute -bottom-2 left-0 right-0 h-8 bg-gradient-to-b from-transparent to-[#fafaf7]"></div>
+</section>
 
-    <div class="mt-8 flex flex-wrap justify-center gap-3">
-      <a href="https://youtube.com/channel/UCHCcttgFDXkLClVeuQxNaMw" target="_blank" rel="noopener" class="inline-flex items-center gap-2 bg-red-600 hover:bg-red-500 text-white font-bold px-5 py-2.5 rounded-xl shadow-md shadow-red-600/20 transition-all text-xs sm:text-sm"><i class="fa-solid fa-play text-xs"></i> 라이브 방송 바로가기</a>
-      <a href="https://www.youtube.com/@%EA%B5%AC%EB%AF%B8%EA%BF%88%EC%9D%B4%EC%9E%88%EB%8A%94%EA%B5%90%ED%9A%8C%EC%95%84%EB%A6%84/posts" target="_blank" rel="noopener" class="inline-flex items-center gap-2 bg-white hover:bg-gray-50 text-navy-900 font-bold px-5 py-2.5 rounded-xl border border-navy-200 shadow-sm transition text-xs sm:text-sm"><i class="fa-regular fa-newspaper text-xs text-gold-600"></i> 커뮤니티 게시물</a>
-      <a href="https://youtube.com/channel/UCHCcttgFDXkLClVeuQxNaMw" target="_blank" rel="noopener" class="inline-flex items-center gap-2 bg-white hover:bg-gray-50 text-navy-900 font-bold px-5 py-2.5 rounded-xl border border-navy-200 shadow-sm transition text-xs sm:text-sm"><i class="fa-solid fa-bell text-xs text-gold-600"></i> 채널 구독하기</a>
+<section id="live" class="py-10 sm:py-16 bg-[#fafaf7] text-navy-900">
+  <div class="max-w-7xl mx-auto px-5 sm:px-8">
+    <div class="flex items-end justify-between gap-3 mb-4 sm:mb-6">
+      <div>
+        <div class="inline-flex items-center gap-2 text-gold-600 text-[11px] sm:text-xs font-bold uppercase tracking-[0.2em]"><span class="w-6 h-px bg-gold-500"></span> Live</div>
+        <h2 class="mt-1.5 sm:mt-2 font-serif text-xl sm:text-3xl text-navy-900 leading-tight tracking-tight">평일 저녁 8시 30분, <span class="text-gold-600">함께하는 라이브 예배</span></h2>
+      </div>
+      <a href="https://youtube.com/channel/UCHCcttgFDXkLClVeuQxNaMw" target="_blank" rel="noopener" class="hidden sm:inline-flex items-center gap-2 text-sm font-bold text-navy-900 hover:text-gold-600 transition">유튜브 채널 바로가기 <i class="fa-solid fa-arrow-right text-xs"></i></a>
+    </div>
+    <div id="liveEmbed" class="relative w-full max-w-5xl mx-auto aspect-video rounded-2xl overflow-hidden shadow-xl bg-black fade-up">
+      <iframe class="absolute inset-0 w-full h-full" src="https://www.youtube.com/embed/live_stream?channel=UCHCcttgFDXkLClVeuQxNaMw" title="구미 꿈이 있는 교회 라이브 예배" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen loading="lazy"></iframe>
     </div>
   </div>
 </section>
 
-<section id="board" class="py-12 sm:py-16 bg-white border-b border-gray-100">
-  <div class="max-w-4xl mx-auto px-5 sm:px-8">
-    <div class="text-center mb-8">
-      <span class="text-gold-600 font-bold text-xs uppercase tracking-wider">Church News</span>
-      <h2 class="text-2xl sm:text-3xl font-bold text-navy-900 mt-1">교회 소식</h2>
+<section id="board" class="py-12 sm:py-20 bg-white">
+  <div class="max-w-6xl mx-auto px-5 sm:px-8">
+    <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 mb-6 sm:mb-8">
+      <div>
+        <div class="inline-flex items-center gap-2 text-gold-600 text-[11px] sm:text-xs font-bold uppercase tracking-[0.2em]"><span class="w-6 h-px bg-gold-500"></span> Church News</div>
+        <h2 class="mt-1.5 sm:mt-2 font-serif text-2xl sm:text-4xl text-navy-900 leading-tight tracking-tight">교회 소식 · <span class="text-gold-600">함께한 이야기</span></h2>
+      </div>
+      <div class="hidden sm:flex items-center gap-2 text-sm font-bold text-navy-700"><i class="fa-regular fa-newspaper text-gold-500"></i> 게시판 글 바로 보기</div>
     </div>
 
-    <div id="latest-post-container" class="mb-6">
-      <div class="text-center text-gray-400 py-8">소식을 불러오는 중입니다...</div>
+    <div id="latest-post-container" class="mb-6 space-y-5">
+      <div class="text-center text-gray-400 py-10">소식을 불러오는 중입니다...</div>
     </div>
 
     <div id="previous-posts-wrapper" class="bg-gray-50 p-5 sm:p-6 rounded-2xl border border-gray-200/60 hidden">
-      <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3 px-1">지난 소식 목록</h3>
-      <ul id="board-list-container" class="divide-y divide-gray-200/80"></ul>
+      <h3 class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-3">지난 소식</h3>
+      <ul id="previous-posts-list" class="divide-y divide-gray-200/70"></ul>
     </div>
   </div>
 </section>
 
-<div id="postModal" class="hidden fixed inset-0 z-[110] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4" onclick="if(event.target===this) closePostModal()">
-  <div class="bg-white w-full max-w-2xl max-h-[90vh] rounded-2xl shadow-2xl overflow-hidden flex flex-col" onclick="event.stopPropagation()">
-    <div class="px-5 py-4 border-b border-gray-100 flex items-start justify-between gap-3">
-      <div class="min-w-0">
-        <div class="text-xs font-semibold text-gold-600" id="postModalDate"></div>
-        <h3 class="mt-0.5 text-lg sm:text-xl font-bold text-navy-900 break-words" id="postModalTitle"></h3>
-      </div>
-      <button onclick="closePostModal()" class="shrink-0 w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 flex items-center justify-center transition" aria-label="닫기">
-        <i class="fa-solid fa-xmark"></i>
-      </button>
-    </div>
-    <div class="p-5 overflow-y-auto post-body text-sm sm:text-base text-gray-700 leading-relaxed break-words" id="postModalBody"></div>
-    <div class="px-5 py-3 border-t border-gray-100 bg-gray-50 text-right">
-      <button onclick="closePostModal()" class="px-4 py-2 bg-navy-900 hover:bg-navy-800 text-white text-xs sm:text-sm font-bold rounded-lg transition">닫기</button>
-    </div>
-  </div>
-</div>
-
-<section id="sermons" class="py-12 sm:py-16 bg-[#fafaf7]">
+<section id="sermons" class="py-12 sm:py-20 bg-[#fafaf7]">
   <div class="max-w-7xl mx-auto px-5 sm:px-8">
-    <div class="text-center max-w-2xl mx-auto reveal">
-      <div class="inline-flex items-center gap-2 text-gold-600 text-xs sm:text-sm font-bold uppercase tracking-[0.2em]"><span class="w-6 h-px bg-gold-500"></span> Recent Sermons</div>
-      <h2 class="mt-2 font-serif text-3xl sm:text-4xl text-navy-900 tracking-tight">최근 <span class="text-gold-600">말씀</span></h2>
-      <p class="mt-2 text-navy-700/70 text-xs sm:text-sm">이번 주와 지난 주에 전해진 말씀을 다시 만나보세요.</p>
-    </div>
-    <div id="sermonsGrid" class="mt-8 grid sm:grid-cols-2 lg:grid-cols-3 gap-5"></div>
-    <div class="mt-8 text-center">
-      <a href="https://youtube.com/channel/UCHCcttgFDXkLClVeuQxNaMw" target="_blank" rel="noopener" class="inline-flex items-center gap-2 text-navy-900 text-sm font-bold border-b-2 border-gold-500 pb-0.5 hover:gap-3 transition-all">유튜브 채널에서 더 많은 말씀 보기 <i class="fa-solid fa-arrow-right text-xs"></i></a>
+    <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 mb-6 sm:mb-8">
+      <div>
+        <div class="inline-flex items-center gap-2 text-gold-600 text-[11px] sm:text-xs font-bold uppercase tracking-[0.2em]"><span class="w-6 h-px bg-gold-500"></span> Recent Sermons</div>
+        <h2 class="mt-1.5 sm:mt-2 font-serif text-2xl sm:text-4xl text-navy-900 leading-tight tracking-tight">최근 <span class="text-gold-600">말씀</span></h2>
+      </div>
+      <a href="https://youtube.com/channel/UCHCcttgFDXkLClVeuQxNaMw" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 text-sm font-bold text-navy-900 hover:text-gold-600 border-b-2 border-gold-500 pb-0.5 hover:gap-3 transition-all">유튜브 채널에서 더 많은 말씀 보기 <i class="fa-solid fa-arrow-right text-xs"></i></a>
     </div>
   </div>
 </section>
@@ -317,24 +283,17 @@ tailwind.config = {
           </div>
           <div class="group p-3 rounded-xl bg-white border border-navy-200/80 shadow-sm hover:border-gold-500/60 transition text-center sm:text-left">
             <div class="w-8 h-8 rounded-lg bg-gold-500/10 text-gold-600 flex items-center justify-center text-sm mb-2 mx-auto sm:mx-0 group-hover:bg-gold-500 group-hover:text-white transition"><i class="fa-solid fa-hand-holding-heart"></i></div>
-            <h4 class="text-navy-900 font-bold text-xs sm:text-sm">섬김 <span class="hidden sm:inline font-normal text-[11px] text-navy-500">(Mission)</span></h4>
+            <h4 class="text-navy-900 font-bold text-xs sm:text-sm">사명 <span class="hidden sm:inline font-normal text-[11px] text-navy-500">(Mission)</span></h4>
             <p class="mt-0.5 text-[11px] text-navy-600 leading-tight hidden sm:block">세상을 향한 따뜻한 손길과 섬김을 실천합니다.</p>
           </div>
         </div>
       </div>
       <div class="lg:col-span-5 reveal order-2">
         <div class="relative">
-          <div class="rounded-2xl overflow-hidden shadow-xl bg-white border border-navy-200/60 p-2">
-            <img src="church1.png?v=3" alt="구미 꿈이 있는 교회 전경" class="w-full h-auto max-h-[500px] object-contain rounded-xl block mx-auto" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');">
-            <div class="hidden flex-col items-center justify-center text-gold-600 p-12 text-center">
-              <i class="fa-solid fa-church text-6xl mb-3"></i>
-              <span class="text-xs font-semibold text-navy-800">구미 꿈이 있는 교회</span>
-            </div>
-          </div>
-          <div class="absolute -bottom-4 -left-2 sm:-left-4 bg-navy-900 text-white p-4 rounded-xl shadow-xl max-w-xs border border-white/10 z-10">
-            <i class="fa-solid fa-quote-left text-gold-400 text-sm"></i>
-            <p class="mt-1 text-xs font-medium leading-relaxed text-white/90">"세상의 빛과 소금이 되는 공동체"</p>
-            <p class="mt-1 text-[10px] text-gold-400/80">— 아름다운발걸음선교회 비전</p>
+          <img src="church1.png" alt="구미 꿈이 있는 교회 전경" class="w-full aspect-[4/5] object-cover rounded-2xl shadow-xl border-4 border-white" onerror="this.outerHTML='<div class=&quot;w-full aspect-[4/5] rounded-2xl bg-navy-700 grid place-items-center text-white text-sm&quot;>이미지를 불러올 수 없습니다</div>'">
+          <div class="absolute -bottom-3 -right-3 sm:-bottom-4 sm:-right-4 bg-gold-500 text-navy-900 rounded-xl sm:rounded-2xl px-3 py-2 sm:px-5 sm:py-3 shadow-xl">
+            <div class="text-[10px] sm:text-xs font-bold uppercase tracking-wider">Since</div>
+            <div class="text-xl sm:text-3xl font-extrabold leading-none">2023</div>
           </div>
         </div>
       </div>
@@ -342,181 +301,194 @@ tailwind.config = {
   </div>
 </section>
 
-<section id="visit" class="py-12 sm:py-16 bg-[#fafaf7]">
-  <div class="max-w-3xl mx-auto px-5 sm:px-8">
-    <div class="reveal">
-      <form id="visitForm" class="bg-white rounded-2xl shadow-md border border-navy-100 p-5 sm:p-7">
-        <div class="text-center mb-5">
-          <div class="inline-flex items-center gap-2 text-gold-600 text-xs font-bold uppercase tracking-[0.2em] mb-1"><span class="w-4 h-px bg-gold-500"></span> Plan a Visit</div>
-          <h2 class="font-serif text-2xl sm:text-3xl text-navy-900 font-bold">첫 방문 신청</h2>
-          <p class="text-xs text-navy-700/60 mt-1">처음 오시는 분들을 환영합니다. 입력 후 신청 시 <strong>카카오톡으로 자동 연결</strong>됩니다.</p>
+<section id="visit" class="py-12 sm:py-20 bg-[#fafaf7]">
+  <div class="max-w-6xl mx-auto px-5 sm:px-8">
+    <div class="grid lg:grid-cols-2 gap-8 lg:gap-12 items-start">
+      <div class="reveal order-2 lg:order-1">
+        <div class="inline-flex items-center gap-2 text-gold-600 text-[11px] sm:text-xs font-bold uppercase tracking-[0.2em]"><span class="w-6 h-px bg-gold-500"></span> First Visit</div>
+        <h2 class="mt-1.5 sm:mt-2 font-serif text-2xl sm:text-3xl md:text-4xl text-navy-900 leading-tight tracking-tight">첫 방문 <span class="text-gold-600">안내</span></h2>
+        <p class="mt-3 text-navy-700 leading-relaxed text-sm sm:text-base">아직 얼굴도 모르는 사이, 어색한 건 당연합니다. 저희 교회는 처음 오신 분도 편하게 함께 예배드릴 수 있도록 작은 섬김을 준비하고 있습니다.</p>
+
+        <form id="visitForm" class="mt-6 bg-white rounded-2xl p-5 sm:p-6 border border-navy-200/80 shadow-sm space-y-4">
+          <div class="grid sm:grid-cols-2 gap-3 sm:gap-4">
+            <div>
+              <label class="block text-xs font-bold text-navy-700 mb-1.5">성함</label>
+              <input id="visitName" type="text" required class="w-full px-3 py-2.5 rounded-lg border border-navy-200 focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 outline-none text-sm" placeholder="홍길동">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-navy-700 mb-1.5">연락처</label>
+              <input id="visitTel" type="tel" required class="w-full px-3 py-2.5 rounded-lg border border-navy-200 focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 outline-none text-sm" placeholder="010-1234-5678">
+            </div>
+          </div>
+          <div class="grid sm:grid-cols-2 gap-3 sm:gap-4">
+            <div>
+              <label class="block text-xs font-bold text-navy-700 mb-1.5">방문 예정일</label>
+              <input id="visitDate" type="date" class="w-full px-3 py-2.5 rounded-lg border border-navy-200 focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 outline-none text-sm">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-navy-700 mb-1.5">인원/구성</label>
+              <input id="visitGroup" type="text" class="w-full px-3 py-2.5 rounded-lg border border-navy-200 focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 outline-none text-sm" placeholder="성인 2명, 아이 1명 등">
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-navy-700 mb-1.5">문의사항 (선택)</label>
+            <textarea id="visitMemo" rows="3" class="w-full px-3 py-2.5 rounded-lg border border-navy-200 focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 outline-none text-sm resize-none" placeholder="편하게 알려주세요."></textarea>
+          </div>
+          <button type="submit" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-navy-900 hover:bg-navy-800 text-white font-bold px-5 py-3 rounded-xl transition shadow-md">
+            <i class="fa-regular fa-paper-plane"></i> 신청 내용 카카오톡으로 보내기
+          </button>
+          <p class="text-[11px] text-navy-500 mt-1">제출 시 입력하신 내용이 카카오톡 메시지로 복사됩니다.</p>
+        </form>
+      </div>
+      <div class="reveal order-1 lg:order-2">
+        <div class="grid sm:grid-cols-2 gap-3 sm:gap-4">
+          <div class="bg-white rounded-2xl p-5 border border-navy-200/80 shadow-sm">
+            <div class="w-10 h-10 rounded-xl bg-gold-500/10 text-gold-600 flex items-center justify-center mb-3"><i class="fa-solid fa-location-dot"></i></div>
+            <div class="text-xs font-bold text-navy-500 uppercase tracking-wider">오시는 길</div>
+            <div class="mt-1 text-sm font-bold text-navy-900">경상북도 구미시 금오대로12길 25</div>
+            <a href="https://map.naver.com/v5/search/%EA%B2%BD%EC%83%81%EB%B6%81%EB%8F%84%20%EA%B5%AC%EB%AF%B8%EC%8B%9C%20%EA%B8%88%EC%98%A4%EB%8C%80%EB%A1%9C12%EA%B8%B8%2025" target="_blank" rel="noopener" class="mt-3 inline-flex items-center gap-1.5 text-xs text-navy-700 hover:text-gold-600 font-bold">네이버 지도 <i class="fa-solid fa-arrow-up-right-from-box text-[10px]"></i></a>
+          </div>
+          <div class="bg-white rounded-2xl p-5 border border-navy-200/80 shadow-sm">
+            <div class="w-10 h-10 rounded-xl bg-gold-500/10 text-gold-600 flex items-center justify-center mb-3"><i class="fa-regular fa-clock"></i></div>
+            <div class="text-xs font-bold text-navy-500 uppercase tracking-wider">예배 시간</div>
+            <div class="mt-1 text-sm font-bold text-navy-900">평일 20:30 라이브 예배</div>
+            <a href="https://youtube.com/channel/UCHCcttgFDXkLClVeuQxNaMw" target="_blank" rel="noopener" class="mt-3 inline-flex items-center gap-1.5 text-xs text-navy-700 hover:text-gold-600 font-bold">라이브 채널 <i class="fa-solid fa-arrow-up-right-from-box text-[10px]"></i></a>
+          </div>
+          <div class="bg-white rounded-2xl p-5 border border-navy-200/80 shadow-sm">
+            <div class="w-10 h-10 rounded-xl bg-gold-500/10 text-gold-600 flex items-center justify-center mb-3"><i class="fa-regular fa-envelope"></i></div>
+            <div class="text-xs font-bold text-navy-500 uppercase tracking-wider">이메일</div>
+            <a href="mailto:lovekyk79@naver.com" class="mt-1 block text-sm font-bold text-navy-900 hover:text-gold-600">lovekyk79@naver.com</a>
+          </div>
+          <div class="bg-white rounded-2xl p-5 border border-navy-200/80 shadow-sm">
+            <div class="w-10 h-10 rounded-xl bg-gold-500/10 text-gold-600 flex items-center justify-center mb-3"><i class="fa-brands fa-instagram"></i></div>
+            <div class="text-xs font-bold text-navy-500 uppercase tracking-wider">인스타그램</div>
+            <a href="https://www.instagram.com/gyuhekim?igsh=NXViY3kxamF2cjlx" target="_blank" rel="noopener" class="mt-1 block text-sm font-bold text-navy-900 hover:text-gold-600">@gyuhekim 바로가기</a>
+          </div>
         </div>
-        <div class="grid sm:grid-cols-2 gap-3">
-          <label class="block"><span class="text-xs font-bold text-navy-700">성함 <span class="text-red-500">*</span></span><input type="text" id="visitName" name="성함" required class="mt-1 w-full rounded-lg border border-navy-200 px-3 py-2 text-xs sm:text-sm focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 outline-none transition" placeholder="홍길동"></label>
-          <label class="block"><span class="text-xs font-bold text-navy-700">연락처 <span class="text-red-500">*</span></span><input type="tel" id="visitTel" name="연락처" required class="mt-1 w-full rounded-lg border border-navy-200 px-3 py-2 text-xs sm:text-sm focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 outline-none transition" placeholder="010-0000-0000"></label>
-          <label class="block sm:col-span-2"><span class="text-xs font-bold text-navy-700">방문 예정일</span><input type="date" id="visitDate" name="방문예정일" class="mt-1 w-full rounded-lg border border-navy-200 px-3 py-2 text-xs sm:text-sm focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 outline-none transition"></label>
-          <label class="block sm:col-span-2"><span class="text-xs font-bold text-navy-700">인원 / 가족 구성</span><input type="text" id="visitGroup" name="인원구성" class="mt-1 w-full rounded-lg border border-navy-200 px-3 py-2 text-xs sm:text-sm focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 outline-none transition" placeholder="예) 성인 2명, 자녀 1명"></label>
-          <label class="block sm:col-span-2"><span class="text-xs font-bold text-navy-700">문의 사항</span><textarea id="visitMemo" name="문의사항" rows="2" class="mt-1 w-full rounded-lg border border-navy-200 px-3 py-2 text-xs sm:text-sm focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 outline-none transition" placeholder="기도제목, 궁금한 점 등 자유롭게 남겨주세요."></textarea></label>
-        </div>
-        <button id="submitBtn" type="submit" class="mt-5 w-full bg-[#FEE500] hover:bg-[#FADA0A] text-[#191919] font-bold py-3 rounded-xl transition shadow-sm flex items-center justify-center gap-2 text-xs sm:text-sm"><i class="fa-solid fa-comment text-[#191919]"></i> 카카오톡으로 방문 신청하기</button>
-        <p class="mt-2 text-[10px] sm:text-[11px] text-navy-500/70 text-center">신청 버튼 클릭 시 작성된 내용이 자동 복사되며 카카오톡 오픈채팅방으로 이동합니다.</p>
-      </form>
+      </div>
     </div>
   </div>
 </section>
 
-<section id="giving" class="relative py-12 sm:py-16 bg-navy-900 text-white overflow-hidden">
-  <div class="absolute inset-0 opacity-[0.05]" style="background-image: radial-gradient(circle at 1px 1px, white 1px, transparent 0); background-size: 28px 28px;"></div>
-  <div class="relative max-w-5xl mx-auto px-5 sm:px-8">
-    <div class="text-center max-w-xl mx-auto reveal">
-      <div class="inline-flex items-center gap-2 text-gold-400 text-xs sm:text-sm font-bold uppercase tracking-[0.2em]"><span class="w-6 h-px bg-gold-500"></span> Giving</div>
-      <h2 class="mt-2 font-serif text-2xl sm:text-3xl text-white tracking-tight">함께하는 <span class="text-gold-400">찬양과 헌금</span></h2>
-      <p class="mt-2 text-white/65 text-xs sm:text-sm leading-relaxed">주님의 일에 동참하시는 마음은 가장 아름다운 예배입니다.</p>
+<section id="giving" class="py-12 sm:py-20 bg-white border-t border-navy-100/60">
+  <div class="max-w-6xl mx-auto px-5 sm:px-8">
+    <div class="text-center max-w-2xl mx-auto">
+      <div class="inline-flex items-center gap-2 text-gold-600 text-[11px] sm:text-xs font-bold uppercase tracking-[0.2em]"><span class="w-6 h-px bg-gold-500"></span> Offering</div>
+      <h2 class="mt-1.5 sm:mt-2 font-serif text-2xl sm:text-4xl text-navy-900 leading-tight tracking-tight">온라인 <span class="text-gold-600">헌금</span></h2>
+      <p class="mt-3 text-navy-700 leading-relaxed text-sm sm:text-base">말씀 안에서의 동역을 함께 나눠주세요. 작은 교제와 봉사가 더 큰 열매가 됩니다.</p>
     </div>
 
-    <div class="mt-8 grid lg:grid-cols-2 gap-4 max-w-4xl mx-auto">
-      <div class="reveal bg-white/5 border border-white/10 rounded-2xl p-5 backdrop-blur">
-        <div class="flex items-center gap-3 mb-3">
-          <div class="w-9 h-9 rounded-lg bg-gold-500/20 text-gold-400 flex items-center justify-center text-base"><i class="fa-solid fa-hand-holding-dollar"></i></div>
-          <div><h3 class="font-bold text-white text-sm">찬양후원 계좌 안내</h3><p class="text-[11px] text-white/50">아름다운발걸음선교회</p></div>
-        </div>
-        <ul class="space-y-2 text-xs sm:text-sm">
-          <li class="flex items-center justify-between gap-2 p-3 rounded-xl bg-navy-950/60 border border-white/10">
-            <div class="flex items-center gap-2">
-              <div class="w-7 h-7 rounded-lg bg-yellow-400/10 text-yellow-300 flex items-center justify-center text-xs"><i class="fa-solid fa-building-columns"></i></div>
-              <div><div class="text-white font-semibold text-xs">농협은행</div><div class="text-white/50 text-[10px]">예금주: 아름다운 발걸음선교회</div></div>
-            </div>
-            <div class="text-right">
-              <div class="font-mono text-white text-xs">351-2258-4827-53</div>
-              <button onclick="copyAccount(this,'351-2258-4827-53')" class="mt-0.5 text-[10px] text-gold-400 hover:text-gold-300"><i class="fa-regular fa-copy"></i> 복사</button>
-            </div>
-          </li>
-        </ul>
-        <p class="mt-3 text-[10px] text-white/45 leading-relaxed">* 헌금 시 입금자명을 확인해 주세요. 기부금영수증 문의: 010-2258-4827</p>
+    <div class="mt-8 sm:mt-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 reveal">
+      <div class="bg-white rounded-2xl border border-navy-200/80 p-5 sm:p-6 shadow-sm">
+        <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-xl bg-yellow-100 text-yellow-700 flex items-center justify-center"><i class="fa-solid fa-hand-holding-heart"></i></div><h3 class="font-bold text-navy-900 text-base sm:text-lg">십일조</h3></div>
+        <p class="mt-3 text-sm text-navy-700 leading-relaxed">정기적으로 드리는 십일조입니다.</p>
+        <button onclick="copyAccount(this,'농협 352-1234-5678-12 (예금주: 아름다운발걸음선교회)')" class="mt-4 w-full bg-navy-900 hover:bg-navy-800 text-white text-sm font-bold px-4 py-2.5 rounded-xl transition flex items-center justify-center gap-2"><i class="fa-regular fa-copy"></i> 계좌번호 복사</button>
       </div>
+      <div class="bg-white rounded-2xl border border-navy-200/80 p-5 sm:p-6 shadow-sm">
+        <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-xl bg-yellow-100 text-yellow-700 flex items-center justify-center"><i class="fa-regular fa-heart"></i></div><h3 class="font-bold text-navy-900 text-base sm:text-lg">감사헌금</h3></div>
+        <p class="mt-3 text-sm text-navy-700 leading-relaxed">감사와 기쁨으로 드리는 자유 헌금입니다.</p>
+        <button onclick="copyAccount(this,'농협 352-1234-5678-12 (예금주: 아름다운발걸음선교회)')" class="mt-4 w-full bg-navy-900 hover:bg-navy-800 text-white text-sm font-bold px-4 py-2.5 rounded-xl transition flex items-center justify-center gap-2"><i class="fa-regular fa-copy"></i> 계좌번호 복사</button>
+      </div>
+      <div class="bg-white rounded-2xl border border-navy-200/80 p-5 sm:p-6 shadow-sm">
+        <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-xl bg-yellow-100 text-yellow-700 flex items-center justify-center"><i class="fa-solid fa-people-group"></i></div><h3 class="font-bold text-navy-900 text-base sm:text-lg">선교헌금</h3></div>
+        <p class="mt-3 text-sm text-navy-700 leading-relaxed">우리 이웃과 세상을 향한 섬김의 손길입니다.</p>
+        <button onclick="copyAccount(this,'농협 352-1234-5678-12 (예금주: 아름다운발걸음선교회)')" class="mt-4 w-full bg-navy-900 hover:bg-navy-800 text-white text-sm font-bold px-4 py-2.5 rounded-xl transition flex items-center justify-center gap-2"><i class="fa-regular fa-copy"></i> 계좌번호 복사</button>
+      </div>
+    </div>
+  </div>
+</section>
 
-      <div class="reveal bg-gradient-to-br from-gold-500 to-gold-600 rounded-2xl p-5 text-navy-900 shadow-lg flex flex-col justify-between">
-        <div>
-          <div class="font-serif text-sm sm:text-base leading-snug">"각 사람이 마음에 정한 대로 하되,<br> 조금 아끼는 마음이나 억지로 하지 말라.<br> 하나님은 즐겨 내는 자를 사랑하시느니라."</div>
-          <div class="mt-2 text-xs font-bold opacity-75">— 고린도후서 9:7</div>
+<section id="contact" class="py-12 sm:py-20 bg-[#fafaf7]">
+  <div class="max-w-6xl mx-auto px-5 sm:px-8">
+    <div class="grid lg:grid-cols-2 gap-8 lg:gap-12 items-start">
+      <div class="reveal order-2 lg:order-1">
+        <div class="inline-flex items-center gap-2 text-gold-600 text-[11px] sm:text-xs font-bold uppercase tracking-[0.2em]"><span class="w-6 h-px bg-gold-500"></span> Location</div>
+        <h2 class="mt-1.5 sm:mt-2 font-serif text-2xl sm:text-3xl md:text-4xl text-navy-900 leading-tight tracking-tight">오시는 <span class="text-gold-600">길</span></h2>
+        <p class="mt-3 text-navy-700 leading-relaxed text-sm sm:text-base">경상북도 구미시 금오대로12길 25 — 아름다운발걸음선교회</p>
+        <div class="mt-6 grid sm:grid-cols-2 gap-3 sm:gap-4">
+          <a href="https://map.naver.com/v5/search/%EA%B2%BD%EC%83%81%EB%B6%81%EB%8F%84%20%EA%B5%AC%EB%AF%B8%EC%8B%9C%20%EA%B8%88%EC%98%A4%EB%8C%80%EB%A1%9C12%EA%B8%B8%2025" target="_blank" rel="noopener" class="bg-white rounded-2xl border border-navy-200/80 p-4 hover:border-gold-500 transition flex items-center gap-3"><div class="w-10 h-10 rounded-xl bg-green-100 text-green-700 flex items-center justify-center"><i class="fa-solid fa-map-location-dot"></i></div><div><div class="text-xs font-bold text-navy-500 uppercase tracking-wider">네이버 지도</div><div class="text-sm font-bold text-navy-900">길찾기 열기</div></div></a>
+          <a href="https://m.blog.naver.com/knh019100?tab=1" target="_blank" rel="noopener" class="bg-white rounded-2xl border border-navy-200/80 p-4 hover:border-gold-500 transition flex items-center gap-3"><div class="w-10 h-10 rounded-xl bg-green-100 text-green-700 flex items-center justify-center"><i class="fa-solid fa-blog"></i></div><div><div class="text-xs font-bold text-navy-500 uppercase tracking-wider">블로그</div><div class="text-sm font-bold text-navy-900">목회 이야기 보기</div></div></a>
         </div>
-        <div class="mt-4">
-          <a href="tel:01022584827" class="w-full bg-navy-900 hover:bg-navy-800 text-white text-xs font-bold py-2.5 rounded-xl flex items-center justify-center gap-2 transition"><i class="fa-solid fa-phone text-xs"></i> 전화로 문의하기</a>
+      </div>
+      <div class="reveal order-1 lg:order-2">
+        <div class="relative aspect-[4/3] rounded-2xl overflow-hidden border border-navy-200/80 shadow-sm bg-white">
+          <iframe src="https://map.naver.com/v5/embed?c=13,36.120,128.345,3d,0,0,0,dh&placeUrl=keyword%3A%EA%B2%BD%EC%83%81%EB%B6%81%EB%8F%84%20%EA%B5%AC%EB%AF%B8%EC%8B%9C%20%EA%B8%88%EC%98%A4%EB%8C%80%EB%A1%9C12%EA%B8%B8%2025" class="absolute inset-0 w-full h-full" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" loading="lazy" title="네이버 지도"></iframe>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<section id="contact" class="py-12 sm:py-16 bg-[#fafaf7]">
+</main>
+
+<footer class="bg-navy-900 text-white/80 pt-12 pb-8">
   <div class="max-w-7xl mx-auto px-5 sm:px-8">
-    <div class="text-center max-w-2xl mx-auto reveal">
-      <div class="inline-flex items-center gap-2 text-gold-600 text-xs sm:text-sm font-bold uppercase tracking-[0.2em]"><span class="w-6 h-px bg-gold-500"></span> Contact</div>
-      <h2 class="mt-2 font-serif text-3xl sm:text-4xl text-navy-900 tracking-tight"><span class="text-gold-600">오시는 길</span>을 안내합니다</h2>
-    </div>
-    <div class="mt-8 grid lg:grid-cols-2 gap-5">
-      <div class="reveal rounded-2xl overflow-hidden shadow-md border border-navy-100 aspect-[4/3] lg:aspect-auto lg:h-full min-h-[360px] bg-navy-100 relative">
-        <iframe title="구미 꿈이 있는 교회 오시는 길" src="https://maps.google.com/maps?q=%EA%B2%BD%EC%83%81%EB%B6%81%EB%8F%84%20%EA%B5%AC%EB%AF%B8%EC%8B%9C%20%EA%B8%88%EC%98%A4%EB%8C%80%EB%A1%9C12%EA%B8%B8%2025&t=&z=17&ie=UTF8&iwloc=&output=embed" class="w-full h-full border-0 absolute inset-0" allowfullscreen="" loading="lazy"></iframe>
-      </div>
-      <div class="reveal grid gap-3">
-        <div class="bg-white border border-navy-100 rounded-2xl p-5 shadow-sm">
-          <div class="flex items-center gap-2.5 mb-2"><div class="w-8 h-8 rounded-lg bg-gold-500/10 text-gold-600 flex items-center justify-center text-base"><i class="fa-solid fa-location-dot"></i></div><h3 class="font-bold text-navy-900 text-base">주소</h3></div>
-          <p class="text-navy-700 text-xs sm:text-sm">경상북도 구미시 금오대로 12길 25 2층<br>아름다운발걸음선교회 / 구미 꿈이 있는 교회</p>
-        </div>
-        <div class="bg-white border border-navy-100 rounded-2xl p-5 shadow-sm">
-          <div class="flex items-center gap-2.5 mb-2"><div class="w-8 h-8 rounded-lg bg-gold-500/10 text-gold-600 flex items-center justify-center text-base"><i class="fa-solid fa-clock"></i></div><h3 class="font-bold text-navy-900 text-base">예배 시간</h3></div>
-          <ul class="text-navy-700 text-xs sm:text-sm space-y-1">
-            <li class="flex justify-between border-b border-navy-100 pb-1"><span>주일 예배</span><strong class="text-navy-900">매주 일요일 11:00</strong></li>
-            <li class="flex justify-between border-b border-navy-100 pb-1"><span>평일 라이브 예배</span><strong class="text-navy-900">월~금 20:30</strong></li>
-          </ul>
-        </div>
-        <div class="bg-white border border-navy-100 rounded-2xl p-5 shadow-sm">
-          <div class="flex items-center gap-2.5 mb-2"><div class="w-8 h-8 rounded-lg bg-gold-500/10 text-gold-600 flex items-center justify-center text-base"><i class="fa-solid fa-phone"></i></div><h3 class="font-bold text-navy-900 text-base">연락처 및 소셜 미디어</h3></div>
-          <p class="text-navy-700 text-xs sm:text-sm">전화번호: 010-2258-4827</p>
-          <p class="text-navy-700 text-xs sm:text-sm mt-0.5"><i class="fa-regular fa-envelope text-gold-600 mr-1"></i> lovekyk79@naver.com</p>
-          <div class="mt-3 flex flex-wrap items-center gap-2">
-            <a href="https://www.instagram.com/gyuhekim?igsh=NXViY3kxamF2cjlx" target="_blank" rel="noopener" class="flex items-center gap-1.5 text-xs font-bold bg-pink-50 text-pink-600 hover:bg-pink-100 px-2.5 py-1.5 rounded-lg transition"><i class="fa-brands fa-instagram"></i> 인스타그램</a>
-            <a href="https://youtube.com/channel/UCHCcttgFDXkLClVeuQxNaMw" target="_blank" rel="noopener" class="flex items-center gap-1.5 text-xs font-bold bg-red-50 text-red-600 hover:bg-red-100 px-2.5 py-1.5 rounded-lg transition"><i class="fa-brands fa-youtube"></i> 유튜브</a>
-            <a href="https://m.blog.naver.com/knh019100?tab=1" target="_blank" rel="noopener" class="flex items-center gap-1.5 text-xs font-bold bg-yellow-50 text-yellow-700 hover:bg-yellow-100 px-2.5 py-1.5 rounded-lg transition"><i class="fa-solid fa-blog"></i> 블로그</a>
-            <a href="https://map.naver.com/v5/search/%EA%B2%BD%EC%83%81%EB%B6%81%EB%8F%84%20%EA%B5%AC%EB%AF%B8%EC%8B%9C%20%EA%B8%88%EC%98%A4%EB%8C%80%EB%A1%9C12%EA%B8%B8%2025" target="_blank" rel="noopener" class="flex items-center gap-1.5 text-xs font-bold bg-gray-100 text-gray-700 hover:bg-gray-200 px-2.5 py-1.5 rounded-lg transition"><i class="fa-solid fa-map-location-dot"></i> 카카오/네이버 지도</a>
+    <div class="grid md:grid-cols-3 gap-8 md:gap-10 pb-8 border-b border-white/10">
+      <div>
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-gold-500 to-gold-600 flex items-center justify-center"><i class="fa-solid fa-cross text-navy-900 text-lg"></i></div>
+          <div class="leading-tight">
+            <div class="font-extrabold text-white text-base">구미 꿈이 있는 교회</div>
+            <div class="text-[11px] uppercase tracking-widest text-gold-300">Gumi Dream Church</div>
           </div>
         </div>
+        <p class="mt-4 text-sm leading-relaxed text-white/70 max-w-xs">말씀과 기도로 세워지는 교회. 아름다운발걸음선교회.</p>
+      </div>
+      <div>
+        <div class="text-xs uppercase tracking-widest text-gold-300 font-bold">Address</div>
+        <div class="mt-2 text-sm text-white/85">경상북도 구미시 금오대로12길 25</div>
+        <div class="text-xs text-white/55 mt-1">아름다운발걸음선교회</div>
+      </div>
+      <div>
+        <div class="text-xs uppercase tracking-widest text-gold-300 font-bold">Contact</div>
+        <a href="mailto:lovekyk79@naver.com" class="mt-2 block text-sm text-white/85 hover:text-white">lovekyk79@naver.com</a>
+        <div class="mt-3 flex items-center gap-3 text-white/80">
+          <a href="https://www.instagram.com/gyuhekim?igsh=NXViY3kxamF2cjlx" target="_blank" rel="noopener" aria-label="인스타그램" class="hover:text-white"><i class="fa-brands fa-instagram text-xl"></i></a>
+          <a href="https://youtube.com/channel/UCHCcttgFDXkLClVeuQxNaMw" target="_blank" rel="noopener" aria-label="유튜브" class="hover:text-white"><i class="fa-brands fa-youtube text-xl"></i></a>
+          <a href="https://m.blog.naver.com/knh019100?tab=1" target="_blank" rel="noopener" aria-label="블로그" class="hover:text-white"><i class="fa-solid fa-blog text-xl"></i></a>
+          <a href="https://map.naver.com/v5/search/%EA%B2%BD%EC%83%81%EB%B6%81%EB%8F%84%20%EA%B5%AC%EB%AF%B8%EC%8B%9C%20%EA%B8%88%EC%98%A4%EB%8C%80%EB%A1%9C12%EA%B8%B8%2025" target="_blank" rel="noopener" aria-label="지도" class="hover:text-white"><i class="fa-solid fa-map-location-dot text-xl"></i></a>
+        </div>
       </div>
     </div>
-  </div>
-</section>
-
-<footer class="bg-navy-950 text-white/60 pb-20 lg:pb-0">
-  <div class="max-w-7xl mx-auto px-5 sm:px-8 py-10 grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
-    <div>
-      <div class="flex items-center gap-2"><div class="w-8 h-8 rounded-lg bg-gold-500 flex items-center justify-center"><i class="fa-solid fa-cross text-navy-900"></i></div><div class="leading-tight"><div class="font-extrabold text-white text-xs sm:text-sm">구미 꿈이 있는 교회</div><div class="text-[9px] uppercase tracking-widest">Gumi Dream Church</div></div></div>
-      <p class="mt-3 text-xs leading-relaxed">사랑과 은혜가 넘치는 공동체, 아름다운발걸음선교회.</p>
-      <div class="mt-3 flex items-center gap-2.5">
-        <a href="https://www.instagram.com/gyuhekim?igsh=NXViY3kxamF2cjlx" target="_blank" rel="noopener" class="w-7 h-7 rounded-full bg-white/10 hover:bg-pink-600 text-white flex items-center justify-center transition text-xs"><i class="fa-brands fa-instagram"></i></a>
-        <a href="https://youtube.com/channel/UCHCcttgFDXkLClVeuQxNaMw" target="_blank" rel="noopener" class="w-7 h-7 rounded-full bg-white/10 hover:bg-red-600 text-white flex items-center justify-center transition text-xs"><i class="fa-brands fa-youtube"></i></a>
-      </div>
-    </div>
-    <div><div class="text-white font-bold text-xs sm:text-sm mb-3">바로가기</div><ul class="space-y-1.5 text-xs"><li><a href="#about" class="hover:text-white">교회 소개</a></li><li><a href="#live" class="hover:text-white">라이브 예배</a></li><li><a href="#board" class="hover:text-white">교회 소식</a></li><li><a href="#sermons" class="hover:text-white">최근 말씀</a></li><li><a href="#gallery-section" class="hover:text-white">갤러리</a></li></ul></div>
-    <div><div class="text-white font-bold text-xs sm:text-sm mb-3">참여</div><ul class="space-y-1.5 text-xs"><li><a href="#visit" class="hover:text-white">첫 방문 안내</a></li><li><a href="#giving" class="hover:text-white">찬양·온라인 헌금</a></li><li><a href="#contact" class="hover:text-white">오시는 길</a></li></ul></div>
-    <div><div class="text-white font-bold text-xs sm:text-sm mb-3">연락</div><ul class="space-y-1.5 text-xs"><li>경상북도 구미시 금오대로 12길 25 2층</li><li>010-2258-4827</li><li>lovekyk79@naver.com</li></ul></div>
-  </div>
-  <div class="border-t border-white/10">
-    <div class="max-w-7xl mx-auto px-5 sm:px-8 py-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px]">
-      <div>© 2026 Gumi Dream Church · 아름다운발걸음선교회. All rights reserved.</div>
-      <div class="flex items-center gap-3">
-        <a href="privacy.html" target="_blank" rel="noopener" class="hover:text-white font-semibold underline underline-offset-4 decoration-gold-500">개인정보처리방침</a>
-        <a href="terms.html" target="_blank" rel="noopener" class="hover:text-white font-semibold underline underline-offset-4 decoration-gold-500">이용약관</a>
-      </div>
+    <div class="pt-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-white/55">
+      <div>© 2026 Gumi Dream Church · 아름다운발걸음선교회 · All rights reserved.</div>
+      <div class="flex items-center gap-4"><a href="#" class="hover:text-white">개인정보처리방침</a><a href="#" class="hover:text-white">이용약관</a></div>
     </div>
   </div>
 </footer>
 
-</main>
-
-<nav id="mobileBar" class="fixed bottom-0 inset-x-0 z-40 lg:hidden">
-  <div class="glass-dark border-t border-white/10 safe-bottom">
-    <ul class="grid grid-cols-5 text-[10px] font-bold text-white/85">
-      <li><a href="#home" class="flex flex-col items-center py-2 gap-0.5"><i class="fa-solid fa-house text-sm"></i>홈</a></li>
-      <li><a href="#live" class="flex flex-col items-center py-2 gap-0.5"><i class="fa-solid fa-tower-broadcast text-sm text-red-400"></i>라이브</a></li>
-      <li><a href="#visit" class="-mt-6 mx-auto w-12 h-12 rounded-full bg-gradient-to-br from-gold-500 to-gold-600 text-navy-900 flex items-center justify-center shadow-lg shadow-gold-500/40 border-2 border-navy-900"><i class="fa-solid fa-hand-wave text-base"></i></a><span class="block text-center mt-0.5">방문</span></li>
-      <li><a href="#gallery-section" class="flex flex-col items-center py-2 gap-0.5"><i class="fa-regular fa-images text-sm"></i>갤러리</a></li>
-      <li><a href="#contact" class="flex flex-col items-center py-2 gap-0.5"><i class="fa-solid fa-map-pin text-sm"></i>길찾기</a></li>
-    </ul>
+<div id="postModal" onclick="if(event.target===this) closePostModal()" class="hidden fixed inset-0 z-[95] bg-navy-900/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-6">
+  <div class="bg-white rounded-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto shadow-2xl reveal in">
+    <div class="sticky top-0 bg-white/95 backdrop-blur border-b border-navy-100 px-5 sm:px-7 py-4 flex items-center justify-between gap-3 z-10">
+      <h3 id="postModalTitle" class="text-base sm:text-lg font-extrabold text-navy-900 pr-2"></h3>
+      <button onclick="closePostModal()" aria-label="닫기" class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-white hover:bg-navy-50 border border-navy-200 grid place-items-center shrink-0"><i class="fa-solid fa-xmark text-navy-700"></i></button>
+    </div>
+    <article id="postModalBody" class="p-5 sm:p-7 post-body"></article>
+    <div id="postModalImageWrap" class="px-5 sm:px-7 pb-5 sm:pb-7 hidden"><img id="postModalImage" class="w-full rounded-xl shadow" alt=""></div>
+    <div class="px-5 sm:px-7 pb-5 sm:pb-7 text-[11px] text-navy-500" id="postModalMeta"></div>
   </div>
-</nav>
+</div>
 
 <script>
-window.__INLINE_DATA__ = {
-  "posts": [
-    { "src": "2026-08-07-testing.md",   "title": "Testing",  "date": "2026-08-07T09:34:00+09:00", "image": "images/1785895136741.jpg", "body": "테스트 본문입니다." },
-    { "src": "2026-08-07-testing2.md",  "title": "Testing2", "date": "2026-08-07T09:37:00+09:00", "image": "", "body": "테스트 본문입니다." },
-    { "src": "2026-08-07-testing2-1.md","title": "Testing2", "date": "2026-08-07T09:37:00+09:00", "image": "", "body": "테스트 본문입니다." }
-  ],
-  "gallery": [
-    "images/58170.jpg","images/58169.jpg","images/58171.jpg","images/58166.jpg","images/58167.jpg",
-    "images/58172.jpg","images/58168.jpg","images/58174.jpg","images/58173.jpg","images/58164.jpg"
-  ]
-};
-</script>
+  // ===== 공통 설정 =====
+  const REPO = "gumivision/gumidreamchurch";
+  const YT_CHANNEL = "UCHCcttgFDXkLClVeuQxNaMw";
+  const KAKAO_CHAT_URL = "https://open.kakao.com/o/sLwXlSJi";
+  const DATA_URL = (() => {
+    const base = `https://raw.githubusercontent.com/${REPO}/main/data.json`;
+    return `${base}?t=${Date.now()}`;
+  })();
+  const rawUrl = (rel) => {
+    if (!rel) return '';
+    if (/^https?:\/\//i.test(rel)) return rel + (rel.includes('?') ? '&' : '?') + 't=' + Date.now();
+    return `https://raw.githubusercontent.com/${REPO}/main/${rel}?t=${Date.now()}`;
+  };
 
-<script>
-  const YT_CHANNEL = 'UCHCcttgFDXkLClVeuQxNaMw';
-  const KAKAO_CHAT_URL = 'https://open.kakao.com/o/sWASfhHi';
-
-  // ===== 유틸 =====
-  function escapeHtml(s){
-    return (s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  }
-  function toRawImageUrl(path){
-    if(!path) return '';
-    const rel = String(path).trim().replace(/^\/+/, '');
-    return `https://raw.githubusercontent.com/gumivision/gumidreamchurch/main/${rel}?t=${Date.now()}`;
-  }
-
-  // ★★★ 모든 날짜는 이 헬퍼 1개로 통일 (시/분/초 제거)
+  // ★★★ 모든 날짜는 이 헬퍼 1개로 통일 (시/분/초 제거) ★★★
   function formatKST(input){
     if(input == null || input === '') return '';
     let s = String(input).trim();
+    if(/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
     const m = s.match(/^(\d{4})-(\d{2})-(\d{2})/);
     if(m) return `${m[1]}-${m[2]}-${m[3]}`;
     const d = new Date(s);
@@ -529,7 +501,7 @@ window.__INLINE_DATA__ = {
     return s;
   }
 
-  // ★★★ 캐시 무력화 — 새 글/이미지 올리면 즉시 반영
+  // ★★★ 캐시 무력화 — 새 글/이미지 올리면 즉시 반영 ★★★
   async function fetchDataJson(){
     try{
       const url = '/data.json?v=' + Date.now();
@@ -538,36 +510,157 @@ window.__INLINE_DATA__ = {
       const j = await r.json();
       if(j && Array.isArray(j.posts) && Array.isArray(j.gallery)) return j;
     }catch(_){}
-    return window.__INLINE_DATA__;
+    return { posts: [], gallery: [] };
   }
 
-  // ★★★ 탭 복귀 / 포커스 시 새 글 자동 반영 (서버 데이터와 비교해서 다르면 1줄 새로고침)
-  async function refreshIfStale(){
-    try{
-      const r = await fetch('/data.json?t=' + Date.now(), { cache:'no-store' });
-      if(!r.ok) return;
-      const j = await r.json();
-      if(!j || !Array.isArray(j.posts)) return;
-      const cur  = (window.__INLINE_DATA__ && window.__INLINE_DATA__.posts && window.__INLINE_DATA__.posts[0]) ? window.__INLINE_DATA__.posts[0].src : '';
-      const live = j.posts[0] ? j.posts[0].src : '';
-      const curN = (window.__INLINE_DATA__ && window.__INLINE_DATA__.posts) ? window.__INLINE_DATA__.posts.length : 0;
-      if(curN !== j.posts.length || (cur && live && cur !== live) || (cur=='' && live)){
-        location.reload();
-      }
-    }catch(_){}
+  // ===== 마크다운 간단 렌더 (제목/볼드/줄바꿈 정도만 안전 처리) =====
+  function mdLite(s){
+    if(s == null) return '';
+    let h = String(s);
+    h = h.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    h = h.replace(/^### (.+)$/gm,'<h3 class="text-base sm:text-lg font-bold text-navy-900 mt-4 mb-2">$1</h3>');
+    h = h.replace(/^## (.+)$/gm,'<h2 class="text-lg sm:text-xl font-extrabold text-navy-900 mt-5 mb-2">$1</h2>');
+    h = h.replace(/\*\*(.+?)\*\*/g,'<strong class="text-navy-900 font-bold">$1</strong>');
+    h = h.replace(/\*(.+?)\*/g,'<em>$1</em>');
+    h = h.replace(/!\[(.*?)\]\((.*?)\)/g,'<img src="$2" alt="$1" class="rounded-xl my-3 shadow" loading="lazy">');
+    h = h.replace(/\[(.*?)\]\((.*?)\)/g,'<a href="$2" target="_blank" rel="noopener" class="text-gold-600 underline">$1</a>');
+    h = h.replace(/\n{2,}/g,'</p><p class="mb-3 leading-relaxed text-navy-800">');
+    h = h.replace(/\n/g,'<br>');
+    if(!/<p/.test(h)) h = '<p class="mb-3 leading-relaxed text-navy-800">' + h + '</p>';
+    return h;
   }
-  document.addEventListener('visibilitychange', ()=>{ if(!document.hidden) refreshIfStale(); });
-  window.addEventListener('focus', refreshIfStale);
-  setTimeout(refreshIfStale, 5000);
-  function safeDate(str){
-    if(str){
-      const d = new Date(str);
-      if(!isNaN(d.getTime())) return d.getTime();
+
+  function escapeHtml(s){
+    return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  function openPostModal(post){
+    document.getElementById('postModalTitle').textContent = post.title || '';
+    document.getElementById('postModalBody').innerHTML = mdLite(post.body || '');
+    const img = document.getElementById('postModalImage');
+    const wrap = document.getElementById('postModalImageWrap');
+    if(post.image){
+      img.src = post.image; img.alt = post.title || '';
+      wrap.classList.remove('hidden');
+    } else wrap.classList.add('hidden');
+    document.getElementById('postModalMeta').textContent = post.date ? formatKST(post.date) : '';
+    document.getElementById('postModal').classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+  }
+  function closePostModal(){
+    const m = document.getElementById('postModal');
+    if (!m || m.classList.contains('hidden')) return;
+    m.classList.add('hidden');
+    document.body.style.overflow = '';
+  }
+
+  function loadPosts(data){
+    const posts = data.posts || [];
+    const latestEl = document.getElementById('latest-post-container');
+    const prevWrap = document.getElementById('previous-posts-wrapper');
+    const prevList = document.getElementById('previous-posts-list');
+    if(!posts.length){
+      latestEl.innerHTML = '<div class="text-center text-gray-400 py-10">아직 등록된 소식이 없습니다.</div>';
+      prevWrap.classList.add('hidden');
+      return;
     }
-    return 0;
+    const sorted = [...posts].sort((a,b) => String(b.date||'').localeCompare(String(a.date||'')));
+    const latest = sorted[0];
+
+    const image = latest.image || '';
+    const imageHtml = image ? `<img src="${escapeHtml(image)}" alt="${escapeHtml(latest.title||'')}" class="mt-4 w-full rounded-xl object-cover max-h-[480px]" loading="lazy" onerror="this.style.display='none'">` : '';
+
+    const summary = latest.summary || (latest.body ? String(latest.body).replace(/\n+/g,' ').slice(0,180) : '');
+
+    latestEl.innerHTML = `
+      <article class="news-card bg-white rounded-2xl border border-navy-200/80 p-5 sm:p-7 shadow-sm fade-up in">
+        <div class="flex items-center gap-2 text-[11px] font-bold tracking-widest uppercase text-gold-600">
+          <span>⭐ 최신소식</span><span class="text-gray-300">·</span><span class="text-gray-500">${escapeHtml(formatKST(latest.date))}</span>
+        </div>
+        <h3 class="mt-2 text-xl sm:text-2xl font-extrabold text-navy-900">${escapeHtml(latest.title || '')}</h3>
+        ${summary ? `<p class="mt-2 text-sm sm:text-base text-navy-700">${escapeHtml(summary)}${summary.length>=180 ? '…' : ''}</p>` : ''}
+        ${imageHtml}
+        <button class="mt-5 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-navy-900 text-white text-sm font-bold hover:bg-navy-800 transition" data-post-idx="0">
+          전체 글 보기 <i class="fa-solid fa-arrow-right text-xs"></i>
+        </button>
+      </article>
+    `;
+
+    if(sorted.length <= 1){
+      prevWrap.classList.add('hidden');
+    } else {
+      prevWrap.classList.remove('hidden');
+      prevList.innerHTML = sorted.slice(1).map((p, i) => `
+        <li class="py-3 flex items-center justify-between gap-3 cursor-pointer hover:bg-white px-2 rounded-lg" data-post-idx="${i+1}">
+          <div class="flex items-center gap-3 min-w-0">
+            <i class="fa-regular fa-newspaper text-gold-600"></i>
+            <span class="truncate text-sm sm:text-base font-semibold text-navy-900">${escapeHtml(p.title || '')}</span>
+          </div>
+          <span class="text-xs text-gray-500 shrink-0">${escapeHtml(formatKST(p.date))}</span>
+        </li>
+      `).join('');
+    }
+
+    const clickHandler = (e) => {
+      const btn = e.target.closest('[data-post-idx]');
+      if(!btn) return;
+      const idx = parseInt(btn.getAttribute('data-post-idx'), 10);
+      openPostModal(sorted[idx]);
+    };
+    latestEl.onclick = clickHandler;
+    prevList.onclick = clickHandler;
   }
 
-  // ===== 헤더/메뉴/스크롤 =====
+  function loadGallery(data){
+    const items = data.gallery || [];
+    const c = document.getElementById('gallery-container');
+    const p = document.getElementById('gallery-pagination');
+    const perPage = 9;
+    if(!items.length){
+      c.innerHTML = '<p class="text-center text-gray-500 col-span-full">아직 등록된 이미지가 없습니다.</p>';
+      p.innerHTML = '';
+      return;
+    }
+    const pages = Math.max(1, Math.ceil(items.length / perPage));
+    let page = 1;
+    const draw = () => {
+      const start = (page-1)*perPage;
+      const slice = items.slice(start, start+perPage);
+      c.innerHTML = slice.map(g => `
+        <button class="group relative aspect-square overflow-hidden rounded-2xl bg-gray-100 shadow-sm hover:shadow-md transition" data-img="${escapeHtml(g.image||'')}" data-title="${escapeHtml(g.title||'')}">
+          <img src="${escapeHtml(g.image||'')}" alt="${escapeHtml(g.title||'')}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" loading="lazy">
+          <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent p-2 opacity-0 group-hover:opacity-100 transition">
+            <div class="text-white text-xs font-bold truncate">${escapeHtml(g.title||'')}</div>
+          </div>
+        </button>
+      `).join('');
+      if(pages>1){
+        p.innerHTML = Array.from({length: pages}, (_, i) => `
+          <button class="px-3 py-1.5 rounded-full text-sm font-bold transition ${i+1===page?'bg-navy-900 text-white':'bg-gray-100 text-navy-900 hover:bg-gray-200'}" data-page="${i+1}">${i+1}</button>
+        `).join('');
+      } else p.innerHTML = '';
+    };
+    draw();
+
+    c.onclick = (e) => {
+      const btn = e.target.closest('[data-img]');
+      if(!btn) return;
+      openLightbox(btn.getAttribute('data-img'), btn.getAttribute('data-title'));
+    };
+    p.onclick = (e) => {
+      const btn = e.target.closest('[data-page]');
+      if(!btn) return;
+      page = parseInt(btn.getAttribute('data-page'), 10);
+      draw();
+    };
+  }
+
+  function renderGalleryFallback(){
+    const c = document.getElementById('gallery-container');
+    c.innerHTML = '<p class="text-center text-gray-500 col-span-full">사진을 불러오는 중입니다...</p>';
+  }
+
+  // ===== 헤더 / 스크롤 =====
   const header = document.getElementById('header');
   const onScroll = () => { if (window.scrollY > 30) { header.classList.add('glass','shadow-md'); } else { header.classList.remove('glass','shadow-md'); } };
   document.addEventListener('scroll', onScroll, {passive:true});
@@ -587,6 +680,7 @@ window.__INLINE_DATA__ = {
   }, { threshold:.12, rootMargin:'0px 0px -60px 0px' });
   document.querySelectorAll('.reveal, .fade-up').forEach(el => io.observe(el));
 
+  // ===== 방문 신청 → 카카오톡 =====
   const visitForm = document.getElementById('visitForm');
   if (visitForm) {
     visitForm.addEventListener('submit', function(e) {
@@ -635,224 +729,73 @@ window.__INLINE_DATA__ = {
     document.body.style.overflow = '';
   }
 
-  // ===== 유튜브 RSS =====
-  async function fetchRssJson(url){
-    const api = 'https://api.rss2json.com/v1/api.json?rss_url=' + encodeURIComponent(url);
-    try{ const r = await fetch(api); if(!r.ok) throw 0; const j = await r.json(); return j.items || []; } catch(e){ return []; }
-  }
-  function ytIdFromUrl(u){
-    try{
-      const url = new URL(u);
-      if(url.hostname.includes('youtu.be')) return url.pathname.slice(1);
-      if(url.searchParams.get('v')) return url.searchParams.get('v');
-      const m = url.pathname.match(/\/shorts\/([\w-]+)/);
-      if(m) return m[1];
-    }catch(_){}
-    return null;
-  }
-  function renderShorts(items){
-    const grid = document.getElementById('shortsGrid');
-    if (!grid) return;
-    const shorts = items.map(i => ({...i, id: ytIdFromUrl(i.link || i.guid)})).filter(i=>i.id).slice(0, 3);
-    if(!shorts.length){
-      grid.innerHTML = '<div class="col-span-full aspect-[16/9] rounded-2xl border border-navy-200 bg-white flex flex-col items-center justify-center text-center p-6 text-navy-600 text-xs sm:text-sm"><i class="fa-brands fa-youtube text-3xl text-red-500 mb-2"></i>Shorts 피드를 불러오는 중입니다.<br>잠시 후 다시 방문해 주세요.</div>';
-      return;
-    }
-    grid.innerHTML = shorts.map(s => `
-      <a href="${s.link}" target="_blank" rel="noopener" class="group relative block bg-black rounded-xl overflow-hidden border border-navy-200/60 shadow-sm hover:border-gold-500/60 transition">
-        <div class="short-wrap">
-          <div class="short-thumb">
-            <img src="https://i.ytimg.com/vi/${s.id}/hqdefault.jpg" alt="${escapeHtml(s.title)}" loading="lazy" />
-            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent"></div>
-            <div class="absolute top-2 left-2 inline-flex items-center gap-1 bg-red-600/90 text-white text-[10px] sm:text-[11px] font-bold px-2 py-0.5 rounded">
-              <i class="fa-solid fa-bolt"></i> Shorts
-            </div>
-            <div class="absolute inset-0 flex items-center justify-center">
-              <span class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-red-600 text-white flex items-center justify-center shadow-xl">
-                <i class="fa-solid fa-play text-sm sm:text-base"></i>
-              </span>
-            </div>
-            <div class="absolute bottom-0 inset-x-0 p-2.5 sm:p-3">
-              <div class="text-white text-[11px] sm:text-xs font-semibold leading-tight line-clamp-2">${escapeHtml(s.title)}</div>
-            </div>
-          </div>
-        </div>
-      </a>
-    `).join('');
-  }
-  function renderSermons(items){
-    const grid = document.getElementById('sermonsGrid');
-    if (!grid) return;
-    const vids = items.map(i => ({...i, id: ytIdFromUrl(i.link || i.guid)})).filter(i=>i.id && !/(shorts|\/short\/)/.test(i.link || '')).slice(0,6);
-    if(!vids.length){
-      grid.innerHTML = '<div class="col-span-full p-6 rounded-2xl bg-white border border-navy-100 text-center text-navy-700/70 text-xs sm:text-sm">최근 말씀 영상을 불러오는 중입니다.</div>';
-      return;
-    }
-    grid.innerHTML = vids.map(v => `<a href="${v.link}" target="_blank" rel="noopener" class="group block rounded-2xl overflow-hidden bg-white border border-navy-100 hover:border-gold-500/60 hover:shadow-lg hover:-translate-y-0.5 transition"><div class="relative aspect-video overflow-hidden"><img src="https://i.ytimg.com/vi/${v.id}/hqdefault.jpg" alt="${escapeHtml(v.title)}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition duration-500"><div class="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 group-hover:opacity-100 transition"><span class="w-12 h-12 rounded-full bg-red-600 text-white flex items-center justify-center shadow-xl"><i class="fa-solid fa-play ml-0.5 text-sm"></i></span></div></div><div class="p-4"><div class="text-[10px] font-bold text-gold-600 mb-1 uppercase tracking-wider">Sermon</div><div class="font-bold text-navy-900 line-clamp-2 text-xs sm:text-sm leading-snug">${escapeHtml(v.title)}</div><div class="mt-2.5 flex items-center gap-1.5 text-[11px] text-navy-700/60"><i class="fa-regular fa-calendar"></i> ${formatKST(v.pubDate)}</div></div></a>`).join('');
-  }
-
-  // ===== 게시글 =====
-  function openPostModal(title, date, bodyContent, headerImageUrl) {
-    document.getElementById('postModalTitle').textContent = title || '제목 없음';
-    document.getElementById('postModalDate').textContent = formatKST(date);
-    const bodyEl = document.getElementById('postModalBody');
-    let html = '';
-    if (headerImageUrl) {
-      html += `<img src="${headerImageUrl}" alt="${escapeHtml(title)}" class="w-full max-h-72 object-cover rounded-lg mb-4" loading="lazy" onerror="this.style.display='none'" />`;
-    }
-    if (bodyContent && bodyContent.trim()) {
-      html += bodyContent;
-    } else {
-      html += `<p class="text-gray-500 text-sm">본문이 비어있습니다. 관리자 페이지에서 내용을 입력해 주세요.</p>`;
-    }
-    bodyEl.innerHTML = html;
-    document.getElementById('postModal').classList.remove('hidden');
-    document.body.style.overflow = 'hidden';
-  }
-  function closePostModal() {
-    const modal = document.getElementById('postModal');
-    if (!modal || modal.classList.contains('hidden')) return;
-    modal.classList.add('hidden');
-    document.body.style.overflow = '';
-  }
-
-  async function loadPosts(data){
-    const container = document.getElementById('latest-post-container');
-    const listContainer = document.getElementById('board-list-container');
-    const wrapper = document.getElementById('previous-posts-wrapper');
-    if (!container) return;
-
-    const posts = (data.posts || []).slice().sort((a,b) => safeDate(b.date) - safeDate(a.date));
-    if (!posts.length) {
-      container.innerHTML = '<p class="text-center text-gray-400 py-8">등록된 게시글이 없습니다.</p>';
-      if (wrapper) wrapper.classList.add('hidden');
-      return;
-    }
-    container.innerHTML = '';
-    const displayPosts = posts.slice(0, 6);
-
-    const latest = displayPosts[0];
-    const latestCard = document.createElement('div');
-    latestCard.className = 'bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden hover:shadow-md transition';
-    const hasImage = !!latest.image;
-    const plainText = (latest.body || '').replace(/<[^>]*>?/gm, '').replace(/\s+/g, ' ').trim();
-    const summary = plainText.length > 120 ? plainText.slice(0, 120) + '…' : plainText;
-    const latestImageUrl = hasImage ? toRawImageUrl(latest.image) : '';
-
-    latestCard.innerHTML = `
-      <div class="flex items-center justify-between px-5 pt-4 pb-2">
-        <span class="inline-flex items-center gap-1.5 bg-gold-500 text-white text-[11px] font-extrabold px-2.5 py-1 rounded-full">
-          <i class="fa-solid fa-star text-[10px]"></i> 최신소식
-        </span>
-        <span class="text-xs text-gray-400 font-medium">${formatKST(latest.date)}</span>
-      </div>
-      <button type="button" class="w-full text-left px-5 pb-5 group">
-        <h3 class="text-lg sm:text-xl font-bold text-navy-900 leading-snug group-hover:text-gold-600 transition">${escapeHtml(latest.title || '제목 없음')}</h3>
-        ${summary ? `<p class="mt-2 text-sm text-gray-600 leading-relaxed line-clamp-3">${escapeHtml(summary)}</p>` : ''}
-        ${hasImage ? `
-          <div class="mt-3 -mx-5 sm:mx-0 sm:rounded-xl overflow-hidden">
-            <img src="${latestImageUrl}" alt="${escapeHtml(latest.title)}" class="w-full max-h-72 object-cover" loading="lazy" onerror="this.parentElement.style.display='none';" />
-          </div>
-        ` : ''}
-        <div class="mt-3 inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-gold-600">
-          전체 글 보기 <i class="fa-solid fa-arrow-right text-xs"></i>
-        </div>
-      </button>
-    `;
-    latestCard.querySelector('button').onclick = () => openPostModal(latest.title, latest.date, latest.body, latestImageUrl);
-    container.appendChild(latestCard);
-
-    const previousPosts = displayPosts.slice(1);
-    if (previousPosts.length > 0 && listContainer && wrapper) {
-      listContainer.innerHTML = '';
-      previousPosts.forEach((post) => {
-        const li = document.createElement('li');
-        li.className = 'flex items-center justify-between gap-3 py-3 px-2 cursor-pointer hover:bg-white transition-colors rounded-lg';
-        li.onclick = () => openPostModal(post.title, post.date, post.body, post.image ? toRawImageUrl(post.image) : '');
-        li.innerHTML = `
-          <div class="flex items-center gap-2 min-w-0">
-            <i class="fa-regular fa-newspaper text-gold-500 text-sm shrink-0"></i>
-            <span class="text-sm sm:text-[15px] text-gray-800 font-medium truncate">${escapeHtml(post.title || '제목 없음')}</span>
-          </div>
-          <span class="text-[11px] sm:text-xs text-gray-400 shrink-0">${formatKST(post.date)}</span>
-        `;
-        listContainer.appendChild(li);
-      });
-      wrapper.classList.remove('hidden');
-    } else if (wrapper) {
-      wrapper.classList.add('hidden');
-    }
-  }
-
-  // ===== 갤러리 =====
-  let galleryItems = [];
-  const galleryItemsPerPage = 9;
-  function renderGalleryPage(page) {
-    const grid = document.getElementById('gallery-container');
-    const pagination = document.getElementById('gallery-pagination');
-    if (!grid) return;
-    grid.innerHTML = '';
-    const totalPages = Math.ceil(galleryItems.length / galleryItemsPerPage);
-    const startIndex = (page - 1) * galleryItemsPerPage;
-    const pageItems = galleryItems.slice(startIndex, startIndex + galleryItemsPerPage);
-    if (pageItems.length === 0) {
-      grid.innerHTML = '<div class="col-span-full text-center text-gray-400 py-8">등록된 사진이 없습니다.</div>';
-      if (pagination) pagination.innerHTML = '';
-      return;
-    }
-    pageItems.forEach(item => {
-      const card = document.createElement('div');
-      card.className = 'relative rounded-xl overflow-hidden aspect-square bg-gray-100 cursor-pointer group shadow-sm';
-      card.onclick = () => openLightbox(item.imageUrl, item.title);
-      card.innerHTML = `<img src="${item.imageUrl}" alt="${escapeHtml(item.title)}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" onerror="this.parentElement.classList.add('opacity-50'); this.alt='이미지 로드 실패: '+this.alt;">`;
-      grid.appendChild(card);
-    });
-    if (pagination) {
-      pagination.innerHTML = '';
-      if (totalPages > 1) {
-        const nav = document.createElement('div');
-        nav.className = 'flex justify-center items-center gap-2 mt-6 w-full';
-        for (let i = 1; i <= totalPages; i++) {
-          const btn = document.createElement('button');
-          btn.innerText = i;
-          btn.className = `px-3 py-1 rounded-md text-xs font-semibold transition ${i === page ? 'bg-amber-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`;
-          btn.onclick = () => { renderGalleryPage(i); grid.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); };
-          nav.appendChild(btn);
-        }
-        pagination.appendChild(nav);
-      }
-    }
-  }
-  function loadGallery(data){
-    const container = document.getElementById('gallery-container');
-    if (!container) return;
-    const items = [];
-    (data.gallery || []).forEach((relPath) => {
-      const url = toRawImageUrl(relPath);
-      if (!url) return;
-      const fileName = relPath.split('/').pop();
-      items.push({ imageUrl: url, title: fileName, src: fileName });
-    });
-    galleryItems = items;
-    renderGalleryPage(1);
-  }
-
-  // ===== 초기화 + 가시성 복귀 시 재로딩 =====
+  // ===== 데이터 로드 + 렌더 =====
   document.addEventListener('DOMContentLoaded', async () => {
+    renderGalleryFallback();
     const data = await fetchDataJson();
+    loadPosts(data);
+    loadGallery(data);
+
+    // 유튜브 라이브 + shorts
     (async () => {
-      const uploads = fetchRssJson(`https://www.youtube.com/feeds/videos.xml?channel_id=${YT_CHANNEL}`);
-      const shorts  = fetchRssJson(`https://www.youtube.com/feeds/videos.xml?channel_id=${YT_CHANNEL}&filter=shorts`).catch(()=>[]);
+      const parseRss = async (url) => {
+        try {
+          const r = await fetch(url);
+          if (!r.ok) return [];
+          const txt = await r.text();
+          const doc = new DOMParser().parseFromString(txt, 'application/xml');
+          return Array.from(doc.querySelectorAll('entry')).map(e => ({
+            title: e.querySelector('title')?.textContent || '',
+            link:  e.querySelector('link')?.getAttribute('href') || '',
+            published: e.querySelector('published')?.textContent || '',
+            videoId: (e.querySelector('link')?.getAttribute('href') || '').split('v=')[1] || ''
+          }));
+        } catch (_) { return []; }
+      };
+      const renderShorts = (items) => {
+        const c = document.getElementById('shortsSlides') || document.getElementById('shorts-container');
+        if(!c) return;
+        if(!items.length){ c.innerHTML = '<p class="text-center text-gray-500 col-span-full">아직 등록된 Shorts 가 없습니다.</p>'; return; }
+        c.innerHTML = items.slice(0,6).map(v => {
+          const id = v.videoId || '';
+          const thumb = id ? `https://i.ytimg.com/vi/${id}/hqdefault.jpg` : '';
+          const url = v.link || (id ? `https://www.youtube.com/shorts/${id}` : '#');
+          return `
+            <a href="${escapeHtml(url)}" target="_blank" rel="noopener" class="short-wrap block bg-black">
+              <div class="short-thumb">
+                <img src="${escapeHtml(thumb)}" alt="${escapeHtml(v.title)}" loading="lazy">
+              </div>
+              <div class="absolute inset-x-0 bottom-0 p-2 bg-gradient-to-t from-black/80 to-transparent text-white text-[11px] font-bold truncate">${escapeHtml(v.title)}</div>
+            </a>
+          `;
+        }).join('');
+      };
+      const renderSermons = (items) => {
+        const c = document.getElementById('sermons-container');
+        if(!c) return;
+        if(!items.length){ c.innerHTML = '<p class="text-center text-gray-500 col-span-full">아직 등록된 말씀이 없습니다.</p>'; return; }
+        c.innerHTML = items.slice(0,6).map(v => {
+          const id = v.videoId || '';
+          const thumb = id ? `https://i.ytimg.com/vi/${id}/hqdefault.jpg` : '';
+          const url = v.link || (id ? `https://www.youtube.com/watch?v=${id}` : '#');
+          return `
+            <a href="${escapeHtml(url)}" target="_blank" rel="noopener" class="group block rounded-2xl overflow-hidden bg-white border border-navy-200/80 hover:shadow-md transition">
+              <div class="aspect-video bg-black overflow-hidden"><img src="${escapeHtml(thumb)}" alt="${escapeHtml(v.title)}" class="w-full h-full object-cover group-hover:scale-105 transition" loading="lazy"></div>
+              <div class="p-3"><div class="text-xs text-gold-600 font-bold mb-1">말씀</div><div class="text-sm font-bold text-navy-900 line-clamp-2">${escapeHtml(v.title)}</div></div>
+            </a>
+          `;
+        }).join('');
+      };
+      const uploads = parseRss(`https://www.youtube.com/feeds/videos.xml?channel_id=${YT_CHANNEL}`);
+      const shorts  = parseRss(`https://www.youtube.com/feeds/videos.xml?channel_id=${YT_CHANNEL}&filter=shorts`).catch(()=>[]);
       const [upItems, shItems] = await Promise.all([uploads, shorts]);
       let shortsFinal = shItems && shItems.length ? shItems : upItems.filter(i => /shorts/.test(i.link || ''));
       if(!shortsFinal.length){ shortsFinal = upItems; }
       renderShorts(shortsFinal);
       renderSermons(upItems);
     })();
-    loadPosts(data);
-    loadGallery(data);
 
-    // 탭 복귀/포커스 시 최신 데이터로 자동 새로고침 (관리자가 새 글을 올렸을 때 즉시 반영)
+    // 탭 복귀/포커스 시 최신 데이터로 자동 새로고침
     const reload = async () => {
       const fresh = await fetchDataJson();
       loadPosts(fresh);
