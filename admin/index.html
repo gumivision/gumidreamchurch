@@ -22,8 +22,9 @@
       margin: 0;
       background: #f6f4ee;
       color: #0b1f3a;
+      -webkit-tap-highlight-color: transparent;
     }
-    .post-body img { max-width: 100%; height: auto; border-radius: 8px; margin: 12px 0; display: block; }
+    .post-body img { max-width: 100%; width:auto; height: auto; max-height:70vh; object-fit:contain; border-radius: 8px; margin: 12px auto; display: block; }
     .post-body p { margin: 0 0 10px 0; }
     .post-body p:last-child { margin-bottom: 0; }
     .line-clamp-3 {
@@ -37,6 +38,67 @@
       from { opacity: 0; transform: translateY(16px); }
       to { opacity: 1; transform: translateY(0); }
     }
+    /* 모달 스크롤/레이아웃 보정 (모바일 이미지 잘림 방지) */
+    #postModal > div{
+      max-height: 90vh;
+      max-height: 90dvh;
+    }
+    #postModalBody{
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior: contain;
+      min-height: 0;
+      flex: 1 1 auto;
+    }
+    #postModal .modal-header, #postModal .modal-footer{ flex-shrink: 0; }
+    #lightboxModal img{ max-height: 80vh; max-height: 80dvh; }
+
+    /* 갤러리 스와이프 힌트 */
+    .swipe-hint{
+      position: fixed; inset: 0; z-index: 105;
+      display: flex; align-items: center; justify-content: center;
+      pointer-events: none; opacity: 0;
+      transition: opacity .3s ease;
+    }
+    .swipe-hint.show{ opacity: 1; }
+    .swipe-hint-inner{
+      background: rgba(0,0,0,.65); color: #fff;
+      padding: 8px 14px; border-radius: 999px;
+      font-size: 12px; font-weight: 600;
+      display: inline-flex; align-items: center; gap: 8px;
+    }
+    /* 로딩 스켈레톤 */
+    .skeleton{ position: relative; overflow: hidden; background:#eef1f5; }
+    .skeleton::after{
+      content:''; position:absolute; inset:0;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.6), transparent);
+      animation: shimmer 1.6s infinite;
+    }
+    @keyframes shimmer{ 0%{transform:translateX(-100%)} 100%{transform:translateX(100%)} }
+
+    /* 관리자 미리보기 배너 (모바일 최적화) */
+    .admin-hero{ min-height: 220px; }
+    @media (min-width: 640px){ .admin-hero{ min-height: 340px; } }
+
+    /* 갤러리 카드 hover */
+    .gal-card{ transition: transform .25s ease, box-shadow .25s ease; }
+    .gal-card:active{ transform: scale(.98); }
+    @media(hover:hover){ .gal-card:hover{ transform: translateY(-2px); box-shadow: 0 12px 28px -12px rgba(11,31,58,.25); } }
+
+    /* 라이트박스 좌우 버튼 (스와이프 대안) */
+    .lb-nav{
+      position:absolute; top:50%; transform: translateY(-50%);
+      width:44px; height:44px; border-radius:9999px;
+      background: rgba(255,255,255,.12); color:#fff;
+      display:flex; align-items:center; justify-content:center;
+      backdrop-filter: blur(8px);
+      transition: background .2s ease;
+    }
+    .lb-nav:hover{ background: rgba(255,255,255,.22); }
+    .lb-nav.prev{ left: 12px; }
+    .lb-nav.next{ right: 12px; }
+    @media(min-width: 640px){ .lb-nav{ width:52px; height:52px; } .lb-nav.prev{ left:24px; } .lb-nav.next{ right:24px; } }
+
+    .safe-bottom{ padding-bottom: calc(env(safe-area-inset-bottom, 0) + 0.75rem); }
   </style>
 </head>
 <body class="antialiased">
@@ -57,7 +119,7 @@
           <i class="fa-solid fa-arrow-up-right-from-square text-[11px]"></i>
           <span class="hidden sm:inline">홈페이지</span>
         </a>
-        <a href="/admin/" target="_blank" class="inline-flex items-center gap-1.5 text-xs sm:text-sm bg-[#0b1f3a] hover:bg-[#172e4d] text-white font-semibold px-3.5 py-2 rounded-lg transition active:scale-95 shadow-sm">
+        <a href="/admin/" target="_blank" class="inline-flex items-center gap-1.5 text-xs sm:text-sm bg-[#0b1f3a] hover:bg-[#172e4d] text-white font-semibold px-3 py-2 sm:px-3.5 rounded-lg transition active:scale-95 shadow-sm">
           <i class="fa-solid fa-user-gear text-[11px]"></i>
           <span>관리자 로그인</span>
         </a>
@@ -66,115 +128,162 @@
   </header>
 
   <section class="max-w-6xl mx-auto px-4 mt-4 sm:mt-6">
-    <div class="relative overflow-hidden rounded-2xl shadow-lg">
+    <div class="relative overflow-hidden rounded-2xl shadow-lg admin-hero">
       <img src="images/main1.png" alt="구미드림교회 메인 이미지"
-           class="w-full h-[260px] sm:h-[380px] object-cover"
+           class="w-full h-full min-h-[220px] sm:min-h-[340px] object-cover absolute inset-0"
            onerror="this.style.display='none'; this.parentElement.classList.add('bg-gradient-to-br','from-[#0b1f3a]','to-[#172e4d]');" />
-      <div class="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent flex flex-col justify-end p-6 sm:p-10 text-white">
+      <div class="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent flex flex-col justify-end p-5 sm:p-10 text-white">
         <span class="inline-flex items-center gap-1.5 text-[10px] sm:text-xs font-bold bg-amber-500/90 text-[#0b1f3a] px-2.5 py-1 rounded-full w-fit mb-2">
           <i class="fa-solid fa-shield-halved"></i> 관리자 미리보기
         </span>
-        <h2 class="text-2xl sm:text-4xl font-extrabold mb-1 leading-tight">꿈이 있는 교회, 행복한 성도</h2>
-        <p class="text-xs sm:text-base text-gray-200">구미드림교회 공식 홈페이지에 올릴 게시글과 사진을 미리 확인하세요.</p>
+        <h2 class="text-xl sm:text-4xl font-extrabold mb-1 leading-tight">꿈이 있는 교회, 행복한 성도</h2>
+        <p class="text-[11px] sm:text-base text-gray-200">구미드림교회 공식 홈페이지에 올릴 게시글과 사진을 미리 확인하세요.</p>
       </div>
     </div>
   </section>
 
+  <!-- 관리자 빠른 액션 (모바일 친화) -->
+  <section class="max-w-6xl mx-auto px-4 mt-4">
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
+      <a href="/admin/#/collections/posts/new" class="flex items-center gap-2 bg-white border border-gray-200 rounded-xl px-3 py-3 shadow-sm active:scale-95 transition">
+        <div class="w-9 h-9 rounded-lg bg-amber-500/15 text-amber-600 flex items-center justify-center shrink-0"><i class="fa-solid fa-pen-to-square text-sm"></i></div>
+        <div class="min-w-0">
+          <div class="text-[11px] text-gray-500 font-medium">새로 쓰기</div>
+          <div class="text-xs sm:text-sm font-bold text-[#0b1f3a] truncate">게시글 작성</div>
+        </div>
+      </a>
+      <a href="/admin/#/collections/gallery/new" class="flex items-center gap-2 bg-white border border-gray-200 rounded-xl px-3 py-3 shadow-sm active:scale-95 transition">
+        <div class="w-9 h-9 rounded-lg bg-blue-500/15 text-blue-600 flex items-center justify-center shrink-0"><i class="fa-regular fa-image text-sm"></i></div>
+        <div class="min-w-0">
+          <div class="text-[11px] text-gray-500 font-medium">사진 업로드</div>
+          <div class="text-xs sm:text-sm font-bold text-[#0b1f3a] truncate">갤러리 추가</div>
+        </div>
+      </a>
+      <a href="/admin/#/collections/posts" class="flex items-center gap-2 bg-white border border-gray-200 rounded-xl px-3 py-3 shadow-sm active:scale-95 transition">
+        <div class="w-9 h-9 rounded-lg bg-purple-500/15 text-purple-600 flex items-center justify-center shrink-0"><i class="fa-solid fa-list-ul text-sm"></i></div>
+        <div class="min-w-0">
+          <div class="text-[11px] text-gray-500 font-medium">글 관리</div>
+          <div class="text-xs sm:text-sm font-bold text-[#0b1f3a] truncate">게시글 목록</div>
+        </div>
+      </a>
+      <a href="/admin/#/collections/gallery" class="flex items-center gap-2 bg-white border border-gray-200 rounded-xl px-3 py-3 shadow-sm active:scale-95 transition">
+        <div class="w-9 h-9 rounded-lg bg-emerald-500/15 text-emerald-600 flex items-center justify-center shrink-0"><i class="fa-regular fa-images text-sm"></i></div>
+        <div class="min-w-0">
+          <div class="text-[11px] text-gray-500 font-medium">사진 관리</div>
+          <div class="text-xs sm:text-sm font-bold text-[#0b1f3a] truncate">갤러리 목록</div>
+        </div>
+      </a>
+    </div>
+  </section>
 
-  <section class="maxw-6xl mx-auto px-4 py-10 sm:py-12">
-    <div class="bg-white rounded-2xl p-5 sm:p-10 shadow-sm border border-gray-100 flex flex-col md:flex-row items-center gap-6 sm:gap-8">
-      <div class="w-full md:w-1/2 space-y-3 order-1">
+  <section class="max-w-6xl mx-auto px-4 py-8 sm:py-12">
+    <div class="bg-white rounded-2xl p-5 sm:p-10 shadow-sm border border-gray-100 flex flex-col md:flex-row items-center gap-5 sm:gap-8">
+      <div class="w-full md:w-1/2 space-y-3 order-2 md:order-1">
         <span class="inline-flex items-center gap-2 text-amber-600 font-bold text-xs sm:text-sm tracking-wide uppercase">
           <span class="w-4 h-px bg-amber-500"></span> About Us
         </span>
-        <h3 class="text-xl sm:text-2xl font-bold text-[#0b1f3a]">구미드림교회를 소개합니다</h3>
-        <p class="text-gray-600 leading-relaxed text-sm">
+        <h3 class="text-lg sm:text-2xl font-bold text-[#0b1f3a]">구미드림교회를 소개합니다</h3>
+        <p class="text-gray-600 leading-relaxed text-xs sm:text-sm">
           하나님의 사랑 안에서 함께 예배하고 서로 교제하며, 지역사회와 세상을 섬기는 따뜻한 공동체입니다. 예수 그리스도의 복음 안에서 참된 평안과 희망을 찾아가실 수 있도록 정성껏 섬기겠습니다.
         </p>
       </div>
-      <div class="w-full md:w-1/2 order-2">
+      <div class="w-full md:w-1/2 order-1 md:order-2">
         <img src="images/church1.png" alt="교회 전경"
-             class="w-full h-64 sm:h-80 object-cover rounded-xl shadow-md"
+             class="w-full h-52 sm:h-80 object-cover rounded-xl shadow-md"
              onerror="this.style.display='none';" />
       </div>
     </div>
   </section>
 
-
   <section id="board-section" class="max-w-6xl mx-auto px-4 py-6 sm:py-10">
-    <div class="bg-white rounded-2xl p-5 sm:p-10 shadow-sm border border-gray-100">
-      <div class="flex items-end justify-between mb-5 sm:mb-6">
-        <div>
-          <span class="inline-flex items-center gap-2 text-amber-600 font-bold text-xs tracking-wide uppercase">
+    <div class="bg-white rounded-2xl p-4 sm:p-10 shadow-sm border border-gray-100">
+      <div class="flex items-end justify-between mb-4 sm:mb-6 gap-3">
+        <div class="min-w-0">
+          <span class="inline-flex items-center gap-2 text-amber-600 font-bold text-[11px] sm:text-xs tracking-wide uppercase">
             <span class="w-4 h-px bg-amber-500"></span> Church News
           </span>
-          <h2 class="text-xl sm:text-2xl font-bold text-[#0b1f3a] mt-1">교회 소식 및 공지사항</h2>
+          <h2 class="text-lg sm:text-2xl font-bold text-[#0b1f3a] mt-1">교회 소식 및 공지사항</h2>
         </div>
-        <span class="text-[11px] text-gray-400">GitHub · 자동 업데이트</span>
+        <span class="text-[10px] sm:text-[11px] text-gray-400 shrink-0">GitHub · 자동 업데이트</span>
       </div>
-      
-      <div id="latest-post-container" class="mb-4 sm:mb-6"></div>
+
+      <div id="latest-post-container" class="mb-4 sm:mb-6">
+        <div class="text-center text-gray-400 py-6"><i class="fa-solid fa-circle-notch fa-spin mr-2"></i>불러오는 중…</div>
+      </div>
       <div id="previous-posts-wrapper" class="hidden bg-gray-50 rounded-xl p-4 sm:p-5 border border-gray-200/60">
-        <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 px-1">지난 소식</h3>
+        <h3 class="text-[11px] sm:text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 px-1">지난 소식</h3>
         <ul id="board-list-container" class="divide-y divide-gray-200/80"></ul>
       </div>
     </div>
   </section>
 
-
   <section id="gallery-section" class="max-w-6xl mx-auto px-4 py-6 sm:py-10">
-    <div class="bg-white rounded-2xl p-5 sm:p-10 shadow-sm border border-gray-100">
-      <h2 class="text-xl sm:text-2xl font-bold text-[#0b1f3a] mb-5 sm:mb-6 text-center">함께한 순간들</h2>
-      
-      <div id="gallery-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        <p class="text-center text-gray-500 col-span-full py-8">사진을 불러오는 중입니다...</p>
+    <div class="bg-white rounded-2xl p-4 sm:p-10 shadow-sm border border-gray-100">
+      <div class="flex items-center justify-between mb-4 sm:mb-6">
+        <h2 class="text-lg sm:text-2xl font-bold text-[#0b1f3a]">함께한 순간들</h2>
+        <span class="text-[10px] sm:text-[11px] text-gray-400 flex items-center gap-1"><i class="fa-solid fa-hand-pointer"></i> 이미지 탭 → 스와이프</span>
+      </div>
+
+      <div id="gallery-container" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4">
+        <div class="skeleton aspect-square rounded-xl"></div>
+        <div class="skeleton aspect-square rounded-xl"></div>
+        <div class="skeleton aspect-square rounded-xl"></div>
+        <div class="skeleton aspect-square rounded-xl"></div>
       </div>
       <div id="gallery-pagination"></div>
     </div>
   </section>
 
-
-  <div id="postModal" class="hidden fixed inset-0 z-[110] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4" onclick="if(event.target===this) closePostModal()">
-    <div class="bg-white w-full max-w-2xl max-h-[90vh] rounded-2xl shadow-2xl overflow-hidden flex flex-col" onclick="event.stopPropagation()">
-      <div class="px-5 py-4 border-b border-gray-100 flex items-start justify-between gap-3">
+  <div id="postModal" class="hidden fixed inset-0 z-[110] bg-black/70 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4" onclick="if(event.target===this) closePostModal()">
+    <div class="bg-white w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden flex flex-col" onclick="event.stopPropagation()">
+      <div class="modal-header px-4 sm:px-5 py-3 sm:py-4 border-b border-gray-100 flex items-start justify-between gap-3">
         <div class="min-w-0">
-          <div class="text-xs font-semibold text-amber-600" id="postModalDate"></div>
-          <h3 class="mt-0.5 text-lg sm:text-xl font-bold text-[#0b1f3a] break-words" id="postModalTitle"></h3>
+          <div class="text-[11px] sm:text-xs font-semibold text-amber-600" id="postModalDate"></div>
+          <h3 class="mt-0.5 text-base sm:text-xl font-bold text-[#0b1f3a] break-words" id="postModalTitle"></h3>
         </div>
         <button onclick="closePostModal()" class="shrink-0 w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 flex items-center justify-center transition" aria-label="닫기">
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
-      <div class="p-5 overflow-y-auto post-body text-sm sm:text-base text-gray-700 leading-relaxed break-words" id="postModalBody"></div>
-      <div class="px-5 py-3 border-t border-gray-100 bg-gray-50 text-right">
+      <div class="p-4 sm:p-5 overflow-y-auto post-body text-sm sm:text-base text-gray-700 leading-relaxed break-words" id="postModalBody"></div>
+      <div class="modal-footer px-4 sm:px-5 py-2.5 sm:py-3 border-t border-gray-100 bg-gray-50 text-right">
         <button onclick="closePostModal()" class="px-4 py-2 bg-[#0b1f3a] hover:bg-[#172e4d] text-white text-xs sm:text-sm font-bold rounded-lg transition">닫기</button>
       </div>
     </div>
   </div>
 
-
-  <div id="lightboxModal" onclick="closeLightbox()" class="hidden fixed inset-0 z-[100] bg-black/95 backdrop-blur-md flex items-center justify-center p-4">
-    <button onclick="closeLightbox()" class="absolute top-5 right-5 w-10 h-10 rounded-full bg-white/10 text-white hover:bg-white/20 flex items-center justify-center z-10 transition">
+  <div id="lightboxModal" onclick="closeLightbox()" class="hidden fixed inset-0 z-[100] bg-black/95 backdrop-blur-md flex items-center justify-center p-3 sm:p-4">
+    <button onclick="closeLightbox()" class="absolute top-4 right-4 sm:top-5 sm:right-5 w-10 h-10 rounded-full bg-white/10 text-white hover:bg-white/20 flex items-center justify-center z-10 transition" aria-label="닫기">
       <i class="fa-solid fa-xmark text-lg"></i>
     </button>
-    <div class="relative max-w-5xl max-h-[90vh] flex flex-col items-center justify-center" onclick="event.stopPropagation()">
-      <img id="lightboxImg" src="" alt="확대 이미지" class="max-w-full max-h-[80vh] object-contain rounded-xl shadow-2xl">
-      <p id="lightboxCaption" class="mt-3 text-white/90 text-base font-medium text-center"></p>
+    <button id="lbPrev" class="lb-nav prev hidden" aria-label="이전 사진"><i class="fa-solid fa-chevron-left"></i></button>
+    <button id="lbNext" class="lb-nav next hidden" aria-label="다음 사진"><i class="fa-solid fa-chevron-right"></i></button>
+    <div id="lbCounter" class="hidden absolute top-4 left-4 sm:top-5 sm:left-5 z-10 text-white/85 text-xs sm:text-sm font-semibold bg-white/10 backdrop-blur px-3 py-1.5 rounded-full"></div>
+    <div id="lbStage" class="relative max-w-5xl w-full max-h-[90vh] flex flex-col items-center justify-center touch-pan-y select-none" onclick="event.stopPropagation()">
+      <img id="lightboxImg" src="" alt="확대 이미지" class="max-w-full max-h-[80vh] object-contain rounded-xl shadow-2xl transition-transform duration-200 will-change-transform" draggable="false">
+      <p id="lightboxCaption" class="mt-3 text-white/90 text-sm sm:text-base font-medium text-center px-4"></p>
     </div>
   </div>
 
+  <div id="swipeHint" class="swipe-hint">
+    <div class="swipe-hint-inner"><i class="fa-solid fa-hand-pointer"></i> 좌우로 스와이프하세요</div>
+  </div>
 
-  <footer class="bg-[#0b1f3a] text-gray-400 py-8 mt-12">
+  <footer class="bg-[#0b1f3a] text-gray-400 py-8 mt-12 safe-bottom">
     <div class="max-w-6xl mx-auto px-4 text-center text-xs sm:text-sm space-y-1.5">
       <p class="font-semibold text-gray-200">구미드림교회 · 관리자 미리보기</p>
-      <p>Copyright &copy; 구미드림교회 All Rights Reserved.</p>
+      <p>Copyright &copy; 2026 구미드림교회 All Rights Reserved.</p>
     </div>
   </footer>
-
 
   <script>
     const GH_REPO = 'gumivision/gumidreamchurch';
     const GH_BRANCH = 'main';
+
+    // ✅ 데이터는 jsDelivr CDN 우선 (GitHub API rate limit 회피)
+    const JSDELIVR_LIST = `https://data.jsdelivr.com/v1/package/gh/${GH_REPO}@${GH_BRANCH}/flat`;
+    const CDN_FILE = (path) => `https://cdn.jsdelivr.net/gh/${GH_REPO}@${GH_BRANCH}/${String(path).replace(/^\/+/, '')}`;
+    const RAW_FILE = (path) => `https://raw.githubusercontent.com/${GH_REPO}/${GH_BRANCH}/${String(path).replace(/^\/+/, '')}`;
 
     function escapeHtml(s){
       return (s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -191,7 +300,37 @@
     function toRawImageUrl(path){
       const rel = normalizeCmsPath(path);
       if(!rel) return '';
-      return `https://raw.githubusercontent.com/${GH_REPO}/${GH_BRANCH}/${rel}?t=${Date.now()}`;
+      return CDN_FILE(rel);
+    }
+    async function robustFetchText(path){
+      const urls = [ CDN_FILE(path), RAW_FILE(path) + `?t=${Date.now()}` ];
+      let lastErr;
+      for(const u of urls){
+        try{
+          const r = await fetch(u, { cache:'no-store' });
+          if(r.ok) return await r.text();
+          lastErr = new Error('HTTP '+r.status);
+        }catch(e){ lastErr = e; }
+      }
+      throw lastErr || new Error('fetch failed');
+    }
+    async function listMdFilesInFolder(folder){
+      try{
+        const r = await fetch(JSDELIVR_LIST);
+        if(!r.ok) throw new Error('flat http '+r.status);
+        const data = await r.json();
+        return (data.files || [])
+          .map(f => (f.name || '').replace(/^\/+/, ''))
+          .filter(n => n.startsWith(folder + '/') && n.endsWith('.md'));
+      }catch(e){
+        try{
+          const r2 = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/${folder}?t=${Date.now()}`);
+          if(!r2.ok) return [];
+          const arr = await r2.json();
+          if(!Array.isArray(arr)) return [];
+          return arr.filter(f => f.name && f.name.endsWith('.md')).map(f => `${folder}/${f.name}`);
+        }catch(_){ return []; }
+      }
     }
 
     function parseFrontmatter(rawText){
@@ -211,12 +350,44 @@
         const m = line.match(/^([A-Za-z_][\w-]*)\s*:\s*(.*)$/);
         if(!m) return;
         const key = m[1].toLowerCase();
-        let val = (m[2] || '').trim().replace(/^["']/, '').replace(/["']$/, '').trim();
+        let val = (m[2] || '').trim().replace(/^["']/, '').replace(/["']?\s*$/, '').trim();
         if(key === 'title') title = val;
         else if(key === 'date') date = val;
         else if(key === 'image') image = val;
       });
       return { body, title, date, image };
+    }
+
+    // 경량 마크다운 → HTML (홈페이지와 동일)
+    function mdToHtml(md){
+      if(!md) return '';
+      let text = String(md).replace(/\r\n?/g, '\n');
+      const codeBlocks = [];
+      text = text.replace(/```([\s\S]*?)```/g, (m, code) => {
+        codeBlocks.push(code);
+        return `\u0000CODE${codeBlocks.length - 1}\u0000`;
+      });
+      text = text.replace(/`([^`]+)`/g, (m, c) => `\u0000IC${escapeHtml(c)}\u0000`);
+      text = text.replace(/!\[(.*?)\]\(([^)]+)\)/g, (m, alt, src) => {
+        const raw = toRawImageUrl(src);
+        return raw ? `<img src="${raw}" alt="${escapeHtml(alt)}" loading="lazy" onerror="this.style.display='none'" />` : '';
+      });
+      text = text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (m, t, u) => `<a href="${escapeHtml(u)}" target="_blank" rel="noopener">${escapeHtml(t)}</a>`);
+      text = text.replace(/^### (.*)$/gm, '<h4>$1</h4>');
+      text = text.replace(/^## (.*)$/gm, '<h3>$1</h3>');
+      text = text.replace(/^# (.*)$/gm, '<h1>$1</h1>');
+      text = text.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+      text = text.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+      text = text.replace(/^\s*---\s*$/gm, '<hr/>');
+      const blocks = text.split(/\n{2,}/).map(b => b.trim()).filter(Boolean);
+      let html = blocks.map(b => {
+        const inner = b.replace(/\n/g, '<br/>');
+        if(/^<(h\d|img|hr|ul|ol|pre|blockquote)/.test(inner)) return inner;
+        return `<p>${inner}</p>`;
+      }).join('\n');
+      html = html.replace(/\u0000IC(.+?)\u0000/g, '<code>$1</code>');
+      html = html.replace(/\u0000CODE(\d+)\u0000/g, (m, idx) => `<pre><code>${escapeHtml(codeBlocks[+idx])}</code></pre>`);
+      return html;
     }
 
     function safeDate(str, fallbackName){
@@ -241,34 +412,30 @@
       if (!container) return;
 
       try {
-        const response = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/posts?t=${Date.now()}`);
-        if (!response.ok) {
+        const mdPaths = await listMdFilesInFolder('posts');
+        if (!mdPaths.length) {
           container.innerHTML = '<p class="text-center text-gray-400 py-6">등록된 게시글이 없습니다.</p>';
           return;
         }
-        const files = await response.json();
-        if (!Array.isArray(files)) {
-          container.innerHTML = '<p class="text-center text-gray-400 py-6">게시글 폴더를 확인해 주세요.</p>';
-          return;
-        }
-        const mdFiles = files.filter(f => f.name && f.name.endsWith('.md'));
-        if (mdFiles.length === 0) {
-          container.innerHTML = '<p class="text-center text-gray-400 py-6">등록된 게시글이 없습니다.</p>';
-          return;
-        }
-        const posts = await Promise.all(mdFiles.map(async (file) => {
-          const res = await fetch(`${file.download_url}?t=${Date.now()}`);
-          const text = await res.text();
-          const fm = parseFrontmatter(text);
-          const title = fm.title || file.name.replace(/\.md$/, '');
-          const date = fm.date || '';
-          const headerImageUrl = fm.image ? toRawImageUrl(fm.image) : '';
-          const bodyHtml = fm.body;  // 관리자 페이지는 raw markdown 그대로 노출도 OK
-          return { title, date, bodyHtml, headerImageUrl, rawDate: safeDate(fm.date, file.name), src: file.name };
+        const posts = await Promise.all(mdPaths.map(async (path) => {
+          try{
+            const text = await robustFetchText(path);
+            const fm = parseFrontmatter(text);
+            const base = path.split('/').pop();
+            const title = fm.title || base.replace(/\.md$/, '');
+            const date = fm.date || '';
+            const headerImageUrl = fm.image ? toRawImageUrl(fm.image) : '';
+            const bodyHtml = mdToHtml(fm.body);
+            return { title, date, bodyHtml, headerImageUrl, rawDate: safeDate(fm.date, base) };
+          }catch(_){ return null; }
         }));
-        posts.sort((a, b) => b.rawDate - a.rawDate);
+        const valid = posts.filter(Boolean).sort((a, b) => b.rawDate - a.rawDate);
+        if (!valid.length) {
+          container.innerHTML = '<p class="text-center text-gray-400 py-6">게시글을 불러올 수 없습니다.</p>';
+          return;
+        }
 
-        const displayPosts = posts.slice(0, 6);
+        const displayPosts = valid.slice(0, 6);
         container.innerHTML = '';
 
         const latest = displayPosts[0];
@@ -283,14 +450,14 @@
             <span class="inline-flex items-center gap-1.5 bg-amber-500 text-white text-[11px] font-extrabold px-2.5 py-1 rounded-full">
               <i class="fa-solid fa-star text-[10px]"></i> 최신소식
             </span>
-            <span class="text-xs text-gray-400 font-medium">${latest.date || ''}</span>
+            <span class="text-[11px] sm:text-xs text-gray-400 font-medium">${latest.date || ''}</span>
           </div>
           <button type="button" class="w-full text-left px-4 sm:px-5 pb-5 group">
-            <h3 class="text-lg sm:text-xl font-bold text-[#0b1f3a] leading-snug group-hover:text-amber-600 transition">${escapeHtml(latest.title)}</h3>
-            ${summary ? `<p class="mt-2 text-sm text-gray-600 leading-relaxed line-clamp-3">${escapeHtml(summary)}</p>` : ''}
+            <h3 class="text-base sm:text-xl font-bold text-[#0b1f3a] leading-snug group-hover:text-amber-600 transition">${escapeHtml(latest.title)}</h3>
+            ${summary ? `<p class="mt-2 text-xs sm:text-sm text-gray-600 leading-relaxed line-clamp-3">${escapeHtml(summary)}</p>` : ''}
             ${hasImage ? `
               <div class="mt-3 -mx-4 sm:mx-0 sm:rounded-xl overflow-hidden">
-                <img src="${latest.headerImageUrl}" alt="${escapeHtml(latest.title)}" class="w-full max-h-72 object-cover" loading="lazy" onerror="this.parentElement.style.display='none';" />
+                <img src="${latest.headerImageUrl}" alt="${escapeHtml(latest.title)}" class="w-full max-h-60 sm:max-h-72 object-cover" loading="lazy" onerror="this.parentElement.style.display='none';" />
               </div>
             ` : ''}
             <div class="mt-3 inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-amber-600">
@@ -311,9 +478,9 @@
             li.innerHTML = `
               <div class="flex items-center gap-2 min-w-0">
                 <i class="fa-regular fa-newspaper text-amber-500 text-sm shrink-0"></i>
-                <span class="text-sm sm:text-[15px] text-gray-800 font-medium truncate">${escapeHtml(post.title)}</span>
+                <span class="text-xs sm:text-[15px] text-gray-800 font-medium truncate">${escapeHtml(post.title)}</span>
               </div>
-              <span class="text-[11px] sm:text-xs text-gray-400 shrink-0">${post.date || ''}</span>
+              <span class="text-[10px] sm:text-xs text-gray-400 shrink-0">${post.date || ''}</span>
             `;
             listContainer.appendChild(li);
           });
@@ -327,47 +494,171 @@
       }
     }
 
+    // ===== 모달 스택 (모바일 뒤로가기 지원) =====
+    const modalStack = [];
+    function pushModal(name, closer){
+      if(modalStack.length && modalStack[modalStack.length-1].name === name) return;
+      modalStack.push({ name, closer });
+      try{ history.pushState({ modal: name, ts: Date.now() }, ''); }catch(_){}
+    }
+    window.addEventListener('popstate', () => {
+      if(modalStack.length){
+        const top = modalStack.pop();
+        if(top && typeof top.closer === 'function') top.closer(true);
+      }
+    });
+
     function openPostModal(title, date, bodyContent, headerImageUrl) {
       document.getElementById('postModalTitle').textContent = title || '제목 없음';
       document.getElementById('postModalDate').textContent = date || '';
       const bodyEl = document.getElementById('postModalBody');
       let html = '';
       if (headerImageUrl) {
-        html += `<img src="${headerImageUrl}" alt="${escapeHtml(title)}" class="w-full max-h-72 object-cover rounded-lg mb-4" loading="lazy" onerror="this.style.display='none'" />`;
+        html += `<img src="${headerImageUrl}" alt="${escapeHtml(title)}" class="w-full max-h-72 sm:max-h-96 object-contain rounded-lg mb-4 bg-gray-50" loading="lazy" onerror="this.style.display='none'" />`;
       }
       if (bodyContent && bodyContent.trim()) {
-        html += `<div class="whitespace-pre-line">${escapeHtml(bodyContent)}</div>`;
+        html += bodyContent;
       } else {
         html += `<p class="text-gray-500 text-sm">본문이 비어있습니다. 관리자 페이지에서 내용을 입력해 주세요.</p>`;
       }
       bodyEl.innerHTML = html;
+      bodyEl.scrollTop = 0;
       document.getElementById('postModal').classList.remove('hidden');
       document.body.style.overflow = 'hidden';
+      pushModal('post', _closePostModalSilent);
     }
-    function closePostModal() {
+    function _closePostModalSilent(){
       const modal = document.getElementById('postModal');
       if (!modal || modal.classList.contains('hidden')) return;
       modal.classList.add('hidden');
       document.body.style.overflow = '';
     }
+    function closePostModal() {
+      const modal = document.getElementById('postModal');
+      if (!modal || modal.classList.contains('hidden')) return;
+      const idx = modalStack.findIndex(m => m.name === 'post');
+      if(idx >= 0){
+        modalStack.splice(idx, 1);
+        _closePostModalSilent();
+        try{ history.back(); }catch(_){}
+      } else {
+        _closePostModalSilent();
+      }
+    }
+
+    // ===== 라이트박스 (스와이프 지원) =====
+    let currentLbIndex = -1;
 
     function openLightbox(imgUrl, caption) {
+      // 인덱스 매칭
+      currentLbIndex = galleryItems.findIndex(g => g.imageUrl === imgUrl);
+      if(currentLbIndex < 0) currentLbIndex = 0;
+      showLightboxByIndex(currentLbIndex, true);
+      pushModal('lightbox', _closeLightboxSilent);
+      // 첫 방문 시 스와이프 힌트 (한 번만)
+      try{
+        if(!localStorage.getItem('gdc_swipe_hint_shown')){
+          const hint = document.getElementById('swipeHint');
+          if(hint){
+            hint.classList.add('show');
+            setTimeout(() => hint.classList.remove('show'), 1600);
+            localStorage.setItem('gdc_swipe_hint_shown', '1');
+          }
+        }
+      }catch(_){}
+    }
+    function showLightboxByIndex(idx, firstOpen){
+      if(!galleryItems.length) return;
+      if(idx < 0) idx = galleryItems.length - 1;
+      if(idx >= galleryItems.length) idx = 0;
+      currentLbIndex = idx;
+      const item = galleryItems[idx];
       const modal = document.getElementById('lightboxModal');
       const modalImg = document.getElementById('lightboxImg');
       const modalCaption = document.getElementById('lightboxCaption');
-      if (modal && modalImg) {
-        modalImg.src = imgUrl;
-        modalCaption.textContent = caption || '';
+      const counter = document.getElementById('lbCounter');
+      const prevBtn = document.getElementById('lbPrev');
+      const nextBtn = document.getElementById('lbNext');
+      modalImg.src = item.imageUrl;
+      modalCaption.textContent = item.title || '';
+      if(counter){
+        counter.textContent = `${idx + 1} / ${galleryItems.length}`;
+        counter.classList.toggle('hidden', galleryItems.length < 2);
+      }
+      if(prevBtn) prevBtn.classList.toggle('hidden', galleryItems.length < 2);
+      if(nextBtn) nextBtn.classList.toggle('hidden', galleryItems.length < 2);
+      if(firstOpen){
         modal.classList.remove('hidden');
         document.body.style.overflow = 'hidden';
       }
     }
+    function lbPrev(){ showLightboxByIndex(currentLbIndex - 1); }
+    function lbNext(){ showLightboxByIndex(currentLbIndex + 1); }
+    function _closeLightboxSilent(){
+      const modal = document.getElementById('lightboxModal');
+      if (!modal || modal.classList.contains('hidden')) return;
+      modal.classList.add('hidden');
+      document.body.style.overflow = '';
+      const img = document.getElementById('lightboxImg');
+      if(img) img.style.transform = '';
+    }
     function closeLightbox() {
       const modal = document.getElementById('lightboxModal');
-      if (modal) {
-        modal.classList.add('hidden');
-        document.body.style.overflow = 'auto';
+      if (!modal || modal.classList.contains('hidden')) return;
+      const idx = modalStack.findIndex(m => m.name === 'lightbox');
+      if(idx >= 0){
+        modalStack.splice(idx, 1);
+        _closeLightboxSilent();
+        try{ history.back(); }catch(_){}
+      } else {
+        _closeLightboxSilent();
       }
+    }
+
+    // ===== 갤러리 스와이프 (touch + pointer) =====
+    function initLightboxSwipe(){
+      const stage = document.getElementById('lbStage');
+      const img = document.getElementById('lightboxImg');
+      if(!stage || !img) return;
+      let startX = 0, startY = 0, dx = 0, dy = 0, active = false;
+      const THRESHOLD = 50;   // 최소 스와이프 거리(px)
+      const V_TOLERANCE = 60; // 세로 허용치 초과 시 스와이프 아님
+
+      const onStart = (e) => {
+        const t = e.touches ? e.touches[0] : e;
+        startX = t.clientX; startY = t.clientY;
+        dx = 0; dy = 0; active = true;
+        img.style.transition = 'none';
+      };
+      const onMove = (e) => {
+        if(!active) return;
+        const t = e.touches ? e.touches[0] : e;
+        dx = t.clientX - startX;
+        dy = t.clientY - startY;
+        if(Math.abs(dx) > Math.abs(dy)){
+          if(e.cancelable) e.preventDefault();
+          img.style.transform = `translateX(${dx * 0.6}px)`;
+        }
+      };
+      const onEnd = () => {
+        if(!active) return;
+        active = false;
+        img.style.transition = 'transform .2s ease';
+        img.style.transform = 'translateX(0)';
+        if(Math.abs(dx) >= THRESHOLD && Math.abs(dy) < V_TOLERANCE){
+          if(dx < 0) lbNext(); else lbPrev();
+        }
+      };
+      stage.addEventListener('touchstart', onStart, { passive: true });
+      stage.addEventListener('touchmove',  onMove,  { passive: false });
+      stage.addEventListener('touchend',   onEnd);
+      stage.addEventListener('touchcancel',onEnd);
+      // 마우스 드래그도 지원 (데스크톱)
+      let mouseDown = false;
+      stage.addEventListener('mousedown', (e) => { mouseDown = true; onStart(e); });
+      stage.addEventListener('mousemove', (e) => { if(mouseDown) onMove(e); });
+      stage.addEventListener('mouseup',   (e) => { if(mouseDown){ mouseDown = false; onEnd(); } });
+      stage.addEventListener('mouseleave',(e) => { if(mouseDown){ mouseDown = false; onEnd(); } });
     }
 
     let galleryItems = [];
@@ -388,11 +679,13 @@
       }
       pageItems.forEach(item => {
         const card = document.createElement('div');
-        card.className = 'overflow-hidden rounded-xl border border-gray-100 shadow-sm hover:shadow-md bg-white text-center cursor-pointer transition transform hover:-translate-y-0.5';
+        card.className = 'gal-card overflow-hidden rounded-xl border border-gray-100 shadow-sm bg-white text-center cursor-pointer';
         card.onclick = () => openLightbox(item.imageUrl, item.title);
         card.innerHTML = `
-          <img src="${item.imageUrl}" alt="${escapeHtml(item.title)}" class="w-full h-44 sm:h-52 object-cover block" loading="lazy" onerror="this.closest('div').remove();" />
-          ${item.title ? `<div class="p-2.5 text-xs font-medium text-gray-700 truncate">${escapeHtml(item.title)}</div>` : ''}
+          <div class="aspect-square">
+            <img src="${item.imageUrl}" alt="${escapeHtml(item.title)}" class="w-full h-full object-cover block" loading="lazy" onerror="this.closest('.gal-card').style.opacity=.4;" />
+          </div>
+          ${item.title ? `<div class="p-2 sm:p-2.5 text-[11px] sm:text-xs font-medium text-gray-700 truncate">${escapeHtml(item.title)}</div>` : ''}
         `;
         grid.appendChild(card);
       });
@@ -400,11 +693,11 @@
         pagination.innerHTML = '';
         if (totalPages > 1) {
           const nav = document.createElement('div');
-          nav.className = 'flex justify-center items-center gap-2 mt-5 w-full';
+          nav.className = 'flex justify-center items-center gap-1.5 mt-5 w-full flex-wrap';
           for (let i = 1; i <= totalPages; i++) {
             const btn = document.createElement('button');
             btn.innerText = i;
-            btn.className = `px-3 py-1 rounded-md text-xs font-semibold transition ${i === page ? 'bg-amber-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`;
+            btn.className = `min-w-[36px] px-3 py-1.5 rounded-md text-xs font-semibold transition ${i === page ? 'bg-amber-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`;
             btn.onclick = () => { renderGalleryPage(i); grid.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); };
             nav.appendChild(btn);
           }
@@ -417,38 +710,44 @@
       const container = document.getElementById('gallery-container');
       if (!container) return;
       try {
-        const response = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/gallery?t=${Date.now()}`);
-        if (!response.ok) {
+        const mdPaths = await listMdFilesInFolder('gallery');
+        if (!mdPaths.length) {
           container.innerHTML = '<p class="text-center text-gray-400 col-span-full py-6">등록된 사진이 없습니다.</p>';
           return;
         }
-        const files = await response.json();
+        const items = await Promise.all(mdPaths.map(async (path) => {
+          try{
+            const text = await robustFetchText(path);
+            const fm = parseFrontmatter(text);
+            const base = path.split('/').pop();
+            const title = fm.title || '';
+            const imageList = [];
+            if(fm.image){
+              imageList.push(fm.image);
+            } else {
+              const listBlockMatch = text.match(/^images:\s*\n((?:\s*-\s+\S.*\n?)+)/m);
+              if (listBlockMatch) {
+                const lines = listBlockMatch[1].split('\n');
+                lines.forEach(line => {
+                  const cleanLine = line.replace(/^\s*-\s*["']?/, '').replace(/["']?\s*$/, '').trim();
+                  if (!cleanLine || cleanLine === '""' || cleanLine === "''") return;
+                  imageList.push(cleanLine);
+                });
+              }
+            }
+            return { base, title, imageList, rawDate: safeDate(fm.date, base) };
+          }catch(_){ return null; }
+        }));
         const tempItems = [];
-        for (const file of files) {
-          if (!file.name.endsWith('.md')) continue;
-          const res = await fetch(`${file.download_url}?t=${Date.now()}`);
-          const text = await res.text();
-          const fm = parseFrontmatter(text);
-          const title = fm.title || '';
-          const imageList = [];
-          const listBlockMatch = text.match(/^images:\s*\n((?:\s*-\s*.*\n?)+)/m);
-          if (listBlockMatch) {
-            const lines = listBlockMatch[1].split('\n');
-            lines.forEach(line => {
-              const cleanLine = line.replace(/^\s*-\s*["']?/, '').replace(/["']?\s*$/, '').trim();
-              if (cleanLine && cleanLine !== '""' && cleanLine !== "''") imageList.push(cleanLine);
-            });
-          }
-          if (imageList.length === 0 && fm.image) {
-            imageList.push(fm.image);
-          }
-          imageList.forEach(imgPath => {
+        items.filter(Boolean).forEach(it => {
+          it.imageList.forEach(imgPath => {
             if (!imgPath || imgPath === '""' || imgPath === "''") return;
+            if (!/\.(png|jpe?g|gif|webp|svg|avif|bmp)(\?.*)?$/i.test(imgPath) && !/^https?:\/\//i.test(imgPath)) return;
             const imageUrl = toRawImageUrl(imgPath);
             if (!imageUrl) return;
-            tempItems.push({ imageUrl, title, src: file.name, rawDate: safeDate('', file.name) });
+            tempItems.push({ imageUrl, title: it.title, src: it.base, rawDate: it.rawDate });
           });
-        }
+        });
         tempItems.sort((a, b) => (b.rawDate - a.rawDate) || (a.src < b.src ? 1 : -1));
         galleryItems = tempItems;
         renderGalleryPage(1);
@@ -459,13 +758,21 @@
     }
 
     document.addEventListener('keydown', (e) => {
+      const lbOpen = !document.getElementById('lightboxModal').classList.contains('hidden');
       if (e.key === 'Escape') {
         closeLightbox();
         closePostModal();
+      } else if (lbOpen && e.key === 'ArrowLeft') {
+        lbPrev();
+      } else if (lbOpen && e.key === 'ArrowRight') {
+        lbNext();
       }
     });
 
     document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('lbPrev').addEventListener('click', (e) => { e.stopPropagation(); lbPrev(); });
+      document.getElementById('lbNext').addEventListener('click', (e) => { e.stopPropagation(); lbNext(); });
+      initLightboxSwipe();
       loadPosts();
       loadGallery();
     });
