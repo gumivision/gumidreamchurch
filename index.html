@@ -74,7 +74,7 @@ tailwind.config = {
   .short-wrap > iframe,
   .short-wrap > .short-thumb{ position:absolute; inset:0; width:100%; height:100%; border:0; }
   .short-thumb img{ width:100%; height:100%; object-fit:cover; }
-  .post-body img{ max-width:100%; height:auto; border-radius: 8px; margin: 12px 0; display:block; }
+  .post-body img{ max-width:100%; width:auto; height:auto; max-height:70vh; object-fit:contain; border-radius: 8px; margin: 12px auto; display:block; }
   .post-body p{ margin: 0 0 10px 0; }
   .post-body p:last-child{ margin-bottom: 0; }
   .post-body h1{ font-size:1.4rem; font-weight:800; margin:1rem 0 .5rem; color:#0b1f3a; }
@@ -87,6 +87,52 @@ tailwind.config = {
   .post-body code{ background:#f6f3ec; padding:.1em .35em; border-radius:.3em; font-size:.9em; }
   .line-clamp-3{ display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
   .line-clamp-4{ display:-webkit-box; -webkit-line-clamp:4; -webkit-box-orient:vertical; overflow:hidden; }
+
+  /* ===== 모달 스크롤/레이아웃 보정 (모바일 이미지 잘림 방지) ===== */
+  #postModal > div{
+    /* iOS 모바일에서 뷰포트 대응: 100dvh 지원 브라우저는 dvh 사용 */
+    max-height: 90vh;
+    max-height: 90dvh;
+  }
+  #postModalBody{
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    min-height: 0;              /* flex 자식이 스크롤 되게 하는 핵심 */
+    flex: 1 1 auto;
+  }
+  #postModal .modal-header, #postModal .modal-footer{ flex-shrink: 0; }
+  /* 라이트박스도 dvh 대응 */
+  #lightboxModal img{ max-height: 80vh; max-height: 80dvh; }
+
+  /* 갤러리 스와이프 힌트 */
+  .swipe-hint{
+    position: fixed; inset: 0; z-index: 105;
+    display: flex; align-items: center; justify-content: center;
+    pointer-events: none; opacity: 0;
+    transition: opacity .3s ease;
+  }
+  .swipe-hint.show{ opacity: 1; }
+  .swipe-hint-inner{
+    background: rgba(0,0,0,.65); color: #fff;
+    padding: 8px 14px; border-radius: 999px;
+    font-size: 12px; font-weight: 600;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  /* 라이트박스 좌우 네비 버튼 */
+  .lb-nav{
+    position:absolute; top:50%; transform: translateY(-50%);
+    width:44px; height:44px; border-radius:9999px;
+    background: rgba(255,255,255,.12); color:#fff;
+    display:flex; align-items:center; justify-content:center;
+    backdrop-filter: blur(8px);
+    transition: background .2s ease;
+    z-index: 10;
+  }
+  .lb-nav:hover{ background: rgba(255,255,255,.22); }
+  .lb-nav.prev{ left: 12px; }
+  .lb-nav.next{ right: 12px; }
+  @media(min-width: 640px){ .lb-nav{ width:52px; height:52px; } .lb-nav.prev{ left:24px; } .lb-nav.next{ right:24px; } }
+
   @media (prefers-reduced-motion: reduce){
     .kb, .fade-up.in, .reveal{ animation:none !important; transition:none !important; opacity:1 !important; transform:none !important; }
   }
@@ -99,7 +145,7 @@ tailwind.config = {
     z-index: 200; transition: width .12s ease-out;
     box-shadow: 0 0 12px rgba(212,163,115,.5);
   }
-  /* Hero 배경 그라디언트 오브 (main1.png 위에 은은하게) */
+  /* Hero 배경 그라디언트 오브 */
   .orb{ position:absolute; border-radius:9999px; filter: blur(70px); opacity:.28; pointer-events:none; }
   .orb-a{ width:520px; height:520px; background: radial-gradient(circle,#d4a373 0%,transparent 60%); top:-140px; left:-160px; animation: orbFloat 18s ease-in-out infinite alternate; }
   .orb-b{ width:460px; height:460px; background: radial-gradient(circle,#5a7aa6 0%,transparent 60%); bottom:-160px; right:-140px; animation: orbFloat 22s ease-in-out infinite alternate-reverse; }
@@ -305,8 +351,8 @@ tailwind.config = {
 </section>
 
 <div id="postModal" class="hidden fixed inset-0 z-[110] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4" onclick="if(event.target===this) closePostModal()">
-  <div class="bg-white w-full max-w-2xl max-h-[90vh] rounded-2xl shadow-2xl overflow-hidden flex flex-col" onclick="event.stopPropagation()">
-    <div class="px-5 py-4 border-b border-gray-100 flex items-start justify-between gap-3">
+  <div class="bg-white w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden flex flex-col" onclick="event.stopPropagation()">
+    <div class="modal-header px-5 py-4 border-b border-gray-100 flex items-start justify-between gap-3">
       <div class="min-w-0">
         <div class="text-xs font-semibold text-gold-600" id="postModalDate"></div>
         <h3 class="mt-0.5 text-lg sm:text-xl font-bold text-navy-900 break-words" id="postModalTitle"></h3>
@@ -316,7 +362,7 @@ tailwind.config = {
       </button>
     </div>
     <div class="p-5 overflow-y-auto post-body text-sm sm:text-base text-gray-700 leading-relaxed break-words" id="postModalBody"></div>
-    <div class="px-5 py-3 border-t border-gray-100 bg-gray-50 text-right">
+    <div class="modal-footer px-5 py-3 border-t border-gray-100 bg-gray-50 text-right">
       <button onclick="closePostModal()" class="px-4 py-2 bg-navy-900 hover:bg-navy-800 text-white text-xs sm:text-sm font-bold rounded-lg transition">닫기</button>
     </div>
   </div>
@@ -346,14 +392,20 @@ tailwind.config = {
   </div>
 </section>
 
-<div id="lightboxModal" onclick="closeLightbox()" class="hidden fixed inset-0 z-[100] bg-black/95 backdrop-blur-md flex items-center justify-center p-4">
-  <button onclick="closeLightbox()" class="absolute top-5 right-5 w-10 h-10 rounded-full bg-white/10 text-white hover:bg-white/20 flex items-center justify-center z-10 transition">
+<div id="lightboxModal" onclick="closeLightbox()" class="hidden fixed inset-0 z-[100] bg-black/95 backdrop-blur-md flex items-center justify-center p-3 sm:p-4">
+  <button onclick="closeLightbox()" class="absolute top-4 right-4 sm:top-5 sm:right-5 w-10 h-10 rounded-full bg-white/10 text-white hover:bg-white/20 flex items-center justify-center z-10 transition" aria-label="닫기">
     <i class="fa-solid fa-xmark text-lg"></i>
   </button>
-  <div class="relative max-w-5xl max-h-[90vh] flex flex-col items-center justify-center" onclick="event.stopPropagation()">
-    <img id="lightboxImg" src="" alt="확대 이미지" class="max-w-full max-h-[80vh] object-contain rounded-xl shadow-2xl">
-    <p id="lightboxCaption" class="mt-3 text-white/90 text-base font-medium text-center"></p>
+  <button id="lbPrev" class="lb-nav prev hidden" aria-label="이전 사진"><i class="fa-solid fa-chevron-left"></i></button>
+  <button id="lbNext" class="lb-nav next hidden" aria-label="다음 사진"><i class="fa-solid fa-chevron-right"></i></button>
+  <div id="lbCounter" class="hidden absolute top-4 left-4 sm:top-5 sm:left-5 z-10 text-white/85 text-xs sm:text-sm font-semibold bg-white/10 backdrop-blur px-3 py-1.5 rounded-full"></div>
+  <div id="lbStage" class="relative max-w-5xl w-full max-h-[90vh] flex flex-col items-center justify-center touch-pan-y select-none" onclick="event.stopPropagation()">
+    <img id="lightboxImg" src="" alt="확대 이미지" class="max-w-full max-h-[80vh] object-contain rounded-xl shadow-2xl transition-transform duration-200 will-change-transform" draggable="false">
+    <p id="lightboxCaption" class="mt-3 text-white/90 text-sm sm:text-base font-medium text-center px-4"></p>
   </div>
+</div>
+<div id="swipeHint" class="swipe-hint">
+  <div class="swipe-hint-inner"><i class="fa-solid fa-hand-pointer"></i> 좌우로 스와이프하세요</div>
 </div>
 
 <section id="about" class="relative py-12 sm:py-16 bg-[#f4efe6] text-navy-900 overflow-hidden border-y border-navy-100/40">
@@ -552,7 +604,7 @@ tailwind.config = {
   const GH_REPO = 'gumivision/gumidreamchurch';
   const GH_BRANCH = 'main';
 
-  // ✅ 데이터는 jsDelivr CDN 사용 → GitHub API rate limit 회피 (다른 사람 단말에서도 안정적으로 로드)
+  // ✅ 데이터는 jsDelivr CDN 사용 → GitHub API rate limit 회피
   const JSDELIVR_LIST = `https://data.jsdelivr.com/v1/package/gh/${GH_REPO}@${GH_BRANCH}/flat`;
   const CDN_FILE = (path) => `https://cdn.jsdelivr.net/gh/${GH_REPO}@${GH_BRANCH}/${String(path).replace(/^\/+/, '')}`;
   const RAW_FILE = (path) => `https://raw.githubusercontent.com/${GH_REPO}/${GH_BRANCH}/${String(path).replace(/^\/+/, '')}`;
@@ -562,13 +614,12 @@ tailwind.config = {
     if(!p) return '';
     let s = String(p).trim();
     s = s.replace(/^\/+/, '');
-    s = s.replace(/^public\//, '');   // 과거 public/images 경로 호환
+    s = s.replace(/^public\//, '');
     if(!/^images\//.test(s) && /\.(png|jpe?g|gif|webp|svg|avif|bmp)$/i.test(s)){
       s = 'images/' + s;
     }
     return s;
   }
-  // ✅ 이미지도 jsDelivr CDN 우선 (raw는 fallback으로 onerror에서 처리)
   function toRawImageUrl(path){
     const rel = normalizeCmsPath(path);
     if(!rel) return '';
@@ -577,7 +628,6 @@ tailwind.config = {
   function escapeHtml(s){
     return (s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   }
-  // jsDelivr → raw.githubusercontent 순으로 시도
   async function robustFetchText(path){
     const urls = [ CDN_FILE(path), RAW_FILE(path) + `?t=${Date.now()}` ];
     let lastErr;
@@ -590,7 +640,6 @@ tailwind.config = {
     }
     throw lastErr || new Error('fetch failed');
   }
-  // ✅ 폴더 안의 .md 목록: jsDelivr flat listing (rate limit 없음)
   async function listMdFilesInFolder(folder){
     try{
       const r = await fetch(JSDELIVR_LIST);
@@ -600,7 +649,6 @@ tailwind.config = {
         .map(f => (f.name || '').replace(/^\/+/, ''))
         .filter(n => n.startsWith(folder + '/') && n.endsWith('.md'));
     }catch(e){
-      // fallback: GitHub API (rate limit 있음)
       try{
         const r2 = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/${folder}?t=${Date.now()}`);
         if(!r2.ok) return [];
@@ -658,7 +706,7 @@ tailwind.config = {
     text = text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (m, t, u) => `<a href="${escapeHtml(u)}" target="_blank" rel="noopener">${escapeHtml(t)}</a>`);
     text = text.replace(/^### (.*)$/gm, '<h4>$1</h4>');
     text = text.replace(/^## (.*)$/gm, '<h3>$1</h3>');
-    text = text.replace(/^# (.*)$/gm, '<h1>$1</h1>');   // ✅ 오타 수정 ('2>$1</h2>' → '<h1>$1</h1>')
+    text = text.replace(/^# (.*)$/gm, '<h1>$1</h1>');
     text = text.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
     text = text.replace(/\*([^*]+)\*/g, '<em>$1</em>');
     text = text.replace(/^\s*---\s*$/gm, '<hr/>');
@@ -746,28 +794,134 @@ tailwind.config = {
     });
   }
 
+  // ===== 모달 스택 (모바일 뒤로가기 지원) =====
+  const modalStack = [];
+  function pushModal(name, closer){
+    if(modalStack.length && modalStack[modalStack.length-1].name === name) return;
+    modalStack.push({ name, closer });
+    try{ history.pushState({ modal: name, ts: Date.now() }, ''); }catch(_){}
+  }
+  window.addEventListener('popstate', () => {
+    if(modalStack.length){
+      const top = modalStack.pop();
+      if(top && typeof top.closer === 'function') top.closer(true);
+    }
+  });
+
+  // ===== 라이트박스 (스와이프 지원) =====
+  let currentLbIndex = -1;
+
   function openLightbox(imgUrl, caption) {
+    currentLbIndex = galleryItems.findIndex(g => g.imageUrl === imgUrl);
+    if(currentLbIndex < 0) currentLbIndex = 0;
+    showLightboxByIndex(currentLbIndex, true);
+    pushModal('lightbox', _closeLightboxSilent);
+    try{
+      if(!localStorage.getItem('gdc_swipe_hint_shown')){
+        const hint = document.getElementById('swipeHint');
+        if(hint){
+          hint.classList.add('show');
+          setTimeout(() => hint.classList.remove('show'), 1600);
+          localStorage.setItem('gdc_swipe_hint_shown', '1');
+        }
+      }
+    }catch(_){}
+  }
+  function showLightboxByIndex(idx, firstOpen){
+    if(!galleryItems.length) return;
+    if(idx < 0) idx = galleryItems.length - 1;
+    if(idx >= galleryItems.length) idx = 0;
+    currentLbIndex = idx;
+    const item = galleryItems[idx];
     const modal = document.getElementById('lightboxModal');
     const modalImg = document.getElementById('lightboxImg');
     const modalCaption = document.getElementById('lightboxCaption');
-    if (modal && modalImg) {
-      modalImg.src = imgUrl;
-      modalCaption.textContent = caption || '';
+    const counter = document.getElementById('lbCounter');
+    const prevBtn = document.getElementById('lbPrev');
+    const nextBtn = document.getElementById('lbNext');
+    modalImg.src = item.imageUrl;
+    modalCaption.textContent = item.title || '';
+    if(counter){
+      counter.textContent = `${idx + 1} / ${galleryItems.length}`;
+      counter.classList.toggle('hidden', galleryItems.length < 2);
+    }
+    if(prevBtn) prevBtn.classList.toggle('hidden', galleryItems.length < 2);
+    if(nextBtn) nextBtn.classList.toggle('hidden', galleryItems.length < 2);
+    if(firstOpen){
       modal.classList.remove('hidden');
       document.body.style.overflow = 'hidden';
     }
   }
-  function closeLightbox() {
+  function lbPrev(){ showLightboxByIndex(currentLbIndex - 1); }
+  function lbNext(){ showLightboxByIndex(currentLbIndex + 1); }
+  function _closeLightboxSilent(){
     const modal = document.getElementById('lightboxModal');
     if (!modal || modal.classList.contains('hidden')) return;
     modal.classList.add('hidden');
     document.body.style.overflow = '';
+    const img = document.getElementById('lightboxImg');
+    if(img) img.style.transform = '';
+  }
+  function closeLightbox() {
+    const modal = document.getElementById('lightboxModal');
+    if (!modal || modal.classList.contains('hidden')) return;
+    const idx = modalStack.findIndex(m => m.name === 'lightbox');
+    if(idx >= 0){
+      modalStack.splice(idx, 1);
+      _closeLightboxSilent();
+      try{ history.back(); }catch(_){}
+    } else {
+      _closeLightboxSilent();
+    }
+  }
+
+  // ===== 갤러리 스와이프 (touch + mouse drag) =====
+  function initLightboxSwipe(){
+    const stage = document.getElementById('lbStage');
+    const img = document.getElementById('lightboxImg');
+    if(!stage || !img) return;
+    let startX = 0, startY = 0, dx = 0, dy = 0, active = false;
+    const THRESHOLD = 50;
+    const V_TOLERANCE = 60;
+    const onStart = (e) => {
+      const t = e.touches ? e.touches[0] : e;
+      startX = t.clientX; startY = t.clientY;
+      dx = 0; dy = 0; active = true;
+      img.style.transition = 'none';
+    };
+    const onMove = (e) => {
+      if(!active) return;
+      const t = e.touches ? e.touches[0] : e;
+      dx = t.clientX - startX;
+      dy = t.clientY - startY;
+      if(Math.abs(dx) > Math.abs(dy)){
+        if(e.cancelable) e.preventDefault();
+        img.style.transform = `translateX(${dx * 0.6}px)`;
+      }
+    };
+    const onEnd = () => {
+      if(!active) return;
+      active = false;
+      img.style.transition = 'transform .2s ease';
+      img.style.transform = 'translateX(0)';
+      if(Math.abs(dx) >= THRESHOLD && Math.abs(dy) < V_TOLERANCE){
+        if(dx < 0) lbNext(); else lbPrev();
+      }
+    };
+    stage.addEventListener('touchstart', onStart, { passive: true });
+    stage.addEventListener('touchmove',  onMove,  { passive: false });
+    stage.addEventListener('touchend',   onEnd);
+    stage.addEventListener('touchcancel',onEnd);
+    let mouseDown = false;
+    stage.addEventListener('mousedown', (e) => { mouseDown = true; onStart(e); });
+    stage.addEventListener('mousemove', (e) => { if(mouseDown) onMove(e); });
+    stage.addEventListener('mouseup',   (e) => { if(mouseDown){ mouseDown = false; onEnd(); } });
+    stage.addEventListener('mouseleave',(e) => { if(mouseDown){ mouseDown = false; onEnd(); } });
   }
 
   // ===== 유튜브 RSS (Shorts 안정 로드) =====
   const YT_RSS = `https://www.youtube.com/feeds/videos.xml?channel_id=${YT_CHANNEL}`;
   async function fetchYouTubeItems(){
-    // 1) rss2json (캐시 우회 파라미터)
     try{
       const url = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(YT_RSS)}&_=${Date.now()}`;
       const r = await fetch(url, { cache: 'no-store' });
@@ -783,7 +937,6 @@ tailwind.config = {
         }
       }
     }catch(_){}
-    // 2) allorigins → XML 직접 파싱
     try{
       const url = `https://api.allorigins.win/get?url=${encodeURIComponent(YT_RSS)}&_=${Date.now()}`;
       const r = await fetch(url, { cache: 'no-store' });
@@ -821,7 +974,6 @@ tailwind.config = {
   function renderShorts(items){
     const grid = document.getElementById('shortsGrid');
     if (!grid) return;
-    // 제목에 #shorts / 숏츠 / 쇼츠 힌트가 있으면 우선, 없으면 최신 3개로 보완
     const all = items.map(i => ({...i, id: ytIdFromUrl(i.link || i.guid)})).filter(i => i.id);
     let picks = all.filter(i => /#?shorts|숏츠|쇼츠/i.test(i.title || ''));
     if(picks.length < 3){
@@ -919,7 +1071,7 @@ tailwind.config = {
     const bodyEl = document.getElementById('postModalBody');
     let html = '';
     if (headerImageUrl) {
-      html += `<img src="${headerImageUrl}" alt="${escapeHtml(title)}" class="w-full max-h-72 object-cover rounded-lg mb-4" loading="lazy" onerror="this.style.display='none'" />`;
+      html += `<img src="${headerImageUrl}" alt="${escapeHtml(title)}" class="w-full max-h-72 sm:max-h-96 object-contain rounded-lg mb-4 bg-gray-50" loading="lazy" onerror="this.style.display='none'" />`;
     }
     if (bodyContent && bodyContent.trim()) {
       html += bodyContent;
@@ -927,17 +1079,31 @@ tailwind.config = {
       html += `<p class="text-gray-500 text-sm">본문이 비어있습니다. 관리자 페이지에서 내용을 입력해 주세요.</p>`;
     }
     bodyEl.innerHTML = html;
+    bodyEl.scrollTop = 0;
     document.getElementById('postModal').classList.remove('hidden');
     document.body.style.overflow = 'hidden';
+    pushModal('post', _closePostModalSilent);
   }
-  function closePostModal() {
+  function _closePostModalSilent(){
     const modal = document.getElementById('postModal');
     if (!modal || modal.classList.contains('hidden')) return;
     modal.classList.add('hidden');
     document.body.style.overflow = '';
   }
+  function closePostModal() {
+    const modal = document.getElementById('postModal');
+    if (!modal || modal.classList.contains('hidden')) return;
+    const idx = modalStack.findIndex(m => m.name === 'post');
+    if(idx >= 0){
+      modalStack.splice(idx, 1);
+      _closePostModalSilent();
+      try{ history.back(); }catch(_){}
+    } else {
+      _closePostModalSilent();
+    }
+  }
 
-  // ===== 게시글 로드 (jsDelivr 사용) =====
+  // ===== 게시글 로드 =====
   async function loadPosts() {
     const container = document.getElementById('latest-post-container');
     const listContainer = document.getElementById('board-list-container');
@@ -950,7 +1116,6 @@ tailwind.config = {
         container.innerHTML = '<p class="text-center text-gray-400 py-8">등록된 게시글이 없습니다.</p>';
         return;
       }
-
       const posts = await Promise.all(mdPaths.map(async (path) => {
         try{
           const text = await robustFetchText(path);
@@ -1030,7 +1195,7 @@ tailwind.config = {
     }
   }
 
-  // ===== 갤러리 로드 (jsDelivr 사용 + 단수 image: 필드 지원) =====
+  // ===== 갤러리 로드 =====
   async function loadGallery() {
     const container = document.getElementById('gallery-container');
     if (!container) return;
@@ -1040,15 +1205,12 @@ tailwind.config = {
         container.innerHTML = '<p class="text-center text-gray-400 col-span-full py-8">등록된 사진이 없습니다.</p>';
         return;
       }
-
       const items = await Promise.all(mdPaths.map(async (path) => {
         try{
           const text = await robustFetchText(path);
           const fm = parseFrontmatter(text);
           const base = path.split('/').pop();
           const title = fm.title || '';
-
-          // ✅ 단수 image: 필드 우선, 복수 images: 리스트도 하위호환
           const imageList = [];
           if(fm.image){
             imageList.push(fm.image);
@@ -1066,7 +1228,6 @@ tailwind.config = {
           return { base, title, imageList, rawDate: safeDate(fm.date, base) };
         }catch(_){ return null; }
       }));
-
       const tempItems = [];
       items.filter(Boolean).forEach(it => {
         it.imageList.forEach(imgPath => {
@@ -1077,7 +1238,6 @@ tailwind.config = {
           tempItems.push({ imageUrl, title: it.title, src: it.base, rawDate: it.rawDate });
         });
       });
-
       tempItems.sort((a, b) => (b.rawDate - a.rawDate) || (a.src < b.src ? 1 : -1));
       galleryItems = tempItems;
       renderGalleryPage(1);
@@ -1099,14 +1259,24 @@ tailwind.config = {
         renderSermons([]);
       }
     })();
+    const lbPrevBtn = document.getElementById('lbPrev');
+    const lbNextBtn = document.getElementById('lbNext');
+    if(lbPrevBtn) lbPrevBtn.addEventListener('click', (e) => { e.stopPropagation(); lbPrev(); });
+    if(lbNextBtn) lbNextBtn.addEventListener('click', (e) => { e.stopPropagation(); lbNext(); });
+    initLightboxSwipe();
     loadPosts();
     loadGallery();
   });
 
   document.addEventListener('keydown', (e) => {
+    const lbOpen = !document.getElementById('lightboxModal').classList.contains('hidden');
     if (e.key === 'Escape') {
       closeLightbox();
       closePostModal();
+    } else if (lbOpen && e.key === 'ArrowLeft') {
+      lbPrev();
+    } else if (lbOpen && e.key === 'ArrowRight') {
+      lbNext();
     }
   });
 </script>
