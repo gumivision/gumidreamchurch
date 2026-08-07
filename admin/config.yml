@@ -4,33 +4,37 @@ backend:
   branch: main
 
 # 정적 이미지 파일 저장 위치
-# - 실제 저장 위치: 저장소 루트의 images/ 폴더 (스크린샷 기준)
+# - 실제 저장 위치: 저장소 루트의 images/ 폴더
 # - 마크다운에는 "/images/foo.png" 경로로 기록됨
 media_folder: "images"
 public_folder: "/images"
 
+# CMS 좌측 표시 이름
+display_name: "구미 꿈이 있는 교회 관리"
+
+# 게시판 + 갤러리 두 컬렉션
 collections:
-  # 1. 게시판 글 (posts 폴더에 .md 문서 저장)
   - name: "posts"
-    label: "게시판 글"
+    label: "교회 소식"
     folder: "posts"
     create: true
-    # slug 템플릿은 유지하되, 추가로 사용자 입력 slug 필드를 받음 (한글 X)
-    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    slug: "{{slug}}"
+    extension: "md"
+    format: "frontmatter"
     fields:
       - { label: "제목", name: "title", widget: "string" }
-      - { label: "Slug (영문/숫자/- 만)", name: "slug", widget: "string", pattern: ['^[a-zA-Z0-9-]+$', '영문·숫자·하이픈(-) 만 입력 (한글 X)'] }
-      - { label: "작성일자", name: "date", widget: "datetime" }
-      - { label: "대표/첨부 이미지", name: "image", widget: "image", required: false }
-      - { label: "내용", name: "body", widget: "markdown" }
+      - { label: "날짜", name: "date", widget: "datetime" }
+      - { label: "대표 이미지", name: "image", widget: "image", required: false }
+      - { label: "본문", name: "body", widget: "markdown" }
 
-  # 2. 함께한 순간들 (gallery 폴더에 .md 문서 저장)
   - name: "gallery"
-    label: "함께한 순간들 (갤러리)"
+    label: "함께한 순간들"
     folder: "gallery"
     create: true
-    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    slug: "{{slug}}"
+    extension: "md"
+    format: "frontmatter"
     fields:
-      - { label: "Slug (영문/숫자/- 만)", name: "slug", widget: "string", pattern: ['^[a-zA-Z0-9-]+$', '영문·숫자·하이픈(-) 만 입력 (한글 X)'] }
-      - { label: "사진 제목", name: "title", widget: "string" }
-      - { label: "사진", name: "image", widget: "image" }
+      - { label: "제목", name: "title", widget: "string" }
+      - { label: "이미지", name: "image", widget: "image", required: true }
+      - { label: "설명", name: "body", widget: "markdown", required: false }
