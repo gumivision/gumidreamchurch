@@ -8,8 +8,11 @@
 <meta name="description" content="구미 꿈이 있는 교회 공식 홈페이지. 하나님의 말씀과 기도로 세워지는 교회, 평일(월~금) 저녁 8시 30분 라이브 예배 방송 진행.">
 <meta name="keywords" content="구미교회, 꿈이 있는 교회, Gumi Dream Church, 아름다운발걸음선교회, 유튜브 라이브, 경북 구미 교회">
 <meta property="og:title" content="구미 꿈이 있는 교회 | 아름다운발걸음선교회">
-<meta property="og:description" content="말씀과 기도로 세워지는 교회. 평일 저녁 8시 30분 라이브 예배.">
+<meta property="og:description" content="말씀과 기도로 세워지는 교회. 평일 저녁 8:30 라이브 예배.">
 <meta property="og:type" content="website">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 <script src="https://cdn.tailwindcss.com"></script>
 <script>
@@ -28,7 +31,7 @@ tailwind.config = {
       }
     }
   }
-}
+};
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -537,6 +540,25 @@ window.__INLINE_DATA__ = {
     }catch(_){}
     return window.__INLINE_DATA__;
   }
+
+  // ★★★ 탭 복귀 / 포커스 시 새 글 자동 반영 (서버 데이터와 비교해서 다르면 1줄 새로고침)
+  async function refreshIfStale(){
+    try{
+      const r = await fetch('/data.json?t=' + Date.now(), { cache:'no-store' });
+      if(!r.ok) return;
+      const j = await r.json();
+      if(!j || !Array.isArray(j.posts)) return;
+      const cur  = (window.__INLINE_DATA__ && window.__INLINE_DATA__.posts && window.__INLINE_DATA__.posts[0]) ? window.__INLINE_DATA__.posts[0].src : '';
+      const live = j.posts[0] ? j.posts[0].src : '';
+      const curN = (window.__INLINE_DATA__ && window.__INLINE_DATA__.posts) ? window.__INLINE_DATA__.posts.length : 0;
+      if(curN !== j.posts.length || (cur && live && cur !== live) || (cur=='' && live)){
+        location.reload();
+      }
+    }catch(_){}
+  }
+  document.addEventListener('visibilitychange', ()=>{ if(!document.hidden) refreshIfStale(); });
+  window.addEventListener('focus', refreshIfStale);
+  setTimeout(refreshIfStale, 5000);
   function safeDate(str){
     if(str){
       const d = new Date(str);
