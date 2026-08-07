@@ -1,26 +1,36 @@
-name: Regenerate data.json
+name: Build data.json and deploy Pages
 
-# 관리자가 posts/, gallery/, images/ 중 어디를 수정하든 자동 실행
 on:
+  # 1) 관리자가 글/이미지를 commit 했을 때 자동 실행
   push:
     branches: [ main ]
     paths:
       - 'posts/**'
       - 'gallery/**'
       - 'images/**'
+      - 'index.html'
+  # 2) Actions 탭에서 "Run workflow" 로 수동 트리거 가능
+  workflow_dispatch:
 
-# 동시에 여러 작업이 들어와도 한 번만 실행 (data.json 충돌 방지)
+# 동시 실행 충돌 방지 (data.json 재기록 race 방지)
 concurrency:
-  group: data-json-${{ github.ref }}
+  group: pages-${{ github.ref }}
   cancel-in-progress: false
 
+permissions:
+  contents: read      # checkout 용
+  pages: write        # GitHub Pages 배포 트리거용
+  id-token: write     # OIDC (향후 deploy 시 필요)
+
 jobs:
-  regen:
+  build-deploy:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write   # data.json 다시 commit 가능하도록
+    environment:
+      name: github-pages
+      url:  ${{ steps.deploy.outputs.page_url }}
+
     steps:
-      - name: Checkout
+      - name: Checkout (전 히스토리)
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -30,18 +40,23 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Build /data.json from frontmatter
+      - name: Build /data.json (posts + gallery 통합)
         run: node scripts/build-data-json.cjs
 
-      - name: Commit data.json back to repo
-        run: |
-          # 변경된 게 없으면 아무것도 안 함
-          if git diff --quiet -- data.json; then
-            echo "data.json unchanged - no commit needed"
-            exit 0
-          fi
-          git config user.name  "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add data.json
-          git commit -m "chore(data): regenerate data.json from CMS markdown"
-          git push origin main
+      - name: Show first 5 lines (디버그용)
+        run: head -n 5 data.json
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+
+      - name: Deploy to GitHub Pages
+        id: deploy
+        uses: actions/deploy-pages@v4
+
+      # ※ 만약 Pages 소스가 여전히 legacy 라면 deploy 단계가 에러 없이도 Pages 가 안 바뀝니다.
+      #   Settings → Pages → Source = "GitHub Actions" 가 먼저 설정되어 있어야 합니다.
