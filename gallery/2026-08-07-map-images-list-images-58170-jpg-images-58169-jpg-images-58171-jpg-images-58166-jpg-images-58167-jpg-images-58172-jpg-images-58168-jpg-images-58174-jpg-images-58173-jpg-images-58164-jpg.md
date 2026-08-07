@@ -1,6 +1,5 @@
 ---
 images:
-  - images/58170.jpg
   - images/58169.jpg
   - images/58171.jpg
   - images/58166.jpg
