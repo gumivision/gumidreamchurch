@@ -60,7 +60,7 @@ tailwind.config = {
   .reveal{ opacity:0; transform: translateY(28px); transition: opacity .9s ease, transform .9s cubic-bezier(.2,.7,.2,1); }
   .reveal.in{ opacity:1; transform: translateY(0); }
   .text-gold-gradient{
-    background: linear-gradient(135deg,#e2bd7a 0%, #d4a373 50%, #b88a55 100%);
+    background: linear-gradient(135deg,#b88a55 0%, #d4a373 50%, #e2bd7a 100%);
     -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
   }
   .glass{ background: rgba(255,255,255,.88); backdrop-filter: saturate(140%) blur(16px); -webkit-backdrop-filter: saturate(140%) blur(16px); }
@@ -88,20 +88,18 @@ tailwind.config = {
   .line-clamp-3{ display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
   .line-clamp-4{ display:-webkit-box; -webkit-line-clamp:4; -webkit-box-orient:vertical; overflow:hidden; }
 
-  /* ===== 모달 스크롤/레이아웃 보정 (모바일 이미지 잘림 방지) ===== */
+  /* ===== 모달 스크롤/레이아웃 보정 ===== */
   #postModal > div{
-    /* iOS 모바일에서 뷰포트 대응: 100dvh 지원 브라우저는 dvh 사용 */
     max-height: 90vh;
     max-height: 90dvh;
   }
   #postModalBody{
     -webkit-overflow-scrolling: touch;
     overscroll-behavior: contain;
-    min-height: 0;              /* flex 자식이 스크롤 되게 하는 핵심 */
+    min-height: 0;
     flex: 1 1 auto;
   }
   #postModal .modal-header, #postModal .modal-footer{ flex-shrink: 0; }
-  /* 라이트박스도 dvh 대응 */
   #lightboxModal img{ max-height: 80vh; max-height: 80dvh; }
 
   /* 갤러리 스와이프 힌트 */
@@ -138,21 +136,67 @@ tailwind.config = {
   }
 
   /* ===== 2026 트렌디 리터치 ===== */
-  /* 스크롤 진행 바 */
   #scroll-progress{
     position: fixed; top: 0; left: 0; height: 3px; width: 0%;
     background: linear-gradient(90deg,#e2bd7a,#d4a373,#b88a55);
     z-index: 200; transition: width .12s ease-out;
     box-shadow: 0 0 12px rgba(212,163,115,.5);
   }
-  /* Hero 배경 그라디언트 오브 */
-  .orb{ position:absolute; border-radius:9999px; filter: blur(70px); opacity:.28; pointer-events:none; }
-  .orb-a{ width:520px; height:520px; background: radial-gradient(circle,#d4a373 0%,transparent 60%); top:-140px; left:-160px; animation: orbFloat 18s ease-in-out infinite alternate; }
-  .orb-b{ width:460px; height:460px; background: radial-gradient(circle,#5a7aa6 0%,transparent 60%); bottom:-160px; right:-140px; animation: orbFloat 22s ease-in-out infinite alternate-reverse; }
-  @keyframes orbFloat{
-    0%{transform:translate(0,0) scale(1)}
-    100%{transform:translate(40px,30px) scale(1.1)}
+
+  /* ===== ✨ 새로운 Hero 배경 (밝고 세련된 톤) ===== */
+  .hero-bg{
+    background:
+      radial-gradient(1200px 600px at 15% 20%, rgba(226,189,122,.35) 0%, transparent 55%),
+      radial-gradient(900px 500px at 85% 80%, rgba(90,122,166,.28) 0%, transparent 55%),
+      radial-gradient(700px 400px at 60% 30%, rgba(255,255,255,.5) 0%, transparent 60%),
+      linear-gradient(135deg, #f8f5ee 0%, #eef2f8 45%, #f6f3ec 100%);
+    position: relative;
+    overflow: hidden;
   }
+  .hero-bg::before{
+    content:''; position:absolute; inset:0;
+    background-image:
+      radial-gradient(circle at 20% 30%, rgba(212,163,115,.15) 0%, transparent 40%),
+      radial-gradient(circle at 80% 70%, rgba(23,46,77,.08) 0%, transparent 40%);
+    pointer-events:none;
+  }
+  .hero-bg::after{
+    content:''; position:absolute; inset:0;
+    background-image:
+      linear-gradient(rgba(11,31,58,.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(11,31,58,.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    mask-image: radial-gradient(ellipse at center, black 40%, transparent 75%);
+    -webkit-mask-image: radial-gradient(ellipse at center, black 40%, transparent 75%);
+    pointer-events:none;
+  }
+  .hero-orb{
+    position:absolute; border-radius:9999px; filter: blur(60px); pointer-events:none;
+    animation: heroFloat 20s ease-in-out infinite alternate;
+  }
+  .hero-orb-1{
+    width:520px; height:520px;
+    background: radial-gradient(circle,#e2bd7a 0%,transparent 65%);
+    opacity:.55; top:-160px; right:-140px;
+  }
+  .hero-orb-2{
+    width:460px; height:460px;
+    background: radial-gradient(circle,#b6c8e0 0%,transparent 65%);
+    opacity:.45; bottom:-180px; left:-140px;
+    animation-direction: alternate-reverse;
+    animation-duration: 24s;
+  }
+  .hero-orb-3{
+    width:320px; height:320px;
+    background: radial-gradient(circle,#ffffff 0%,transparent 70%);
+    opacity:.6; top:30%; left:40%;
+    animation-duration: 18s;
+  }
+  @keyframes heroFloat{
+    0%{transform:translate(0,0) scale(1)}
+    100%{transform:translate(40px,30px) scale(1.08)}
+  }
+
   /* Shorts 카드 hover-lift */
   .short-card{
     transition: transform .35s cubic-bezier(.2,.7,.2,1), box-shadow .35s ease, border-color .3s ease;
@@ -185,7 +229,6 @@ tailwind.config = {
 <body class="bg-[#fafaf7]">
 <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[100] focus:bg-navy-900 focus:text-white focus:px-4 focus:py-2 focus:rounded">본문 바로가기</a>
 
-<!-- 스크롤 진행 표시 -->
 <div id="scroll-progress"></div>
 
 <header id="header" class="fixed top-0 inset-x-0 z-50 transition-all duration-300">
@@ -251,36 +294,36 @@ tailwind.config = {
 
 <main id="main">
 
-<section id="home" class="relative min-h-[75vh] sm:min-h-[85vh] flex items-center overflow-hidden bg-navy-900 bg-cover bg-center bg-no-repeat" style="background-image: url('main1.png');">
-  <div class="absolute inset-0 bg-gradient-to-r from-navy-950/90 via-navy-900/80 to-navy-950/65"></div>
-  <div class="orb orb-a"></div>
-  <div class="orb orb-b"></div>
-  <div class="absolute -top-32 -right-40 w-[480px] h-[480px] rounded-full bg-gold-500/10 blur-3xl"></div>
-  <div class="absolute -bottom-32 -left-40 w-[420px] h-[420px] rounded-full bg-navy-400/10 blur-3xl"></div>
+<!-- ✨ HERO: main1.png 제거하고 밝은 그라디언트 + 오브 효과로 교체 -->
+<section id="home" class="relative min-h-[75vh] sm:min-h-[85vh] flex items-center hero-bg">
+  <div class="hero-orb hero-orb-1"></div>
+  <div class="hero-orb hero-orb-2"></div>
+  <div class="hero-orb hero-orb-3"></div>
+
   <div class="relative z-10 w-full max-w-6xl mx-auto px-5 sm:px-8 pt-24 pb-12 sm:pt-28 sm:pb-16">
-    <div class="fade-up inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-red-600/20 border border-red-500/40 text-red-100 text-xs sm:text-sm font-medium backdrop-blur-sm">
+    <div class="fade-up inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/80 backdrop-blur border border-gold-500/40 text-red-600 text-xs sm:text-sm font-semibold shadow-sm">
       <span class="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span>
       평일(월~금) 저녁 8:30 라이브 예배
     </div>
-    <h1 class="fade-up mt-4 font-serif text-white text-3xl sm:text-5xl md:text-6xl tracking-tight leading-tight">
+    <h1 class="fade-up mt-4 font-serif text-navy-900 text-3xl sm:text-5xl md:text-6xl tracking-tight leading-tight">
       말씀과 기도로<br><span class="text-gold-gradient">세워지는 교회</span>
     </h1>
-    <p class="fade-up mt-4 max-w-xl text-white/85 text-sm sm:text-base leading-relaxed">
+    <p class="fade-up mt-4 max-w-xl text-navy-700 text-sm sm:text-base leading-relaxed">
       하나님의 따뜻한 사랑을 전하고, 이웃과 함께 동행하며 성장하는 믿음의 공동체입니다.<br class="hidden sm:block"> 당신의 첫 걸음을 언제나 환영합니다.
     </p>
     <div class="fade-up mt-6 flex flex-col sm:flex-row gap-3">
       <a href="https://youtube.com/channel/UCHCcttgFDXkLClVeuQxNaMw" target="_blank" rel="noopener" class="inline-flex items-center justify-center gap-2 bg-red-600 hover:bg-red-500 text-white font-bold px-6 py-3 rounded-xl shadow-lg shadow-red-600/30 transition-all text-sm"><i class="fa-solid fa-play"></i> 라이브 예배 참여</a>
-      <a href="#about" class="inline-flex items-center justify-center gap-2 bg-white/10 hover:bg-white/15 text-white border border-white/20 px-6 py-3 rounded-xl backdrop-blur font-semibold transition-all text-sm">교회 알아보기 <i class="fa-solid fa-arrow-down text-xs"></i></a>
+      <a href="#about" class="inline-flex items-center justify-center gap-2 bg-navy-900 hover:bg-navy-800 text-white px-6 py-3 rounded-xl font-semibold transition-all text-sm shadow-md">교회 알아보기 <i class="fa-solid fa-arrow-down text-xs"></i></a>
     </div>
-    <div class="fade-up mt-10 grid grid-cols-3 max-w-lg gap-4 text-white/90">
-      <div><div class="font-serif text-2xl sm:text-3xl font-bold text-gold-400">2016</div><div class="mt-0.5 text-xs text-white/70">개척의 시작</div></div>
-      <div><div class="font-serif text-2xl sm:text-3xl font-bold text-gold-400">50+</div><div class="mt-0.5 text-xs text-white/70">동역하는 성도</div></div>
-      <div><div class="font-serif text-2xl sm:text-3xl font-bold text-gold-400">365</div><div class="mt-0.5 text-xs text-white/70">말씀과 기도의 날</div></div>
+    <div class="fade-up mt-10 grid grid-cols-3 max-w-lg gap-4 text-navy-900">
+      <div><div class="font-serif text-2xl sm:text-3xl font-bold text-gold-600">2016</div><div class="mt-0.5 text-xs text-navy-600">개척의 시작</div></div>
+      <div><div class="font-serif text-2xl sm:text-3xl font-bold text-gold-600">50+</div><div class="mt-0.5 text-xs text-navy-600">동역하는 성도</div></div>
+      <div><div class="font-serif text-2xl sm:text-3xl font-bold text-gold-600">365</div><div class="mt-0.5 text-xs text-navy-600">말씀과 기도의 날</div></div>
     </div>
   </div>
 </section>
 
-<section id="live" class="relative py-12 sm:py-16 bg-[#f6f4ee] text-navy-900 border-b border-navy-100/60">
+<section id="live" class="relative py-12 sm:py-16 bg-[#f6f4ee] text-navy-900 border-y border-navy-100/60">
   <div class="relative max-w-7xl mx-auto px-5 sm:px-8">
     <div class="text-center max-w-2xl mx-auto reveal">
       <div class="inline-flex items-center gap-2 text-gold-600 text-xs sm:text-sm font-bold uppercase tracking-[0.2em]"><span class="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span> Live Worship &amp; Shorts</div>
@@ -604,12 +647,14 @@ tailwind.config = {
   const GH_REPO = 'gumivision/gumidreamchurch';
   const GH_BRANCH = 'main';
 
-  // ✅ 데이터는 jsDelivr CDN 사용 → GitHub API rate limit 회피
-  const JSDELIVR_LIST = `https://data.jsdelivr.com/v1/package/gh/${GH_REPO}@${GH_BRANCH}/flat`;
+  // ✅ 실시간 반영 우선 전략:
+  //   1) GitHub API를 최우선 사용 (커밋 즉시 반영)
+  //   2) rate limit 실패 시 jsDelivr CDN으로 fallback
+  //   3) 모든 요청에 캐시 우회 (?t=timestamp + cache: no-store)
   const CDN_FILE = (path) => `https://cdn.jsdelivr.net/gh/${GH_REPO}@${GH_BRANCH}/${String(path).replace(/^\/+/, '')}`;
-  const RAW_FILE = (path) => `https://raw.githubusercontent.com/${GH_REPO}/${GH_BRANCH}/${String(path).replace(/^\/+/, '')}`;
+  const RAW_FILE = (path) => `https://raw.githubusercontent.com/${GH_REPO}/${GH_BRANCH}/${String(path).replace(/^\/+/, '')}?t=${Date.now()}`;
+  const API_LIST = (folder) => `https://api.github.com/repos/${GH_REPO}/contents/${folder}?ref=${GH_BRANCH}&t=${Date.now()}`;
 
-  // ===== 경로 정규화 =====
   function normalizeCmsPath(p){
     if(!p) return '';
     let s = String(p).trim();
@@ -620,16 +665,18 @@ tailwind.config = {
     }
     return s;
   }
+  // ✅ 이미지도 raw.githubusercontent.com + 타임스탬프 (즉시 반영)
   function toRawImageUrl(path){
     const rel = normalizeCmsPath(path);
     if(!rel) return '';
-    return CDN_FILE(rel);
+    return `https://raw.githubusercontent.com/${GH_REPO}/${GH_BRANCH}/${rel}?t=${Date.now()}`;
   }
   function escapeHtml(s){
     return (s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   }
+  // ✅ 파일 내용 조회: raw.githubusercontent 우선 → jsDelivr fallback (rate limit 대응)
   async function robustFetchText(path){
-    const urls = [ CDN_FILE(path), RAW_FILE(path) + `?t=${Date.now()}` ];
+    const urls = [ RAW_FILE(path), CDN_FILE(path) ];
     let lastErr;
     for(const u of urls){
       try{
@@ -640,26 +687,32 @@ tailwind.config = {
     }
     throw lastErr || new Error('fetch failed');
   }
+  // ✅ 폴더의 .md 목록: GitHub API 우선 (즉시 반영) → jsDelivr fallback
   async function listMdFilesInFolder(folder){
+    // 1) GitHub API 우선 시도
     try{
-      const r = await fetch(JSDELIVR_LIST);
-      if(!r.ok) throw new Error('flat http ' + r.status);
-      const data = await r.json();
-      return (data.files || [])
-        .map(f => (f.name || '').replace(/^\/+/, ''))
-        .filter(n => n.startsWith(folder + '/') && n.endsWith('.md'));
-    }catch(e){
-      try{
-        const r2 = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/${folder}?t=${Date.now()}`);
-        if(!r2.ok) return [];
-        const arr = await r2.json();
-        if(!Array.isArray(arr)) return [];
-        return arr.filter(f => f.name && f.name.endsWith('.md')).map(f => `${folder}/${f.name}`);
-      }catch(_){ return []; }
-    }
+      const r = await fetch(API_LIST(folder), { cache: 'no-store' });
+      if(r.ok){
+        const arr = await r.json();
+        if(Array.isArray(arr)){
+          return arr.filter(f => f.name && f.name.endsWith('.md'))
+                    .map(f => `${folder}/${f.name}`);
+        }
+      }
+    }catch(_){}
+    // 2) jsDelivr flat listing fallback (rate limit 걸렸을 때만)
+    try{
+      const r = await fetch(`https://data.jsdelivr.com/v1/package/gh/${GH_REPO}@${GH_BRANCH}/flat?t=${Date.now()}`, { cache: 'no-store' });
+      if(r.ok){
+        const data = await r.json();
+        return (data.files || [])
+          .map(f => (f.name || '').replace(/^\/+/, ''))
+          .filter(n => n.startsWith(folder + '/') && n.endsWith('.md'));
+      }
+    }catch(_){}
+    return [];
   }
 
-  // ===== frontmatter 파싱 =====
   function parseFrontmatter(rawText){
     if(!rawText) return { body:'', title:'', date:'', image:'' };
     const text = rawText.replace(/\r\n?/g, '\n');
@@ -689,7 +742,6 @@ tailwind.config = {
     return { body, title, date, image };
   }
 
-  // ===== 경량 마크다운 → HTML =====
   function mdToHtml(md){
     if(!md) return '';
     let text = String(md).replace(/\r\n?/g, '\n');
@@ -736,7 +788,6 @@ tailwind.config = {
     return 0;
   }
 
-  // ===== 헤더/메뉴/스크롤 =====
   const header = document.getElementById('header');
   const progressBar = document.getElementById('scroll-progress');
   const onScroll = () => {
@@ -808,7 +859,7 @@ tailwind.config = {
     }
   });
 
-  // ===== 라이트박스 (스와이프 지원) =====
+  // ===== 라이트박스 =====
   let currentLbIndex = -1;
 
   function openLightbox(imgUrl, caption) {
@@ -875,7 +926,6 @@ tailwind.config = {
     }
   }
 
-  // ===== 갤러리 스와이프 (touch + mouse drag) =====
   function initLightboxSwipe(){
     const stage = document.getElementById('lbStage');
     const img = document.getElementById('lightboxImg');
@@ -919,7 +969,7 @@ tailwind.config = {
     stage.addEventListener('mouseleave',(e) => { if(mouseDown){ mouseDown = false; onEnd(); } });
   }
 
-  // ===== 유튜브 RSS (Shorts 안정 로드) =====
+  // ===== 유튜브 RSS =====
   const YT_RSS = `https://www.youtube.com/feeds/videos.xml?channel_id=${YT_CHANNEL}`;
   async function fetchYouTubeItems(){
     try{
@@ -1064,7 +1114,6 @@ tailwind.config = {
     }
   }
 
-  // ===== 게시글 모달 =====
   function openPostModal(title, date, bodyContent, headerImageUrl) {
     document.getElementById('postModalTitle').textContent = title || '제목 없음';
     document.getElementById('postModalDate').textContent = date || '';
@@ -1103,7 +1152,6 @@ tailwind.config = {
     }
   }
 
-  // ===== 게시글 로드 =====
   async function loadPosts() {
     const container = document.getElementById('latest-post-container');
     const listContainer = document.getElementById('board-list-container');
@@ -1114,6 +1162,7 @@ tailwind.config = {
       const mdPaths = await listMdFilesInFolder('posts');
       if (!mdPaths.length) {
         container.innerHTML = '<p class="text-center text-gray-400 py-8">등록된 게시글이 없습니다.</p>';
+        if(wrapper) wrapper.classList.add('hidden');
         return;
       }
       const posts = await Promise.all(mdPaths.map(async (path) => {
@@ -1195,14 +1244,16 @@ tailwind.config = {
     }
   }
 
-  // ===== 갤러리 로드 =====
   async function loadGallery() {
     const container = document.getElementById('gallery-container');
     if (!container) return;
     try {
       const mdPaths = await listMdFilesInFolder('gallery');
       if (!mdPaths.length) {
+        galleryItems = [];
         container.innerHTML = '<p class="text-center text-gray-400 col-span-full py-8">등록된 사진이 없습니다.</p>';
+        const pagination = document.getElementById('gallery-pagination');
+        if(pagination) pagination.innerHTML = '';
         return;
       }
       const items = await Promise.all(mdPaths.map(async (path) => {
