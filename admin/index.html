@@ -38,7 +38,6 @@
       from { opacity: 0; transform: translateY(16px); }
       to { opacity: 1; transform: translateY(0); }
     }
-    /* 모달 스크롤/레이아웃 보정 (모바일 이미지 잘림 방지) */
     #postModal > div{
       max-height: 90vh;
       max-height: 90dvh;
@@ -52,7 +51,6 @@
     #postModal .modal-header, #postModal .modal-footer{ flex-shrink: 0; }
     #lightboxModal img{ max-height: 80vh; max-height: 80dvh; }
 
-    /* 갤러리 스와이프 힌트 */
     .swipe-hint{
       position: fixed; inset: 0; z-index: 105;
       display: flex; align-items: center; justify-content: center;
@@ -66,7 +64,6 @@
       font-size: 12px; font-weight: 600;
       display: inline-flex; align-items: center; gap: 8px;
     }
-    /* 로딩 스켈레톤 */
     .skeleton{ position: relative; overflow: hidden; background:#eef1f5; }
     .skeleton::after{
       content:''; position:absolute; inset:0;
@@ -75,16 +72,13 @@
     }
     @keyframes shimmer{ 0%{transform:translateX(-100%)} 100%{transform:translateX(100%)} }
 
-    /* 관리자 미리보기 배너 (모바일 최적화) */
     .admin-hero{ min-height: 220px; }
     @media (min-width: 640px){ .admin-hero{ min-height: 340px; } }
 
-    /* 갤러리 카드 hover */
     .gal-card{ transition: transform .25s ease, box-shadow .25s ease; }
     .gal-card:active{ transform: scale(.98); }
     @media(hover:hover){ .gal-card:hover{ transform: translateY(-2px); box-shadow: 0 12px 28px -12px rgba(11,31,58,.25); } }
 
-    /* 라이트박스 좌우 버튼 (스와이프 대안) */
     .lb-nav{
       position:absolute; top:50%; transform: translateY(-50%);
       width:44px; height:44px; border-radius:9999px;
@@ -105,7 +99,7 @@
 
   <header class="sticky top-0 z-30 bg-white/85 backdrop-blur-md border-b border-gray-200 shadow-sm">
     <div class="max-w-6xl mx-auto px-4 py-3 sm:py-4 flex items-center justify-between gap-3">
-      <a href="/" class="flex items-center gap-2 min-w-0">
+      <a href="https://gumivision.github.io/gumidreamchurch/" class="flex items-center gap-2 min-w-0">
         <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center shrink-0">
           <i class="fa-solid fa-cross text-[#0b1f3a]"></i>
         </div>
@@ -115,11 +109,11 @@
         </div>
       </a>
       <div class="flex items-center gap-2">
-        <a href="/" target="_blank" class="inline-flex items-center gap-1.5 text-xs sm:text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold px-3 py-2 rounded-lg transition active:scale-95">
+        <a href="https://gumivision.github.io/gumidreamchurch/" target="_blank" class="inline-flex items-center gap-1.5 text-xs sm:text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold px-3 py-2 rounded-lg transition active:scale-95">
           <i class="fa-solid fa-arrow-up-right-from-square text-[11px]"></i>
           <span class="hidden sm:inline">홈페이지</span>
         </a>
-        <a href="/admin/" target="_blank" class="inline-flex items-center gap-1.5 text-xs sm:text-sm bg-[#0b1f3a] hover:bg-[#172e4d] text-white font-semibold px-3 py-2 sm:px-3.5 rounded-lg transition active:scale-95 shadow-sm">
+        <a href="https://gumivision.github.io/gumidreamchurch/admin/" target="_blank" class="inline-flex items-center gap-1.5 text-xs sm:text-sm bg-[#0b1f3a] hover:bg-[#172e4d] text-white font-semibold px-3 py-2 sm:px-3.5 rounded-lg transition active:scale-95 shadow-sm">
           <i class="fa-solid fa-user-gear text-[11px]"></i>
           <span>관리자 로그인</span>
         </a>
@@ -142,31 +136,30 @@
     </div>
   </section>
 
-  <!-- 관리자 빠른 액션 (모바일 친화) -->
   <section class="max-w-6xl mx-auto px-4 mt-4">
     <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
-      <a href="/admin/#/collections/posts/new" class="flex items-center gap-2 bg-white border border-gray-200 rounded-xl px-3 py-3 shadow-sm active:scale-95 transition">
+      <a href="https://gumivision.github.io/gumidreamchurch/admin/#/collections/posts/new" class="flex items-center gap-2 bg-white border border-gray-200 rounded-xl px-3 py-3 shadow-sm active:scale-95 transition">
         <div class="w-9 h-9 rounded-lg bg-amber-500/15 text-amber-600 flex items-center justify-center shrink-0"><i class="fa-solid fa-pen-to-square text-sm"></i></div>
         <div class="min-w-0">
           <div class="text-[11px] text-gray-500 font-medium">새로 쓰기</div>
           <div class="text-xs sm:text-sm font-bold text-[#0b1f3a] truncate">게시글 작성</div>
         </div>
       </a>
-      <a href="/admin/#/collections/gallery/new" class="flex items-center gap-2 bg-white border border-gray-200 rounded-xl px-3 py-3 shadow-sm active:scale-95 transition">
+      <a href="https://gumivision.github.io/gumidreamchurch/admin/#/collections/gallery/new" class="flex items-center gap-2 bg-white border border-gray-200 rounded-xl px-3 py-3 shadow-sm active:scale-95 transition">
         <div class="w-9 h-9 rounded-lg bg-blue-500/15 text-blue-600 flex items-center justify-center shrink-0"><i class="fa-regular fa-image text-sm"></i></div>
         <div class="min-w-0">
           <div class="text-[11px] text-gray-500 font-medium">사진 업로드</div>
           <div class="text-xs sm:text-sm font-bold text-[#0b1f3a] truncate">갤러리 추가</div>
         </div>
       </a>
-      <a href="/admin/#/collections/posts" class="flex items-center gap-2 bg-white border border-gray-200 rounded-xl px-3 py-3 shadow-sm active:scale-95 transition">
+      <a href="https://gumivision.github.io/gumidreamchurch/admin/#/collections/posts" class="flex items-center gap-2 bg-white border border-gray-200 rounded-xl px-3 py-3 shadow-sm active:scale-95 transition">
         <div class="w-9 h-9 rounded-lg bg-purple-500/15 text-purple-600 flex items-center justify-center shrink-0"><i class="fa-solid fa-list-ul text-sm"></i></div>
         <div class="min-w-0">
           <div class="text-[11px] text-gray-500 font-medium">글 관리</div>
           <div class="text-xs sm:text-sm font-bold text-[#0b1f3a] truncate">게시글 목록</div>
         </div>
       </a>
-      <a href="/admin/#/collections/gallery" class="flex items-center gap-2 bg-white border border-gray-200 rounded-xl px-3 py-3 shadow-sm active:scale-95 transition">
+      <a href="https://gumivision.github.io/gumidreamchurch/admin/#/collections/gallery" class="flex items-center gap-2 bg-white border border-gray-200 rounded-xl px-3 py-3 shadow-sm active:scale-95 transition">
         <div class="w-9 h-9 rounded-lg bg-emerald-500/15 text-emerald-600 flex items-center justify-center shrink-0"><i class="fa-regular fa-images text-sm"></i></div>
         <div class="min-w-0">
           <div class="text-[11px] text-gray-500 font-medium">사진 관리</div>
@@ -280,7 +273,6 @@
     const GH_REPO = 'gumivision/gumidreamchurch';
     const GH_BRANCH = 'main';
 
-    // ✅ 데이터는 jsDelivr CDN 우선 (GitHub API rate limit 회피)
     const JSDELIVR_LIST = `https://data.jsdelivr.com/v1/package/gh/${GH_REPO}@${GH_BRANCH}/flat`;
     const CDN_FILE = (path) => `https://cdn.jsdelivr.net/gh/${GH_REPO}@${GH_BRANCH}/${String(path).replace(/^\/+/, '')}`;
     const RAW_FILE = (path) => `https://raw.githubusercontent.com/${GH_REPO}/${GH_BRANCH}/${String(path).replace(/^\/+/, '')}`;
@@ -358,7 +350,6 @@
       return { body, title, date, image };
     }
 
-    // 경량 마크다운 → HTML (홈페이지와 동일)
     function mdToHtml(md){
       if(!md) return '';
       let text = String(md).replace(/\r\n?/g, '\n');
@@ -494,7 +485,6 @@
       }
     }
 
-    // ===== 모달 스택 (모바일 뒤로가기 지원) =====
     const modalStack = [];
     function pushModal(name, closer){
       if(modalStack.length && modalStack[modalStack.length-1].name === name) return;
@@ -546,16 +536,13 @@
       }
     }
 
-    // ===== 라이트박스 (스와이프 지원) =====
     let currentLbIndex = -1;
 
     function openLightbox(imgUrl, caption) {
-      // 인덱스 매칭
       currentLbIndex = galleryItems.findIndex(g => g.imageUrl === imgUrl);
       if(currentLbIndex < 0) currentLbIndex = 0;
       showLightboxByIndex(currentLbIndex, true);
       pushModal('lightbox', _closeLightboxSilent);
-      // 첫 방문 시 스와이프 힌트 (한 번만)
       try{
         if(!localStorage.getItem('gdc_swipe_hint_shown')){
           const hint = document.getElementById('swipeHint');
@@ -615,14 +602,13 @@
       }
     }
 
-    // ===== 갤러리 스와이프 (touch + pointer) =====
     function initLightboxSwipe(){
       const stage = document.getElementById('lbStage');
       const img = document.getElementById('lightboxImg');
       if(!stage || !img) return;
       let startX = 0, startY = 0, dx = 0, dy = 0, active = false;
-      const THRESHOLD = 50;   // 최소 스와이프 거리(px)
-      const V_TOLERANCE = 60; // 세로 허용치 초과 시 스와이프 아님
+      const THRESHOLD = 50;
+      const V_TOLERANCE = 60;
 
       const onStart = (e) => {
         const t = e.touches ? e.touches[0] : e;
@@ -653,7 +639,6 @@
       stage.addEventListener('touchmove',  onMove,  { passive: false });
       stage.addEventListener('touchend',   onEnd);
       stage.addEventListener('touchcancel',onEnd);
-      // 마우스 드래그도 지원 (데스크톱)
       let mouseDown = false;
       stage.addEventListener('mousedown', (e) => { mouseDown = true; onStart(e); });
       stage.addEventListener('mousemove', (e) => { if(mouseDown) onMove(e); });
