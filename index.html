@@ -914,13 +914,13 @@ tailwind.config = {
               if (cleanLine.startsWith('-')) return;
               imageList.push(cleanLine);
             });
+        }     
         imageList.forEach(imgPath => {
           if (!imgPath || imgPath === '""' || imgPath === "''") return;
           const imageUrl = toRawImageUrl(imgPath);
           if (!imageUrl) return;
           tempItems.push({ imageUrl, title, src: file.name, rawDate: safeDate('', file.name) });
         });
-      }
 
       // 갤러리는 최신순 (파일 날짜 기준, 같은 날이면 이름 역순으로 안정 정렬)
       tempItems.sort((a, b) => (b.rawDate - a.rawDate) || (a.src < b.src ? 1 : -1));
