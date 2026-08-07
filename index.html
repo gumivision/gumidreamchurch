@@ -489,11 +489,6 @@ tailwind.config = {
   const GH_BRANCH = 'main';
 
   // ===== 경로 정규화 (이번 패치의 핵심) =====
-  // 저장소 구조 (스크린샷 기준):
-  //   - images/        ← 저장소 루트에 images 폴더가 존재 (public/ 없음)
-  //   - images/57938.png, images/58166.jpg, images/1785895136741.jpg 등
-  //   - gallery/*.md  ← 이미지 경로는 frontmatter "image: images/..." 형식으로 저장됨
-  // raw URL = https://raw.githubusercontent.com/gumivision/gumidreamchurch/main/images/foo.png
   function normalizeCmsPath(p){
     if(!p) return '';
     let s = String(p).trim();
@@ -816,7 +811,7 @@ tailwind.config = {
         return { title, date, bodyHtml, headerImageUrl, rawDate: safeDate(fm.date, file.name) };
       }));
 
-      // 최신순 안정 정렬
+      // 최신순 정렬
       posts.sort((a, b) => b.rawDate - a.rawDate);
 
       const displayPosts = posts.slice(0, 6);
@@ -901,7 +896,6 @@ tailwind.config = {
         const fm = parseFrontmatter(text);
         const title = fm.title || '';
 
-        // images: 블록 (다중 이미지) 또는 image: 단일 이미지 모두 지원
         const imageList = [];
         const listBlockMatch = text.match(/^images:\s*\n((?:\s*-\s+\S.*\n?)+)/m);
         if (listBlockMatch) {
@@ -924,7 +918,6 @@ tailwind.config = {
         });
       }
 
-      // 갤러리는 최신순 (파일 날짜 기준, 같은 날이면 이름 역순으로 안정 정렬)
       tempItems.sort((a, b) => (b.rawDate - a.rawDate) || (a.src < b.src ? 1 : -1));
       galleryItems = tempItems;
       renderGalleryPage(1);
@@ -968,4 +961,5 @@ tailwind.config = {
   }
 </script>
 </body>
+</html>
 </html>
