@@ -1,0 +1,47 @@
+name: Regenerate data.json
+
+# 관리자가 posts/, gallery/, images/ 중 어디를 수정하든 자동 실행
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'posts/**'
+      - 'gallery/**'
+      - 'images/**'
+
+# 동시에 여러 작업이 들어와도 한 번만 실행 (data.json 충돌 방지)
+concurrency:
+  group: data-json-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  regen:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write   # data.json 다시 commit 가능하도록
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Build /data.json from frontmatter
+        run: node scripts/build-data-json.cjs
+
+      - name: Commit data.json back to repo
+        run: |
+          # 변경된 게 없으면 아무것도 안 함
+          if git diff --quiet -- data.json; then
+            echo "data.json unchanged - no commit needed"
+            exit 0
+          fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data.json
+          git commit -m "chore(data): regenerate data.json from CMS markdown"
+          git push origin main
