@@ -643,7 +643,7 @@ tailwind.config = {
         <div class="bg-white border border-navy-100 rounded-2xl p-5 shadow-sm">
           <div class="flex items-center gap-2.5 mb-2"><div class="w-8 h-8 rounded-lg bg-gold-500/10 text-gold-600 flex items-center justify-center text-base"><i class="fa-solid fa-phone"></i></div><h3 class="font-bold text-navy-900 text-base">연락처 및 소셜 미디어</h3></div>
           <p class="text-navy-700 text-xs sm:text-sm">전화번호: 010-2258-4827</p>
-          <p class="text-navy-700 text-xs sm:text-sm mt-0.5"><i class="fa-regular fa-envelope text-gold-600 mr-1"></i> lovekyk79@naver.com</p>
+          <p class="text-navy-700 text-xs sm:text-sm mt-0.5"><i class="fa-regular fa-envelope text-gold-600 mr-1"></i> <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="533f3c2536382a38646a133d322536217d303c3e">[email&#160;protected]</a></p>
           <div class="mt-3 flex flex-wrap items-center gap-2">
             <a href="https://www.instagram.com/gyuhekim?igsh=NXViY3kxamF2cjlx" target="_blank" rel="noopener" class="flex items-center gap-1.5 text-xs font-bold bg-pink-50 text-pink-600 hover:bg-pink-100 px-2.5 py-1.5 rounded-lg transition"><i class="fa-brands fa-instagram"></i> 인스타그램</a>
             <a href="https://youtube.com/channel/UCHCcttgFDXkLClVeuQxNaMw" target="_blank" rel="noopener" class="flex items-center gap-1.5 text-xs font-bold bg-red-50 text-red-600 hover:bg-red-100 px-2.5 py-1.5 rounded-lg transition"><i class="fa-brands fa-youtube"></i> 유튜브</a>
@@ -669,7 +669,7 @@ tailwind.config = {
     </div>
     <div><div class="text-white font-bold text-xs sm:text-sm mb-3">바로가기</div><ul class="space-y-1.5 text-xs"><li><a href="#about" class="hover:text-white">교회 소개</a></li><li><a href="#live" class="hover:text-white">라이브 예배</a></li><li><a href="#board" class="hover:text-white">교회 소식</a></li><li><a href="#sermons" class="hover:text-white">최근 말씀</a></li><li><a href="#gallery-section" class="hover:text-white">갤러리</a></li></ul></div>
     <div><div class="text-white font-bold text-xs sm:text-sm mb-3">참여</div><ul class="space-y-1.5 text-xs"><li><a href="#visit" class="hover:text-white">첫 방문 안내</a></li><li><a href="#giving" class="hover:text-white">찬양·온라인 헌금</a></li><li><a href="#contact" class="hover:text-white">오시는 길</a></li></ul></div>
-    <div><div class="text-white font-bold text-xs sm:text-sm mb-3">연락</div><ul class="space-y-1.5 text-xs"><li>경상북도 구미시 금오대로 12길 25 2층</li><li>010-2258-4827</li><li>lovekyk79@naver.com</li></ul></div>
+    <div><div class="text-white font-bold text-xs sm:text-sm mb-3">연락</div><ul class="space-y-1.5 text-xs"><li>경상북도 구미시 금오대로 12길 25 2층</li><li>010-2258-4827</li><li><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="3f5350495a54465408067f515e495a4d115c5052">[email&#160;protected]</a></li></ul></div>
   </div>
   <div class="border-t border-white/10">
     <div class="max-w-7xl mx-auto px-5 sm:px-8 py-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px]">
@@ -696,7 +696,7 @@ tailwind.config = {
   </div>
 </nav>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
   const YT_CHANNEL = 'UCHCcttgFDXkLClVeuQxNaMw';
   const KAKAO_CHAT_URL = 'https://open.kakao.com/o/sWASfhHi';
   const GH_REPO = 'gumivision/gumidreamchurch';
@@ -1169,44 +1169,166 @@ tailwind.config = {
     stage.addEventListener('pointercancel', onEnd);
   }
 
-  // ===== 유튜브 RSS =====
+  // ===== 유튜브 RSS (재시도/백오프 통합 버전) =====
   const YT_RSS = `https://www.youtube.com/feeds/videos.xml?channel_id=${YT_CHANNEL}`;
-  async function fetchYouTubeItems(){
+  const YT_LAST_GOOD_CACHE_KEY = 'yt:lastgood:v1';
+  const YT_LAST_GOOD_TTL_MS = 6 * 60 * 60 * 1000; // 6시간 이내면 정상 데이터로 인정
+
+  // ---------- 재시도 상태 (라이브 표시용) ----------
+  const ytRetryState = { phase: 'idle', attempt: 0, total: 0, source: '', message: '' };
+  function setYtRetryState(patch){
+    Object.assign(ytRetryState, patch);
+    window.dispatchEvent(new CustomEvent('yt:retry-state', { detail: { ...ytRetryState } }));
+  }
+
+  // ---------- 캐시 헬퍼 ----------
+  const sleep = (ms) => new Promise(res => setTimeout(res, ms));
+  function readCacheRecord(key){
     try{
-      const url = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(YT_RSS)}&_=${Date.now()}`;
-      const r = await fetch(url, { cache: 'no-store' });
-      if(r.ok){
-        const j = await r.json();
-        if(j && Array.isArray(j.items) && j.items.length){
-          return j.items.map(it => ({
-            title: it.title || '',
-            link: it.link || '',
-            pubDate: it.pubDate || '',
-            guid: it.guid || ''
-          }));
+      const raw = localStorage.getItem(key);
+      if(!raw) return null;
+      const parsed = JSON.parse(raw);
+      if(!parsed || typeof parsed !== 'object' || !('time' in parsed)) return null;
+      return parsed;
+    }catch(_){ return null; }
+  }
+  function getFreshCache(key, ttlMs){
+    const rec = readCacheRecord(key);
+    if(!rec) return null;
+    if(Date.now() - rec.time > ttlMs) return null;
+    return rec.data;
+  }
+  function getStaleCache(key){
+    const rec = readCacheRecord(key);
+    return rec ? rec.data : null;
+  }
+  function setCacheRecord(key, data){
+    try{ localStorage.setItem(key, JSON.stringify({ time: Date.now(), data })); }catch(_){}
+  }
+
+  // ---------- 재시도/타임아웃 ----------
+  async function fetchWithTimeout(url, timeoutMs){
+    const ctrl = new AbortController();
+    const t = setTimeout(() => ctrl.abort(), timeoutMs);
+    try{
+      const r = await fetch(url, { cache: 'no-store', signal: ctrl.signal });
+      return r;
+    }finally{
+      clearTimeout(t);
+    }
+  }
+  async function withRetry(fn, { tries = 3, baseDelayMs = 1000, maxDelayMs = 8000, jitter = true, onRetry } = {}){
+    let lastErr;
+    for(let attempt = 1; attempt <= tries; attempt++){
+      try{
+        return await fn(attempt);
+      }catch(err){
+        lastErr = err;
+        if(attempt < tries){
+          const exp = Math.min(maxDelayMs, baseDelayMs * Math.pow(2, attempt - 1));
+          const delay = jitter ? Math.round(exp * (0.5 + Math.random() * 0.5)) : exp;
+          if(typeof onRetry === 'function'){
+            try{ onRetry(attempt, tries, delay, err); }catch(_){}
+          }
+          await sleep(delay);
         }
       }
-    }catch(_){}
+    }
+    throw lastErr || new Error('retry exhausted');
+  }
+
+  // ---------- 경로별 fetcher ----------
+  async function fetchRss2Json(){
+    const url = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(YT_RSS)}&_=${Date.now()}`;
+    const r = await fetchWithTimeout(url, 8000);
+    if(!r.ok) throw new Error('rss2json HTTP ' + r.status);
+    const j = await r.json();
+    if(!j || !Array.isArray(j.items) || !j.items.length) throw new Error('rss2json empty');
+    return j.items.map(it => ({
+      title: it.title || '',
+      link: it.link || '',
+      pubDate: it.pubDate || '',
+      guid: it.guid || ''
+    }));
+  }
+  async function fetchAllOriginsXml(){
+    const url = `https://api.allorigins.win/get?url=${encodeURIComponent(YT_RSS)}&_=${Date.now()}`;
+    const r = await fetchWithTimeout(url, 10000);
+    if(!r.ok) throw new Error('allorigins HTTP ' + r.status);
+    const wrap = await r.json();
+    const xmlText = wrap && wrap.contents ? wrap.contents : '';
+    if(!xmlText) throw new Error('allorigins empty body');
+    const doc = new DOMParser().parseFromString(xmlText, 'text/xml');
+    const entries = Array.from(doc.getElementsByTagName('entry'));
+    if(!entries.length) throw new Error('allorigins no entries');
+    return entries.map(e => {
+      const vid = e.getElementsByTagName('yt:videoId')[0]?.textContent
+               || e.getElementsByTagName('videoId')[0]?.textContent || '';
+      const title = e.getElementsByTagName('title')[0]?.textContent || '';
+      const link = e.getElementsByTagName('link')[0]?.getAttribute('href') || (vid ? `https://www.youtube.com/watch?v=${vid}` : '');
+      const pub = e.getElementsByTagName('published')[0]?.textContent || '';
+      return { title, link, pubDate: pub, guid: vid };
+    });
+  }
+
+  // ---------- 메인: rss2json 재시도 → allorigins 재시도 → 캐시 fallback ----------
+  async function fetchYouTubeItems(){
+    // 1) rss2json 재시도 (최대 3회, 백오프 1s → 2s → 4s)
     try{
-      const url = `https://api.allorigins.win/get?url=${encodeURIComponent(YT_RSS)}&_=${Date.now()}`;
-      const r = await fetch(url, { cache: 'no-store' });
-      if(r.ok){
-        const wrap = await r.json();
-        const xmlText = wrap && wrap.contents ? wrap.contents : '';
-        if(xmlText){
-          const doc = new DOMParser().parseFromString(xmlText, 'text/xml');
-          const entries = Array.from(doc.getElementsByTagName('entry'));
-          return entries.map(e => {
-            const vid = e.getElementsByTagName('yt:videoId')[0]?.textContent
-                     || e.getElementsByTagName('videoId')[0]?.textContent || '';
-            const title = e.getElementsByTagName('title')[0]?.textContent || '';
-            const link = e.getElementsByTagName('link')[0]?.getAttribute('href') || (vid ? `https://www.youtube.com/watch?v=${vid}` : '');
-            const pub = e.getElementsByTagName('published')[0]?.textContent || '';
-            return { title, link, pubDate: pub, guid: vid };
+      const items = await withRetry(fetchRss2Json, {
+        tries: 3,
+        baseDelayMs: 1000,
+        onRetry: (attempt, total, delay) => {
+          setYtRetryState({
+            phase: 'retry',
+            source: 'rss2json',
+            attempt, total,
+            message: `rss2json 재시도 ${attempt}/${total} (대기 ${Math.round(delay/1000)}s)`
           });
         }
-      }
-    }catch(_){}
+      });
+      setCacheRecord(YT_LAST_GOOD_CACHE_KEY, items);
+      setYtRetryState({ phase: 'idle', attempt: 0, total: 0, source: 'rss2json', message: '' });
+      return items;
+    }catch(_){ /* 다음 경로 */ }
+
+    setYtRetryState({ phase: 'switch', source: 'allorigins', attempt: 0, total: 0, message: 'allorigins로 전환 중' });
+
+    // 2) allorigins 재시도 (최대 2회, 백오프 1s → 2s)
+    try{
+      const items = await withRetry(fetchAllOriginsXml, {
+        tries: 2,
+        baseDelayMs: 1000,
+        onRetry: (attempt, total, delay) => {
+          setYtRetryState({
+            phase: 'retry',
+            source: 'allorigins',
+            attempt, total,
+            message: `allorigins 재시도 ${attempt}/${total} (대기 ${Math.round(delay/1000)}s)`
+          });
+        }
+      });
+      setCacheRecord(YT_LAST_GOOD_CACHE_KEY, items);
+      setYtRetryState({ phase: 'idle', attempt: 0, total: 0, source: 'allorigins', message: '' });
+      return items;
+    }catch(_){ /* 마지막 fallback */ }
+
+    // 3) 캐시 fallback (6시간 이내 → 정상, 그 외 → '오래된 데이터' 표시)
+    const stale = getStaleCache(YT_LAST_GOOD_CACHE_KEY);
+    if(Array.isArray(stale) && stale.length){
+      const rec = readCacheRecord(YT_LAST_GOOD_CACHE_KEY);
+      const ageMin = rec ? Math.round((Date.now() - rec.time) / 60000) : null;
+      const stillFresh = ageMin !== null && ageMin <= 360;
+      setYtRetryState({
+        phase: stillFresh ? 'idle' : 'stale',
+        source: 'cache',
+        attempt: 0, total: 0,
+        message: stillFresh ? '' : `외부 서비스 일시 장애로 ${ageMin}분 전 데이터를 표시 중`
+      });
+      return stale;
+    }
+
+    setYtRetryState({ phase: 'failed', source: 'none', attempt: 0, total: 0, message: '데이터를 가져오지 못했습니다' });
     return [];
   }
 
@@ -1234,7 +1356,35 @@ tailwind.config = {
     }
     picks = picks.slice(0, 3);
     if(!picks.length){
-      grid.innerHTML = '<div class="col-span-full aspect-[16/9] rounded-2xl border border-navy-200 bg-white flex flex-col items-center justify-center text-center p-6 text-navy-600 text-xs sm:text-sm"><i class="fa-brands fa-youtube text-3xl text-red-500 mb-2"></i>Shorts 피드를 불러오는 중입니다.<br>잠시 후 다시 방문해 주세요.</div>';
+      const isRetrying = ytRetryState.phase === 'retry' || ytRetryState.phase === 'switch';
+      const isStale = ytRetryState.phase === 'stale';
+      const isFailed = ytRetryState.phase === 'failed';
+      const icon = '<i class="fa-brands fa-youtube text-3xl text-red-500 mb-2"></i>';
+      const spinner = '<i class="fa-solid fa-spinner fa-spin text-3xl text-red-500 mb-2"></i>';
+      let body = '';
+      if(isRetrying){
+        body = `${spinner}<span class="font-bold text-navy-800">Shorts 피드를 다시 불러오는 중</span><br><span class="text-navy-500 text-[11px] mt-1 inline-block">${escapeHtml(ytRetryState.message || '잠시만 기다려 주세요')}</span>`;
+      } else if(isStale){
+        body = `${icon}<span>외부 서비스 일시 장애로 마지막 정상 Shorts를 표시 중입니다.</span>`;
+      } else if(isFailed){
+        body = `${icon}<span>Shorts 피드를 지금 불러오지 못했습니다.</span><button type="button" id="retryShortsBtn" class="mt-3 inline-flex items-center gap-2 bg-red-600 hover:bg-red-500 text-white text-xs font-bold px-4 py-2 rounded-lg"><i class="fa-solid fa-rotate-right"></i> 다시 시도</button>`;
+      } else {
+        body = `${icon}<span>표시할 Shorts가 아직 없습니다.</span><br><span class="text-navy-500 text-[11px] mt-1 inline-block">채널에 새 영상이 올라오면 자동으로 표시됩니다.</span>`;
+      }
+      grid.innerHTML = `<div id="shortsStatus" class="col-span-full aspect-[16/9] rounded-2xl border border-navy-200 bg-white flex flex-col items-center justify-center text-center p-6 text-navy-600 text-xs sm:text-sm">${body}</div>`;
+      const retryBtn = document.getElementById('retryShortsBtn');
+      if(retryBtn){
+        retryBtn.addEventListener('click', async () => {
+          retryBtn.disabled = true;
+          retryBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 시도 중';
+          try{
+            const items = await fetchYouTubeItems();
+            renderShorts(items);
+          }catch(_){
+            renderShorts([]);
+          }
+        }, { once: true });
+      }
       return;
     }
     grid.innerHTML = picks.map(s => `
@@ -1267,7 +1417,15 @@ tailwind.config = {
       .filter(i => i.id && !/#?shorts|숏츠|쇼츠/i.test(i.title || ''))
       .slice(0,4);
     if(!vids.length){
-      grid.innerHTML = '<div class="col-span-full p-6 rounded-2xl bg-white border border-navy-100 text-center text-navy-700/70 text-xs sm:text-sm">최근 말씀 영상을 불러오는 중입니다.</div>';
+      const isRetrying = ytRetryState.phase === 'retry' || ytRetryState.phase === 'switch';
+      const isStale = ytRetryState.phase === 'stale';
+      const isFailed = ytRetryState.phase === 'failed';
+      const spinner = isRetrying ? '<i class="fa-solid fa-spinner fa-spin text-navy-400 mr-2"></i>' : '';
+      let msg = '최근 말씀 영상을 불러오는 중입니다.';
+      if(isRetrying) msg = ytRetryState.message || '다시 시도 중입니다';
+      else if(isStale) msg = ytRetryState.message || '외부 서비스 일시 장애로 마지막 정상 영상을 표시 중입니다.';
+      else if(isFailed) msg = '최근 말씀 영상을 지금 불러오지 못했습니다.';
+      grid.innerHTML = `<div class="col-span-full p-6 rounded-2xl bg-white border border-navy-100 text-center text-navy-700/70 text-xs sm:text-sm">${spinner}${escapeHtml(msg)}</div>`;
       return;
     }
     grid.innerHTML = vids.map(v => `<a href="${v.link}" target="_blank" rel="noopener" class="group block rounded-2xl overflow-hidden bg-white border border-navy-100 hover:border-gold-500/60 hover:shadow-lg hover:-translate-y-0.5 transition"><div class="relative aspect-video overflow-hidden"><img src="https://i.ytimg.com/vi/${v.id}/hqdefault.jpg" alt="${escapeHtml(v.title)}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition duration-500"><div class="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 group-hover:opacity-100 transition"><span class="w-12 h-12 rounded-full bg-red-600 text-white flex items-center justify-center shadow-xl"><i class="fa-solid fa-play ml-0.5 text-sm"></i></span></div></div><div class="p-2 sm:p-3"><div class="hidden sm:block text-[10px] font-bold text-gold-600 mb-1 uppercase tracking-wider">Sermon</div><div class="font-bold text-navy-900 line-clamp-2 text-xs sm:text-sm leading-snug">${escapeHtml(v.title)}</div><div class="mt-1.5 sm:mt-2.5 flex items-center gap-1.5 text-[10px] sm:text-[11px] text-navy-700/60"><i class="fa-regular fa-calendar"></i> ${new Date(v.pubDate).toLocaleDateString('ko-KR')}</div></div></a>`).join('');
