@@ -91,7 +91,7 @@ tailwind.config = {
   .safe-bottom{ padding-bottom: calc(env(safe-area-inset-bottom) + 0.75rem); }
   .divider-gold{ height:1px; background: linear-gradient(90deg, transparent, rgba(212,163,115,.5), transparent); }
   a:focus-visible, button:focus-visible{ outline: 2px solid #d4a373; outline-offset: 3px; border-radius: 6px; }
-  .short-wrap{ position:relative; width:100%; aspect-ratio: 9/16; max-height: 460px; overflow:hidden; border-radius: 0.75rem; }
+  .short-wrap{ position:relative; width:100%; aspect-ratio: 9/16; max-height: 300px; overflow:hidden; border-radius: 0.75rem; }
   .short-wrap > iframe,
   .short-wrap > .short-thumb{ position:absolute; inset:0; width:100%; height:100%; border:0; }
   .short-thumb img{ width:100%; height:100%; object-fit:cover; }
@@ -245,6 +245,36 @@ tailwind.config = {
     animation: shimmer 1.6s infinite;
   }
   @keyframes shimmer{ 0%{transform:translateX(-100%)} 100%{transform:translateX(100%)} }
+
+  /* ===== 햄버거 메뉴 손가락 힌트 ===== */
+  .menu-hint{
+    position:absolute; right:calc(100% + 6px); top:50%;
+    display:inline-flex; align-items:center; gap:4px;
+    background:#d4a373; color:#0b1f3a;
+    font-size:11px; font-weight:800; white-space:nowrap;
+    padding:4px 9px; border-radius:999px;
+    box-shadow:0 4px 10px -2px rgba(184,138,85,.5);
+    transform:translateY(-50%);
+    animation: hintBounce 1.4s ease-in-out infinite;
+    pointer-events:none;
+    transition: opacity .3s ease;
+  }
+  .menu-hint::after{
+    content:''; position:absolute; left:100%; top:50%;
+    transform:translateY(-50%);
+    border:5px solid transparent; border-left-color:#d4a373; border-right:0;
+  }
+  .menu-hint.hidden-hint{ opacity:0; animation:none; }
+  /* 라이트박스 핀치줌/드래그 */
+  #lightboxImg{ touch-action:none; cursor:grab; user-select:none; -webkit-user-select:none; }
+  #lbStage{ touch-action:none; }
+  @keyframes hintBounce{
+    0%,100%{ transform:translateY(-50%) translateX(0); }
+    50%{ transform:translateY(-50%) translateX(-7px); }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .menu-hint{ animation:none !important; }
+  }
 </style>
 </head>
 <body class="bg-[#fafaf7]">
@@ -252,7 +282,7 @@ tailwind.config = {
 
 <div id="scroll-progress"></div>
 
-<header id="header" class="fixed top-0 inset-x-0 z-50 transition-all duration-300">
+<header id="header" class="fixed top-0 inset-x-0 z-[80] transition-all duration-300">
   <div class="max-w-7xl mx-auto px-5 sm:px-8">
     <nav class="flex items-center justify-between h-16 sm:h-20">
       <a href="#home" class="flex items-center gap-3 group">
@@ -280,14 +310,17 @@ tailwind.config = {
         <a href="https://m.blog.naver.com/knh019100?tab=1" target="_blank" rel="noopener" aria-label="블로그 바로가기" class="text-sm font-bold text-navy-700 hover:text-yellow-600 transition"><i class="fa-solid fa-blog text-lg"></i></a>
         <a href="#visit" class="ml-2 bg-navy-900 hover:bg-navy-800 text-white text-sm font-bold px-4 py-2.5 rounded-full transition shadow-md hover:shadow-lg">방문 신청</a>
       </div>
-      <button id="menuBtn" aria-label="메뉴 열기" class="lg:hidden w-11 h-11 rounded-xl flex items-center justify-center text-navy-900 bg-white/70 backdrop-blur shadow-sm border border-white/60">
-        <i class="fa-solid fa-bars text-lg"></i>
-      </button>
+      <div class="lg:hidden relative flex items-center">
+        <span id="menuHint" class="menu-hint" aria-hidden="true">
+          <i class="fa-solid fa-hand-pointer"></i><span>메뉴</span>
+        </span>
+        <button id="menuBtn" aria-label="메뉴 열기" type="button" class="menu-btn w-11 h-11 rounded-xl flex items-center justify-center text-navy-900 bg-white/90 backdrop-blur shadow-md border border-white/70 relative z-[75]"><svg class="w-5 h-5 pointer-events-none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg></button>
+      </div>
     </nav>
   </div>
 </header>
 
-<div id="mobileMenu" class="fixed inset-0 z-[60] hidden">
+<div id="mobileMenu" class="fixed inset-0 z-[90] hidden">
   <div class="absolute inset-0 bg-navy-950/95 backdrop-blur-xl"></div>
   <div class="relative h-full flex flex-col">
     <div class="flex items-center justify-between px-6 h-16 border-b border-white/10">
@@ -316,12 +349,12 @@ tailwind.config = {
 <main id="main">
 
 <!-- ✨ HERO: main1.png 제거하고 밝은 그라디언트 + 오브 효과로 교체 -->
-<section id="home" class="relative min-h-[75vh] sm:min-h-[85vh] flex items-center hero-bg">
+<section id="home" class="relative min-h-[52vh] sm:min-h-[58vh] flex items-center hero-bg">
   <div class="hero-orb hero-orb-1"></div>
   <div class="hero-orb hero-orb-2"></div>
   <div class="hero-orb hero-orb-3"></div>
 
-  <div class="relative z-10 w-full max-w-6xl mx-auto px-5 sm:px-8 pt-24 pb-12 sm:pt-28 sm:pb-16">
+  <div class="relative z-10 w-full max-w-6xl mx-auto px-5 sm:px-8 pt-20 pb-8 sm:pt-24 sm:pb-10">
     <div class="fade-up inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/80 backdrop-blur border border-gold-500/40 text-red-600 text-xs sm:text-sm font-semibold shadow-sm">
       <span class="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span>
       평일(월~금) 저녁 8:30 라이브 예배
@@ -332,11 +365,11 @@ tailwind.config = {
     <p class="fade-up mt-4 max-w-xl text-navy-700 text-sm sm:text-base leading-relaxed">
       하나님의 따뜻한 사랑을 전하고, 이웃과 함께 동행하며 성장하는 믿음의 공동체입니다.<br class="hidden sm:block"> 당신의 첫 걸음을 언제나 환영합니다.
     </p>
-    <div class="fade-up mt-6 flex flex-col sm:flex-row gap-3">
+    <div class="fade-up mt-5 flex flex-col sm:flex-row gap-2.5">
       <a href="https://youtube.com/channel/UCHCcttgFDXkLClVeuQxNaMw" target="_blank" rel="noopener" class="inline-flex items-center justify-center gap-2 bg-red-600 hover:bg-red-500 text-white font-bold px-6 py-3 rounded-xl shadow-lg shadow-red-600/30 transition-all text-sm"><i class="fa-solid fa-play"></i> 라이브 예배 참여</a>
       <a href="#about" class="inline-flex items-center justify-center gap-2 bg-navy-900 hover:bg-navy-800 text-white px-6 py-3 rounded-xl font-semibold transition-all text-sm shadow-md">교회 알아보기 <i class="fa-solid fa-arrow-down text-xs"></i></a>
     </div>
-    <div class="fade-up mt-10 grid grid-cols-3 max-w-lg gap-4 text-navy-900">
+    <div class="fade-up mt-7 grid grid-cols-3 max-w-lg gap-4 text-navy-900">
       <div><div class="font-serif text-2xl sm:text-3xl font-bold text-gold-600">2016</div><div class="mt-0.5 text-xs text-navy-600">개척의 시작</div></div>
       <div><div class="font-serif text-2xl sm:text-3xl font-bold text-gold-600">50+</div><div class="mt-0.5 text-xs text-navy-600">동역하는 성도</div></div>
       <div><div class="font-serif text-2xl sm:text-3xl font-bold text-gold-600">365</div><div class="mt-0.5 text-xs text-navy-600">말씀과 기도의 날</div></div>
@@ -344,30 +377,30 @@ tailwind.config = {
   </div>
 </section>
 
-<section id="live" class="relative py-12 sm:py-16 bg-[#f6f4ee] text-navy-900 border-y border-navy-100/60">
+<section id="live" class="relative py-8 sm:py-10 bg-[#f6f4ee] text-navy-900 border-y border-navy-100/60">
   <div class="relative max-w-7xl mx-auto px-5 sm:px-8">
     <div class="text-center max-w-2xl mx-auto reveal">
       <div class="inline-flex items-center gap-2 text-gold-600 text-xs sm:text-sm font-bold uppercase tracking-[0.2em]"><span class="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span> Live Worship &amp; Shorts</div>
       <h2 class="mt-2 font-serif text-3xl sm:text-4xl text-navy-900 tracking-tight">오늘의 <span class="text-gold-600">은혜로운 예배</span></h2>
       <p class="mt-2 text-navy-700/70 leading-relaxed text-xs sm:text-sm">시간과 장소의 제약 없이 찬양과 말씀의 은혜를 실시간으로 함께 누릴 수 있습니다.</p>
     </div>
-    <div class="mt-6 flex flex-wrap items-center justify-center gap-3">
+    <div class="mt-4 flex flex-wrap items-center justify-center gap-2 sm:gap-3">
       <div class="inline-flex items-center gap-2 bg-red-50 border border-red-200 text-red-700 px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium"><i class="fa-regular fa-clock text-red-500"></i> 예배 시간: <strong class="ml-1">평일(월~금) 저녁 8:30</strong></div>
       <div class="inline-flex items-center gap-2 bg-white border border-navy-100 text-navy-700 px-3.5 py-1.5 rounded-lg text-xs sm:text-sm shadow-sm"><i class="fa-solid fa-signal text-gold-600"></i> YouTube Live · Shorts 피드</div>
     </div>
 
-    <div class="mt-8 max-w-5xl mx-auto reveal">
+    <div class="mt-5 max-w-5xl mx-auto reveal">
       <div class="flex items-center justify-between mb-3">
         <h3 class="text-navy-900 font-bold flex items-center gap-2 text-sm sm:text-base"><i class="fa-solid fa-clapperboard text-gold-600"></i> Shorts 피드</h3>
         <span class="text-[11px] text-navy-500">최신 3개 자동 업데이트</span>
       </div>
-      <div id="shortsGrid" class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div id="shortsGrid" class="grid grid-cols-3 gap-2 sm:gap-3">
         <div class="short-card skeleton aspect-[9/16] rounded-xl"></div>
         <div class="short-card skeleton aspect-[9/16] rounded-xl"></div>
         <div class="short-card skeleton aspect-[9/16] rounded-xl"></div>
       </div>
 
-      <div class="mt-6 p-5 sm:p-6 rounded-2xl bg-amber-50/80 border-2 border-gold-500/80 shadow-md hover:shadow-lg transition-all flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="mt-4 p-4 sm:p-5 rounded-2xl bg-amber-50/80 border-2 border-gold-500/80 shadow-md hover:shadow-lg transition-all flex flex-col sm:flex-row items-center justify-between gap-4">
         <div class="flex items-start sm:items-center gap-4">
           <div class="w-12 h-12 rounded-2xl bg-gold-500 text-white flex items-center justify-center text-xl shrink-0 shadow-md shadow-gold-500/30">
             <i class="fa-solid fa-bullhorn"></i>
@@ -388,7 +421,7 @@ tailwind.config = {
       </div>
     </div>
 
-    <div class="mt-8 flex flex-wrap justify-center gap-3">
+    <div class="mt-5 flex flex-wrap justify-center gap-2 sm:gap-3">
       <a href="https://youtube.com/channel/UCHCcttgFDXkLClVeuQxNaMw" target="_blank" rel="noopener" class="inline-flex items-center gap-2 bg-red-600 hover:bg-red-500 text-white font-bold px-5 py-2.5 rounded-xl shadow-md shadow-red-600/20 transition-all text-xs sm:text-sm"><i class="fa-solid fa-play text-xs"></i> 라이브 방송 바로가기</a>
       <a href="https://www.youtube.com/@%EA%B5%AC%EB%AF%B8%EA%BF%88%EC%9D%B4%EC%9E%88%EB%8A%94%EA%B5%90%ED%9A%8C%EC%95%84%EB%A6%84/posts" target="_blank" rel="noopener" class="inline-flex items-center gap-2 bg-white hover:bg-gray-50 text-navy-900 font-bold px-5 py-2.5 rounded-xl border border-navy-200 shadow-sm transition text-xs sm:text-sm"><i class="fa-regular fa-newspaper text-xs text-gold-600"></i> 커뮤니티 게시물</a>
       <a href="https://youtube.com/channel/UCHCcttgFDXkLClVeuQxNaMw" target="_blank" rel="noopener" class="inline-flex items-center gap-2 bg-white hover:bg-gray-50 text-navy-900 font-bold px-5 py-2.5 rounded-xl border border-navy-200 shadow-sm transition text-xs sm:text-sm"><i class="fa-solid fa-bell text-xs text-gold-600"></i> 채널 구독하기</a>
@@ -396,14 +429,14 @@ tailwind.config = {
   </div>
 </section>
 
-<section id="board" class="py-12 sm:py-16 bg-gradient-to-b from-white to-navy-50/40 border-b border-gray-100">
+<section id="board" class="py-8 sm:py-10 bg-gradient-to-b from-white to-navy-50/40 border-b border-gray-100">
   <div class="max-w-4xl mx-auto px-5 sm:px-8">
-    <div class="text-center mb-8">
+    <div class="text-center mb-5">
       <span class="text-gold-600 font-bold text-xs uppercase tracking-wider">Church News</span>
       <h2 class="text-2xl sm:text-3xl font-bold text-navy-900 mt-1">교회 소식</h2>
     </div>
 
-    <div id="latest-post-container" class="mb-6">
+    <div id="latest-post-container" class="mb-4">
       <div class="text-center text-gray-400 py-8"><i class="fa-solid fa-circle-notch fa-spin mr-2"></i>소식을 불러오는 중입니다...</div>
     </div>
 
@@ -432,39 +465,39 @@ tailwind.config = {
   </div>
 </div>
 
-<section id="sermons" class="py-12 sm:py-16 bg-[#fafaf7]">
+<section id="sermons" class="py-8 sm:py-10 bg-[#fafaf7]">
   <div class="max-w-7xl mx-auto px-5 sm:px-8">
     <div class="text-center max-w-2xl mx-auto reveal">
       <div class="inline-flex items-center gap-2 text-gold-600 text-xs sm:text-sm font-bold uppercase tracking-[0.2em]"><span class="w-6 h-px bg-gold-500"></span> Recent Sermons</div>
       <h2 class="mt-2 font-serif text-3xl sm:text-4xl text-navy-900 tracking-tight">최근 <span class="text-gold-600">말씀</span></h2>
       <p class="mt-2 text-navy-700/70 text-xs sm:text-sm">이번 주와 지난 주에 전해진 말씀을 다시 만나보세요.</p>
     </div>
-    <div id="sermonsGrid" class="mt-8 grid sm:grid-cols-2 lg:grid-cols-3 gap-5"></div>
-    <div class="mt-8 text-center">
+    <div id="sermonsGrid" class="mt-5 grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4"></div>
+    <div class="mt-5 text-center">
       <a href="https://youtube.com/channel/UCHCcttgFDXkLClVeuQxNaMw" target="_blank" rel="noopener" class="inline-flex items-center gap-2 text-navy-900 text-sm font-bold border-b-2 border-gold-500 pb-0.5 hover:gap-3 transition-all">유튜브 채널에서 더 많은 말씀 보기 <i class="fa-solid fa-arrow-right text-xs"></i></a>
     </div>
   </div>
 </section>
 
-<section id="gallery-section" class="py-12 sm:py-16 bg-white">
+<section id="gallery-section" class="py-8 sm:py-10 bg-white">
   <div class="max-w-5xl mx-auto px-5 sm:px-8">
-    <h2 class="text-2xl sm:text-3xl font-bold text-navy-900 mb-6 text-center">함께한 순간들</h2>
-    <div id="gallery-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
+    <h2 class="text-2xl sm:text-3xl font-bold text-navy-900 mb-4 text-center">함께한 순간들</h2>
+    <div id="gallery-container" class="grid grid-cols-3 md:grid-cols-4 gap-1.5 sm:gap-3">
       <p class="text-center text-gray-500 col-span-full py-8">사진을 불러오는 중입니다...</p>
     </div>
     <div id="gallery-pagination"></div>
   </div>
 </section>
 
-<div id="lightboxModal" onclick="closeLightbox()" class="hidden fixed inset-0 z-[100] bg-black/95 backdrop-blur-md flex items-center justify-center p-3 sm:p-4">
+<div id="lightboxModal" onclick="closeLightbox()" class="hidden fixed inset-0 z-[120] bg-black/95 backdrop-blur-md flex items-center justify-center p-3 sm:p-4">
   <button onclick="closeLightbox()" class="absolute top-4 right-4 sm:top-5 sm:right-5 w-10 h-10 rounded-full bg-white/10 text-white hover:bg-white/20 flex items-center justify-center z-10 transition" aria-label="닫기">
     <i class="fa-solid fa-xmark text-lg"></i>
   </button>
   <button id="lbPrev" class="lb-nav prev hidden" aria-label="이전 사진"><i class="fa-solid fa-chevron-left"></i></button>
   <button id="lbNext" class="lb-nav next hidden" aria-label="다음 사진"><i class="fa-solid fa-chevron-right"></i></button>
   <div id="lbCounter" class="hidden absolute top-4 left-4 sm:top-5 sm:left-5 z-10 text-white/85 text-xs sm:text-sm font-semibold bg-white/10 backdrop-blur px-3 py-1.5 rounded-full"></div>
-  <div id="lbStage" class="relative max-w-5xl w-full max-h-[90vh] flex flex-col items-center justify-center touch-pan-y select-none" onclick="event.stopPropagation()">
-    <img id="lightboxImg" src="" alt="확대 이미지" class="max-w-full max-h-[80vh] object-contain rounded-xl shadow-2xl transition-transform duration-200 will-change-transform" draggable="false">
+  <div id="lbStage" class="relative max-w-5xl w-full max-h-[90vh] flex flex-col items-center justify-center select-none" style="touch-action:none;overflow:hidden;" onclick="event.stopPropagation()">
+    <img id="lightboxImg" src="" alt="확대 이미지" class="max-w-full max-h-[80vh] object-contain rounded-xl shadow-2xl" draggable="false" style="touch-action:none;user-select:none;-webkit-user-drag:none;will-change:transform;">
     <p id="lightboxCaption" class="mt-3 text-white/90 text-sm sm:text-base font-medium text-center px-4"></p>
   </div>
 </div>
@@ -472,7 +505,7 @@ tailwind.config = {
   <div class="swipe-hint-inner"><i class="fa-solid fa-hand-pointer"></i> 좌우로 스와이프하세요</div>
 </div>
 
-<section id="about" class="relative py-12 sm:py-16 bg-[#f4efe6] text-navy-900 overflow-hidden border-y border-navy-100/40">
+<section id="about" class="relative py-8 sm:py-10 bg-[#f4efe6] text-navy-900 overflow-hidden border-y border-navy-100/40">
   <div class="max-w-7xl mx-auto px-5 sm:px-8 relative z-10">
     <div class="grid lg:grid-cols-12 gap-8 lg:gap-12 items-center">
       <div class="lg:col-span-7 reveal order-1">
@@ -480,7 +513,7 @@ tailwind.config = {
         <h2 class="mt-2 font-serif text-2xl sm:text-3xl md:text-4xl text-navy-900 leading-tight tracking-tight">모든 세대가 함께 예배하며,<br><span class="text-gold-600">참된 삶의 가치</span>를 찾아갑니다.</h2>
         <p class="mt-3 text-navy-700 leading-relaxed text-xs sm:text-sm">구미 꿈이 있는 교회는 모든 세대가 마음을 모아 예배하며, 하나님의 말씀을 통해 삶의 참된 지혜와 가치를 발견합니다. 따뜻한 교제와 사랑의 실천을 통해 이웃과 세상을 더욱 아름답게 섬기고자 합니다.</p>
 
-        <div class="mt-6 grid grid-cols-3 gap-2 sm:gap-3">
+        <div class="mt-5 grid grid-cols-3 gap-2 sm:gap-3">
           <div class="group p-3 rounded-xl bg-white border border-navy-200/80 shadow-sm hover:border-gold-500/60 transition text-center sm:text-left">
             <div class="w-8 h-8 rounded-lg bg-gold-500/10 text-gold-600 flex items-center justify-center text-sm mb-2 mx-auto sm:mx-0 group-hover:bg-gold-500 group-hover:text-white transition"><i class="fa-solid fa-heart"></i></div>
             <h4 class="text-navy-900 font-bold text-xs sm:text-sm">사랑 <span class="hidden sm:inline font-normal text-[11px] text-navy-500">(Love)</span></h4>
@@ -501,7 +534,7 @@ tailwind.config = {
       <div class="lg:col-span-5 reveal order-2">
         <div class="relative">
           <div class="rounded-2xl overflow-hidden shadow-xl bg-white border border-navy-200/60 p-2">
-            <img src="church1.png?v=3" alt="구미 꿈이 있는 교회 전경" class="w-full h-auto max-h-[500px] object-contain rounded-xl block mx-auto" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');">
+            <img src="church1.png?v=3" alt="구미 꿈이 있는 교회 전경" class="w-full h-auto max-h-[340px] object-contain rounded-xl block mx-auto" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');">
             <div class="hidden flex-col items-center justify-center text-gold-600 p-12 text-center">
               <i class="fa-solid fa-church text-6xl mb-3"></i>
               <span class="text-xs font-semibold text-navy-800">구미 꿈이 있는 교회</span>
@@ -518,13 +551,14 @@ tailwind.config = {
   </div>
 </section>
 
-<section id="visit" class="py-12 sm:py-16 bg-[#fafaf7]">
-  <div class="max-w-3xl mx-auto px-5 sm:px-8">
+<section id="visit" class="py-8 sm:py-10 bg-[#fafaf7]">
+  <div class="max-w-6xl mx-auto px-5 sm:px-8">
+    <div class="grid lg:grid-cols-2 gap-4 sm:gap-5 items-stretch">
     <div class="reveal">
-      <form id="visitForm" class="bg-white rounded-2xl shadow-md border border-navy-100 p-5 sm:p-7">
-        <div class="text-center mb-5">
-          <div class="inline-flex items-center gap-2 text-gold-600 text-xs font-bold uppercase tracking-[0.2em] mb-1"><span class="w-4 h-px bg-gold-500"></span> Plan a Visit</div>
-          <h2 class="font-serif text-2xl sm:text-3xl text-navy-900 font-bold">첫 방문 신청</h2>
+      <form id="visitForm" class="bg-white rounded-2xl shadow-md border border-navy-100 p-4 sm:p-6">
+        <div class="text-center mb-3">
+          <div class="inline-flex items-center gap-2 text-gold-600 text-[11px] font-bold uppercase tracking-[0.2em] mb-0.5"><span class="w-4 h-px bg-gold-500"></span> Plan a Visit</div>
+          <h2 class="font-serif text-xl sm:text-2xl text-navy-900 font-bold">첫 방문 신청</h2>
           <p class="text-xs text-navy-700/60 mt-1">처음 오시는 분들을 환영합니다. 입력 후 신청 시 <strong>카카오톡으로 자동 연결</strong>됩니다.</p>
         </div>
         <div class="grid sm:grid-cols-2 gap-3">
@@ -534,30 +568,27 @@ tailwind.config = {
           <label class="block sm:col-span-2"><span class="text-xs font-bold text-navy-700">인원 / 가족 구성</span><input type="text" id="visitGroup" name="인원구성" class="mt-1 w-full rounded-lg border border-navy-200 px-3 py-2 text-xs sm:text-sm focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 outline-none transition" placeholder="예) 성인 2명, 자녀 1명"></label>
           <label class="block sm:col-span-2"><span class="text-xs font-bold text-navy-700">문의 사항</span><textarea id="visitMemo" name="문의사항" rows="2" class="mt-1 w-full rounded-lg border border-navy-200 px-3 py-2 text-xs sm:text-sm focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 outline-none transition" placeholder="기도제목, 궁금한 점 등 자유롭게 남겨주세요."></textarea></label>
         </div>
-        <button id="submitBtn" type="submit" class="mt-5 w-full bg-[#FEE500] hover:bg-[#FADA0A] text-[#191919] font-bold py-3 rounded-xl transition shadow-sm flex items-center justify-center gap-2 text-xs sm:text-sm"><i class="fa-solid fa-comment text-[#191919]"></i> 카카오톡으로 방문 신청하기</button>
+        <button id="submitBtn" type="submit" class="mt-4 w-full bg-[#FEE500] hover:bg-[#FADA0A] text-[#191919] font-bold py-3 rounded-xl transition shadow-sm flex items-center justify-center gap-2 text-xs sm:text-sm"><i class="fa-solid fa-comment text-[#191919]"></i> 카카오톡으로 방문 신청하기</button>
         <p class="mt-2 text-[10px] sm:text-[11px] text-navy-500/70 text-center">신청 버튼 클릭 시 작성된 내용이 자동 복사되며 카카오톡 오픈채팅방으로 이동합니다.</p>
       </form>
     </div>
-  </div>
-</section>
-
-<section id="giving" class="relative py-12 sm:py-16 bg-navy-900 text-white overflow-hidden">
+    <div id="giving" class="relative bg-navy-900 text-white overflow-hidden rounded-2xl p-4 sm:p-6 flex flex-col justify-center scroll-mt-24">
   <div class="absolute inset-0 opacity-[0.05]" style="background-image: radial-gradient(circle at 1px 1px, white 1px, transparent 0); background-size: 28px 28px;"></div>
-  <div class="relative max-w-5xl mx-auto px-5 sm:px-8">
+  <div class="relative">
     <div class="text-center max-w-xl mx-auto reveal">
       <div class="inline-flex items-center gap-2 text-gold-400 text-xs sm:text-sm font-bold uppercase tracking-[0.2em]"><span class="w-6 h-px bg-gold-500"></span> Giving</div>
-      <h2 class="mt-2 font-serif text-2xl sm:text-3xl text-white tracking-tight">함께하는 <span class="text-gold-400">찬양과 헌금</span></h2>
-      <p class="mt-2 text-white/65 text-xs sm:text-sm leading-relaxed">주님의 일에 동참하시는 마음은 가장 아름다운 예배입니다.</p>
+      <h2 class="mt-1.5 font-serif text-xl sm:text-2xl text-white tracking-tight">함께하는 <span class="text-gold-400">찬양과 헌금</span></h2>
+      <p class="mt-1.5 text-white/65 text-[11px] sm:text-xs leading-relaxed">주님의 일에 동참하시는 마음은 가장 아름다운 예배입니다.</p>
     </div>
 
-    <div class="mt-8 grid lg:grid-cols-2 gap-4 max-w-4xl mx-auto">
-      <div class="reveal bg-white/5 border border-white/10 rounded-2xl p-5 backdrop-blur">
+    <div class="mt-3 sm:mt-4 grid gap-2.5 sm:gap-3">
+      <div class="reveal bg-white/5 border border-white/10 rounded-2xl p-3.5 sm:p-4 backdrop-blur">
         <div class="flex items-center gap-3 mb-3">
           <div class="w-9 h-9 rounded-lg bg-gold-500/20 text-gold-400 flex items-center justify-center text-base"><i class="fa-solid fa-hand-holding-dollar"></i></div>
           <div><h3 class="font-bold text-white text-sm">찬양후원 계좌 안내</h3><p class="text-[11px] text-white/50">아름다운발걸음선교회</p></div>
         </div>
         <ul class="space-y-2 text-xs sm:text-sm">
-          <li class="flex items-center justify-between gap-2 p-3 rounded-xl bg-navy-950/60 border border-white/10">
+          <li class="flex items-center justify-between gap-2 p-2.5 rounded-xl bg-navy-950/60 border border-white/10">
             <div class="flex items-center gap-2">
               <div class="w-7 h-7 rounded-lg bg-yellow-400/10 text-yellow-300 flex items-center justify-center text-xs"><i class="fa-solid fa-building-columns"></i></div>
               <div><div class="text-white font-semibold text-xs">농협은행</div><div class="text-white/50 text-[10px]">예금주: 아름다운 발걸음선교회</div></div>
@@ -571,9 +602,9 @@ tailwind.config = {
         <p class="mt-3 text-[10px] text-white/45 leading-relaxed">* 헌금 시 입금자명을 확인해 주세요. 기부금영수증 문의: 010-2258-4827</p>
       </div>
 
-      <div class="reveal bg-gradient-to-br from-gold-500 to-gold-600 rounded-2xl p-5 text-navy-900 shadow-lg flex flex-col justify-between">
+      <div class="reveal bg-gradient-to-br from-gold-500 to-gold-600 rounded-2xl p-3.5 sm:p-4 text-navy-900 shadow-lg flex flex-col justify-between">
         <div>
-          <div class="font-serif text-sm sm:text-base leading-snug">"각 사람이 마음에 정한 대로 하되,<br> 조금 아끼는 마음이나 억지로 하지 말라.<br> 하나님은 즐겨 내는 자를 사랑하시느니라."</div>
+          <div class="font-serif text-xs sm:text-base leading-snug">"각 사람이 마음에 정한 대로 하되,<br> 조금 아끼는 마음이나 억지로 하지 말라.<br> 하나님은 즐겨 내는 자를 사랑하시느니라."</div>
           <div class="mt-2 text-xs font-bold opacity-75">— 고린도후서 9:7</div>
         </div>
         <div class="mt-4">
@@ -582,16 +613,19 @@ tailwind.config = {
       </div>
     </div>
   </div>
+</div>
+    </div>
+  </div>
 </section>
 
-<section id="contact" class="py-12 sm:py-16 bg-[#fafaf7]">
+<section id="contact" class="py-8 sm:py-10 bg-[#fafaf7]">
   <div class="max-w-7xl mx-auto px-5 sm:px-8">
     <div class="text-center max-w-2xl mx-auto reveal">
       <div class="inline-flex items-center gap-2 text-gold-600 text-xs sm:text-sm font-bold uppercase tracking-[0.2em]"><span class="w-6 h-px bg-gold-500"></span> Contact</div>
       <h2 class="mt-2 font-serif text-3xl sm:text-4xl text-navy-900 tracking-tight"><span class="text-gold-600">오시는 길</span>을 안내합니다</h2>
     </div>
-    <div class="mt-8 grid lg:grid-cols-2 gap-5">
-      <div class="reveal rounded-2xl overflow-hidden shadow-md border border-navy-100 aspect-[4/3] lg:aspect-auto lg:h-full min-h-[360px] bg-navy-100 relative">
+    <div class="mt-5 grid lg:grid-cols-2 gap-4">
+      <div class="reveal rounded-2xl overflow-hidden shadow-md border border-navy-100 aspect-[4/3] lg:aspect-auto lg:h-full min-h-[280px] bg-navy-100 relative">
         <iframe title="구미 꿈이 있는 교회 오시는 길" src="https://maps.google.com/maps?q=%EA%B2%BD%EC%83%81%EB%B6%81%EB%8F%84%20%EA%B5%AC%EB%AF%B8%EC%8B%9C%20%EA%B8%88%EC%98%A4%EB%8C%80%EB%A1%9C12%EA%B8%B8%2025&t=&z=17&ie=UTF8&iwloc=&output=embed" class="w-full h-full border-0 absolute inset-0" allowfullscreen="" loading="lazy"></iframe>
       </div>
       <div class="reveal grid gap-3">
@@ -623,7 +657,7 @@ tailwind.config = {
 </section>
 
 <footer class="bg-navy-950 text-white/60 pb-20 lg:pb-0">
-  <div class="max-w-7xl mx-auto px-5 sm:px-8 py-10 grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
+  <div class="max-w-7xl mx-auto px-5 sm:px-8 py-8 grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
     <div>
       <div class="flex items-center gap-2"><div class="w-8 h-8 rounded-lg bg-gold-500 flex items-center justify-center"><i class="fa-solid fa-cross text-navy-900"></i></div><div class="leading-tight"><div class="font-extrabold text-white text-xs sm:text-sm">구미 꿈이 있는 교회</div><div class="text-[9px] uppercase tracking-widest">Gumi Dream Church</div></div></div>
       <p class="mt-3 text-xs leading-relaxed">사랑과 은혜가 넘치는 공동체, 아름다운발걸음선교회.</p>
@@ -825,11 +859,46 @@ tailwind.config = {
   const menuBtn = document.getElementById('menuBtn');
   const menuClose = document.getElementById('menuClose');
   const mobileMenu = document.getElementById('mobileMenu');
-  const openMenu = () => { mobileMenu.classList.remove('hidden'); document.body.classList.add('nav-open'); };
-  const closeMenu = () => { mobileMenu.classList.add('hidden'); document.body.classList.remove('nav-open'); };
+  const menuHint = document.getElementById('menuHint');
+  let menuIsOpen = false;
+  let menuHistoryPushed = false;
+  const _menuUI = (open) => {
+    mobileMenu.classList.toggle('hidden', !open);
+    document.body.classList.toggle('nav-open', open);
+    if(menuHint) menuHint.classList.toggle('hidden-hint', open);
+  };
+
+  const openMenu = () => {
+    if(menuIsOpen) return;
+    menuIsOpen = true;
+    _menuUI(true);
+    if(!menuHistoryPushed){
+      try{ history.pushState({ gdc:'menu', ts: Date.now() }, ''); menuHistoryPushed = true; }catch(_){}
+    }
+  };
+  const closeMenu = () => {
+    if(!menuIsOpen) return;
+    menuIsOpen = false;
+    _menuUI(false);
+    if(menuHistoryPushed){
+      menuHistoryPushed = false;
+      try{ history.back(); }catch(_){}
+    }
+  };
   if (menuBtn) menuBtn.addEventListener('click', openMenu);
   if (menuClose) menuClose.addEventListener('click', closeMenu);
-  if (mobileMenu) { mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMenu)); }
+  
+  if (mobileMenu) {
+    mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', (e) => {
+      if(!menuIsOpen) return;
+      menuIsOpen = false;
+      _menuUI(false);
+      if(menuHistoryPushed){
+        menuHistoryPushed = false;
+        try{ history.replaceState({ gdc:'menu-closed', ts: Date.now() }, ''); }catch(_){}
+      }
+    }));
+  }
 
   const io = new IntersectionObserver(entries => {
     entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
@@ -874,6 +943,12 @@ tailwind.config = {
     try{ history.pushState({ modal: name, ts: Date.now() }, ''); }catch(_){}
   }
   window.addEventListener('popstate', () => {
+    if(menuIsOpen){
+      menuIsOpen = false;
+      menuHistoryPushed = false;
+      _menuUI(false);
+      return;
+    }
     if(modalStack.length){
       const top = modalStack.pop();
       if(top && typeof top.closer === 'function') top.closer(true);
@@ -882,6 +957,14 @@ tailwind.config = {
 
   // ===== 라이트박스 =====
   let currentLbIndex = -1;
+  let lbScale = 1, lbTX = 0, lbTY = 0;
+  function applyLbTransform(trans){
+    const img = document.getElementById('lightboxImg');
+    if(!img) return;
+    if(trans !== undefined) img.style.transition = trans;
+    img.style.transform = `translate(${lbTX}px, ${lbTY}px) scale(${lbScale})`;
+  }
+  function resetLbZoom(){ lbScale = 1; lbTX = 0; lbTY = 0; applyLbTransform('none'); }
 
   function openLightbox(imgUrl, caption) {
     currentLbIndex = galleryItems.findIndex(g => g.imageUrl === imgUrl);
@@ -899,7 +982,7 @@ tailwind.config = {
       }
     }catch(_){}
   }
-  function showLightboxByIndex(idx, firstOpen){
+  function showLightboxByIndex(idx, firstOpen, dir){
     if(!galleryItems.length) return;
     if(idx < 0) idx = galleryItems.length - 1;
     if(idx >= galleryItems.length) idx = 0;
@@ -911,28 +994,56 @@ tailwind.config = {
     const counter = document.getElementById('lbCounter');
     const prevBtn = document.getElementById('lbPrev');
     const nextBtn = document.getElementById('lbNext');
-    modalImg.src = item.imageUrl;
-    modalCaption.textContent = item.title || '';
-    if(counter){
-      counter.textContent = `${idx + 1} / ${galleryItems.length}`;
-      counter.classList.toggle('hidden', galleryItems.length < 2);
-    }
-    if(prevBtn) prevBtn.classList.toggle('hidden', galleryItems.length < 2);
-    if(nextBtn) nextBtn.classList.toggle('hidden', galleryItems.length < 2);
+    const applyContent = () => {
+      modalImg.src = item.imageUrl;
+      modalCaption.textContent = item.title || '';
+      if(counter){
+        counter.textContent = `${idx + 1} / ${galleryItems.length}`;
+        counter.classList.toggle('hidden', galleryItems.length < 2);
+      }
+      if(prevBtn) prevBtn.classList.toggle('hidden', galleryItems.length < 2);
+      if(nextBtn) nextBtn.classList.toggle('hidden', galleryItems.length < 2);
+    };
     if(firstOpen){
       modal.classList.remove('hidden');
       document.body.style.overflow = 'hidden';
+      resetLbZoom();
+      applyContent();
+      return;
+    }
+    if(dir){
+      // 자연스러운 슬라이드 전환: 현재 이미지 밀어내고 새 이미지 반대편에서 진입
+      const off = 70 * dir;
+      modalImg.style.transition = 'transform .18s ease-in, opacity .18s ease-in';
+      modalImg.style.opacity = '0.4';
+      lbTX = -off; lbTY = 0; lbScale = 1; applyLbTransform();
+      setTimeout(() => {
+        applyContent();
+        modalImg.style.transition = 'none';
+        lbTX = off; lbTY = 0; lbScale = 1; applyLbTransform();
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            modalImg.style.transition = 'transform .24s cubic-bezier(.2,.7,.2,1), opacity .24s ease';
+            modalImg.style.opacity = '1';
+            lbTX = 0; lbTY = 0; applyLbTransform();
+          });
+        });
+      }, 170);
+    } else {
+      resetLbZoom();
+      applyContent();
     }
   }
-  function lbPrev(){ showLightboxByIndex(currentLbIndex - 1); }
-  function lbNext(){ showLightboxByIndex(currentLbIndex + 1); }
+  function lbPrev(){ showLightboxByIndex(currentLbIndex - 1, false, -1); }
+  function lbNext(){ showLightboxByIndex(currentLbIndex + 1, false, 1); }
   function _closeLightboxSilent(){
     const modal = document.getElementById('lightboxModal');
     if (!modal || modal.classList.contains('hidden')) return;
     modal.classList.add('hidden');
     document.body.style.overflow = '';
     const img = document.getElementById('lightboxImg');
-    if(img) img.style.transform = '';
+    if(img){ img.style.transform = ''; img.style.opacity = ''; }
+    lbScale = 1; lbTX = 0; lbTY = 0;
   }
   function closeLightbox() {
     const modal = document.getElementById('lightboxModal');
@@ -951,43 +1062,111 @@ tailwind.config = {
     const stage = document.getElementById('lbStage');
     const img = document.getElementById('lightboxImg');
     if(!stage || !img) return;
-    let startX = 0, startY = 0, dx = 0, dy = 0, active = false;
-    const THRESHOLD = 50;
-    const V_TOLERANCE = 60;
-    const onStart = (e) => {
-      const t = e.touches ? e.touches[0] : e;
-      startX = t.clientX; startY = t.clientY;
-      dx = 0; dy = 0; active = true;
-      img.style.transition = 'none';
-    };
-    const onMove = (e) => {
-      if(!active) return;
-      const t = e.touches ? e.touches[0] : e;
-      dx = t.clientX - startX;
-      dy = t.clientY - startY;
-      if(Math.abs(dx) > Math.abs(dy)){
-        if(e.cancelable) e.preventDefault();
-        img.style.transform = `translateX(${dx * 0.6}px)`;
+    const pts = new Map();
+    let mode = null;               // 'swipe' | 'pan' | 'pinch'
+    let startX = 0, startY = 0, dx = 0, dy = 0;
+    let txStart = 0, tyStart = 0;
+    let pinchStart = 0, scaleStart = 1, midStart = { x:0, y:0 };
+    const SWIPE_MIN = 55, V_TOL = 80;
+    const dist = (a,b) => Math.hypot(a.x - b.x, a.y - b.y);
+    const midp = (a,b) => ({ x:(a.x + b.x) / 2, y:(a.y + b.y) / 2 });
+
+    function clampPan(){
+      const iw = img.clientWidth * lbScale, ih = img.clientHeight * lbScale;
+      const mx = Math.max(0, (iw - stage.clientWidth) / 2);
+      const my = Math.max(0, (ih - stage.clientHeight) / 2);
+      lbTX = Math.min(mx, Math.max(-mx, lbTX));
+      lbTY = Math.min(my, Math.max(-my, lbTY));
+      applyLbTransform('transform .2s ease');
+    }
+
+    stage.addEventListener('pointerdown', (e) => {
+      try{ stage.setPointerCapture(e.pointerId); }catch(_){}
+      pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      if(pts.size === 1){
+        startX = e.clientX; startY = e.clientY; dx = 0; dy = 0;
+        mode = (lbScale > 1) ? 'pan' : 'swipe';
+        txStart = lbTX; tyStart = lbTY;
+        img.style.transition = 'none';
+      } else if(pts.size === 2){
+        mode = 'pinch';
+        const [a, b] = [...pts.values()];
+        pinchStart = dist(a, b);
+        scaleStart = lbScale;
+        midStart = midp(a, b);
+        txStart = lbTX; tyStart = lbTY;
+      }
+    });
+
+    stage.addEventListener('pointermove', (e) => {
+      if(!pts.has(e.pointerId)) return;
+      pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      if(mode === 'pinch' && pts.size >= 2){
+        const [a, b] = [...pts.values()];
+        const d = dist(a, b);
+        if(pinchStart > 0){
+          lbScale = Math.min(4, Math.max(1, scaleStart * d / pinchStart));
+          const m = midp(a, b);
+          lbTX = txStart + (m.x - midStart.x);
+          lbTY = tyStart + (m.y - midStart.y);
+          applyLbTransform('none');
+        }
+      } else if(mode === 'pan'){
+        dx = e.clientX - startX; dy = e.clientY - startY;
+        lbTX = txStart + dx; lbTY = tyStart + dy;
+        applyLbTransform('none');
+      } else if(mode === 'swipe'){
+        dx = e.clientX - startX; dy = e.clientY - startY;
+        if(Math.abs(dx) > Math.abs(dy)){
+          lbTX = dx; lbTY = 0; lbScale = 1;
+          applyLbTransform('none');
+        }
+      }
+    });
+
+    let lastTap = 0;
+    const onEnd = (e) => {
+      if(!pts.has(e.pointerId)) return;
+      pts.delete(e.pointerId);
+      if(pts.size < 2 && mode === 'pinch'){
+        if(lbScale <= 1.05){ lbScale = 1; lbTX = 0; lbTY = 0; applyLbTransform('transform .2s ease'); }
+        else clampPan();
+        mode = null;
+        return;
+      }
+      if(pts.size === 0){
+        if(mode === 'swipe'){
+          if(Math.abs(dx) >= SWIPE_MIN && Math.abs(dy) < V_TOL){
+            const dir = dx < 0 ? 1 : -1;
+            const sw = stage.clientWidth || 360;
+            lbTX = dir * sw;
+            lbTY = 0;
+            applyLbTransform('transform .28s cubic-bezier(.2,.7,.2,1)');
+            setTimeout(() => {
+              if(dir > 0) lbNext(); else lbPrev();
+              lbTX = 0; lbTY = 0;
+              applyLbTransform('none');
+            }, 260);
+          } else {
+            lbTX = 0; lbTY = 0;
+            applyLbTransform('transform .25s cubic-bezier(.2,.7,.2,1)');
+          }
+        } else if(mode === 'pan'){
+          clampPan();
+        }
+        // 더블탭 줌 토글
+        const now = Date.now();
+        if(now - lastTap < 300 && Math.abs(dx) < 10 && Math.abs(dy) < 10){
+          if(lbScale > 1){ lbScale = 1; lbTX = 0; lbTY = 0; }
+          else { lbScale = 2; }
+          applyLbTransform('transform .25s ease');
+        }
+        lastTap = now;
+        mode = null;
       }
     };
-    const onEnd = () => {
-      if(!active) return;
-      active = false;
-      img.style.transition = 'transform .2s ease';
-      img.style.transform = 'translateX(0)';
-      if(Math.abs(dx) >= THRESHOLD && Math.abs(dy) < V_TOLERANCE){
-        if(dx < 0) lbNext(); else lbPrev();
-      }
-    };
-    stage.addEventListener('touchstart', onStart, { passive: true });
-    stage.addEventListener('touchmove',  onMove,  { passive: false });
-    stage.addEventListener('touchend',   onEnd);
-    stage.addEventListener('touchcancel',onEnd);
-    let mouseDown = false;
-    stage.addEventListener('mousedown', (e) => { mouseDown = true; onStart(e); });
-    stage.addEventListener('mousemove', (e) => { if(mouseDown) onMove(e); });
-    stage.addEventListener('mouseup',   (e) => { if(mouseDown){ mouseDown = false; onEnd(); } });
-    stage.addEventListener('mouseleave',(e) => { if(mouseDown){ mouseDown = false; onEnd(); } });
+    stage.addEventListener('pointerup', onEnd);
+    stage.addEventListener('pointercancel', onEnd);
   }
 
   // ===== 유튜브 RSS =====
@@ -1068,12 +1247,12 @@ tailwind.config = {
               <i class="fa-solid fa-bolt"></i> Shorts
             </div>
             <div class="absolute inset-0 flex items-center justify-center">
-              <span class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-red-600 text-white flex items-center justify-center shadow-xl">
+              <span class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-red-600 text-white flex items-center justify-center shadow-xl">
                 <i class="fa-solid fa-play text-sm sm:text-base"></i>
               </span>
             </div>
-            <div class="absolute bottom-0 inset-x-0 p-2.5 sm:p-3">
-              <div class="text-white text-[11px] sm:text-xs font-semibold leading-tight line-clamp-2">${escapeHtml(s.title)}</div>
+            <div class="absolute bottom-0 inset-x-0 p-1.5 sm:p-2">
+              <div class="text-white text-[10px] font-semibold leading-tight line-clamp-2">${escapeHtml(s.title)}</div>
             </div>
           </div>
         </div>
@@ -1086,17 +1265,17 @@ tailwind.config = {
     if (!grid) return;
     const vids = items.map(i => ({...i, id: ytIdFromUrl(i.link || i.guid)}))
       .filter(i => i.id && !/#?shorts|숏츠|쇼츠/i.test(i.title || ''))
-      .slice(0,6);
+      .slice(0,4);
     if(!vids.length){
       grid.innerHTML = '<div class="col-span-full p-6 rounded-2xl bg-white border border-navy-100 text-center text-navy-700/70 text-xs sm:text-sm">최근 말씀 영상을 불러오는 중입니다.</div>';
       return;
     }
-    grid.innerHTML = vids.map(v => `<a href="${v.link}" target="_blank" rel="noopener" class="group block rounded-2xl overflow-hidden bg-white border border-navy-100 hover:border-gold-500/60 hover:shadow-lg hover:-translate-y-0.5 transition"><div class="relative aspect-video overflow-hidden"><img src="https://i.ytimg.com/vi/${v.id}/hqdefault.jpg" alt="${escapeHtml(v.title)}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition duration-500"><div class="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 group-hover:opacity-100 transition"><span class="w-12 h-12 rounded-full bg-red-600 text-white flex items-center justify-center shadow-xl"><i class="fa-solid fa-play ml-0.5 text-sm"></i></span></div></div><div class="p-4"><div class="text-[10px] font-bold text-gold-600 mb-1 uppercase tracking-wider">Sermon</div><div class="font-bold text-navy-900 line-clamp-2 text-xs sm:text-sm leading-snug">${escapeHtml(v.title)}</div><div class="mt-2.5 flex items-center gap-1.5 text-[11px] text-navy-700/60"><i class="fa-regular fa-calendar"></i> ${new Date(v.pubDate).toLocaleDateString('ko-KR')}</div></div></a>`).join('');
+    grid.innerHTML = vids.map(v => `<a href="${v.link}" target="_blank" rel="noopener" class="group block rounded-2xl overflow-hidden bg-white border border-navy-100 hover:border-gold-500/60 hover:shadow-lg hover:-translate-y-0.5 transition"><div class="relative aspect-video overflow-hidden"><img src="https://i.ytimg.com/vi/${v.id}/hqdefault.jpg" alt="${escapeHtml(v.title)}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition duration-500"><div class="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 group-hover:opacity-100 transition"><span class="w-12 h-12 rounded-full bg-red-600 text-white flex items-center justify-center shadow-xl"><i class="fa-solid fa-play ml-0.5 text-sm"></i></span></div></div><div class="p-2 sm:p-3"><div class="hidden sm:block text-[10px] font-bold text-gold-600 mb-1 uppercase tracking-wider">Sermon</div><div class="font-bold text-navy-900 line-clamp-2 text-xs sm:text-sm leading-snug">${escapeHtml(v.title)}</div><div class="mt-1.5 sm:mt-2.5 flex items-center gap-1.5 text-[10px] sm:text-[11px] text-navy-700/60"><i class="fa-regular fa-calendar"></i> ${new Date(v.pubDate).toLocaleDateString('ko-KR')}</div></div></a>`).join('');
   }
 
   // ===== 갤러리 =====
   let galleryItems = [];
-  const galleryItemsPerPage = 9;
+  const galleryItemsPerPage = 8;
   function renderGalleryPage(page) {
     const grid = document.getElementById('gallery-container');
     const pagination = document.getElementById('gallery-pagination');
@@ -1115,7 +1294,7 @@ tailwind.config = {
       card.className = 'relative rounded-xl overflow-hidden aspect-square bg-gray-100 cursor-pointer group shadow-sm';
       card.onclick = () => openLightbox(item.imageUrl, item.title);
       card.innerHTML = `<img src="${item.imageUrl}" alt="${escapeHtml(item.title)}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" onerror="this.parentElement.classList.add('opacity-50'); this.alt='이미지 로드 실패: '+this.alt;">
-        ${item.title ? `<div class="absolute inset-x-0 bottom-0 p-2.5 text-white text-[11px] font-semibold bg-gradient-to-t from-black/70 to-transparent">${escapeHtml(item.title)}</div>` : ''}`;
+        ${item.title ? `<div class="absolute inset-x-0 bottom-0 p-1.5 text-white text-[10px] font-semibold bg-gradient-to-t from-black/70 to-transparent">${escapeHtml(item.title)}</div>` : ''}`;
       grid.appendChild(card);
     });
     if (pagination) {
