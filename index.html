@@ -91,7 +91,9 @@ tailwind.config = {
   .safe-bottom{ padding-bottom: calc(env(safe-area-inset-bottom) + 0.75rem); }
   .divider-gold{ height:1px; background: linear-gradient(90deg, transparent, rgba(212,163,115,.5), transparent); }
   a:focus-visible, button:focus-visible{ outline: 2px solid #d4a373; outline-offset: 3px; border-radius: 6px; }
-  .short-wrap{ position:relative; width:100%; aspect-ratio: 9/16; max-height: 300px; overflow:hidden; border-radius: 0.75rem; }
+  /* 쇼츠(세로 9/16)용으로 잡혀 있었는데, 실제로 올라오는 것은 가로형 예배 영상이라
+     좌우가 절반 넘게 잘려 나갔다. 영상 비율에 맞춘다. */
+  .short-wrap{ position:relative; width:100%; aspect-ratio: 16/9; overflow:hidden; border-radius: 0.75rem; }
   .short-wrap > iframe,
   .short-wrap > .short-thumb{ position:absolute; inset:0; width:100%; height:100%; border:0; }
   .short-thumb img{ width:100%; height:100%; object-fit:cover; }
@@ -380,18 +382,18 @@ tailwind.config = {
 <section id="live" class="relative py-8 sm:py-10 bg-[#f6f4ee] text-navy-900 border-y border-navy-100/60">
   <div class="relative max-w-7xl mx-auto px-5 sm:px-8">
     <div class="text-center max-w-2xl mx-auto reveal">
-      <div class="inline-flex items-center gap-2 text-gold-600 text-xs sm:text-sm font-bold uppercase tracking-[0.2em]"><span class="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span> Live Worship &amp; Shorts</div>
+      <div class="inline-flex items-center gap-2 text-gold-600 text-xs sm:text-sm font-bold uppercase tracking-[0.2em]"><span class="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span> Live Worship</div>
       <h2 class="mt-2 font-serif text-3xl sm:text-4xl text-navy-900 tracking-tight">오늘의 <span class="text-gold-600">은혜로운 예배</span></h2>
       <p class="mt-2 text-navy-700/70 leading-relaxed text-xs sm:text-sm">시간과 장소의 제약 없이 찬양과 말씀의 은혜를 실시간으로 함께 누릴 수 있습니다.</p>
     </div>
     <div class="mt-4 flex flex-wrap items-center justify-center gap-2 sm:gap-3">
       <div class="inline-flex items-center gap-2 bg-red-50 border border-red-200 text-red-700 px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium"><i class="fa-regular fa-clock text-red-500"></i> 예배 시간: <strong class="ml-1">평일(월~금) 저녁 8:30</strong></div>
-      <div class="inline-flex items-center gap-2 bg-white border border-navy-100 text-navy-700 px-3.5 py-1.5 rounded-lg text-xs sm:text-sm shadow-sm"><i class="fa-solid fa-signal text-gold-600"></i> YouTube Live · Shorts 피드</div>
+      <div class="inline-flex items-center gap-2 bg-white border border-navy-100 text-navy-700 px-3.5 py-1.5 rounded-lg text-xs sm:text-sm shadow-sm"><i class="fa-solid fa-signal text-gold-600"></i> YouTube Live · 예배 영상</div>
     </div>
 
     <div class="mt-5 max-w-5xl mx-auto reveal">
       <div class="flex items-center justify-between mb-3">
-        <h3 class="text-navy-900 font-bold flex items-center gap-2 text-sm sm:text-base"><i class="fa-solid fa-clapperboard text-gold-600"></i> Shorts 피드</h3>
+        <h3 class="text-navy-900 font-bold flex items-center gap-2 text-sm sm:text-base"><i class="fa-solid fa-clapperboard text-gold-600"></i> 예배 영상</h3>
         <span class="text-[11px] text-navy-500">최신 3개 자동 업데이트</span>
       </div>
       <div id="shortsGrid" class="grid grid-cols-3 gap-2 sm:gap-3">
@@ -1173,6 +1175,11 @@ tailwind.config = {
   const YT_RSS = `https://www.youtube.com/feeds/videos.xml?channel_id=${YT_CHANNEL}`;
   const YT_LAST_GOOD_CACHE_KEY = 'yt:lastgood:v1';
   const YT_LAST_GOOD_TTL_MS = 6 * 60 * 60 * 1000; // 6시간 이내면 정상 데이터로 인정
+  const YT_FRESH_TTL_MS = 30 * 60 * 1000;         // 30분 이내면 네트워크를 아예 안 탄다
+
+  /* 우리 클라우드플레어 워커. 유튜브 RSS 를 대신 받아 CORS 를 붙여 돌려준다.
+     남의 무료 중계에 기대지 않으므로 그쪽 장애와 무관하다. */
+  const YT_RELAY = `https://yt-feed.cnrksvks00.workers.dev/?channel=${YT_CHANNEL}`;
 
   // ---------- 재시도 상태 (라이브 표시용) ----------
   const ytRetryState = { phase: 'idle', attempt: 0, total: 0, source: '', message: '' };
@@ -1251,65 +1258,74 @@ tailwind.config = {
       guid: it.guid || ''
     }));
   }
-  async function fetchAllOriginsXml(){
-    const url = `https://api.allorigins.win/get?url=${encodeURIComponent(YT_RSS)}&_=${Date.now()}`;
-    const r = await fetchWithTimeout(url, 10000);
-    if(!r.ok) throw new Error('allorigins HTTP ' + r.status);
-    const wrap = await r.json();
-    const xmlText = wrap && wrap.contents ? wrap.contents : '';
-    if(!xmlText) throw new Error('allorigins empty body');
-    const doc = new DOMParser().parseFromString(xmlText, 'text/xml');
-    const entries = Array.from(doc.getElementsByTagName('entry'));
-    if(!entries.length) throw new Error('allorigins no entries');
-    return entries.map(e => {
-      const vid = e.getElementsByTagName('yt:videoId')[0]?.textContent
-               || e.getElementsByTagName('videoId')[0]?.textContent || '';
-      const title = e.getElementsByTagName('title')[0]?.textContent || '';
-      const link = e.getElementsByTagName('link')[0]?.getAttribute('href') || (vid ? `https://www.youtube.com/watch?v=${vid}` : '');
-      const pub = e.getElementsByTagName('published')[0]?.textContent || '';
-      return { title, link, pubDate: pub, guid: vid };
-    });
+  /* 우리 워커. 이미 정리된 JSON 을 주므로 XML 을 파싱할 일이 없다. */
+  async function fetchRelay(){
+    const r = await fetchWithTimeout(`${YT_RELAY}&_=${Date.now()}`, 6000);
+    if(!r.ok) throw new Error('relay HTTP ' + r.status);
+    const j = await r.json();
+    if(!j || !j.ok || !Array.isArray(j.items) || !j.items.length) throw new Error('relay empty');
+    return j.items.map(it => ({
+      title: it.title || '',
+      link: it.link || '',
+      pubDate: it.pubDate || '',
+      guid: it.id || ''
+    }));
   }
 
-  // ---------- 메인: rss2json 재시도 → allorigins 재시도 → 캐시 fallback ----------
+  /* allorigins 는 걷어냈다.
+     2026-09-06 확인 결과 세 번 다 522 로 죽어 있었는데, 타임아웃이 10초라
+     실패할 때마다 20초를 헛되이 기다렸다. 그 사이 방문자는 화면을 떠난다.
+     대체 후보(codetabs·corsproxy.io·cors.lol)도 전부 막혀 있어 워커로 바꿨다. */
+
+  // ---------- 메인: 캐시 → 워커 → rss2json → 오래된 캐시 ----------
   async function fetchYouTubeItems(){
-    // 1) rss2json 재시도 (최대 3회, 백오프 1s → 2s → 4s)
+    /* 0) 30분 이내에 받아 둔 것이 있으면 그것을 쓴다.
+          예전에는 이 캐시를 만들어만 두고 쓰지 않아서, 페이지를 열 때마다
+          무조건 바깥으로 나갔다. 방문이 몰리면 중계 서비스 호출 한도에
+          걸렸고, 그러면 쇼츠가 통째로 사라졌다. */
+    const fresh = getFreshCache(YT_LAST_GOOD_CACHE_KEY, YT_FRESH_TTL_MS);
+    if(Array.isArray(fresh) && fresh.length){
+      setYtRetryState({ phase: 'idle', attempt: 0, total: 0, source: 'cache', message: '' });
+      return fresh;
+    }
+
+    // 1) 우리 워커 (최대 2회, 백오프 0.6s)
+    try{
+      const items = await withRetry(fetchRelay, {
+        tries: 2,
+        baseDelayMs: 600,
+        onRetry: (attempt, total, delay) => {
+          setYtRetryState({
+            phase: 'retry',
+            source: 'relay',
+            attempt, total,
+            message: `다시 불러오는 중 ${attempt}/${total}`
+          });
+        }
+      });
+      setCacheRecord(YT_LAST_GOOD_CACHE_KEY, items);
+      setYtRetryState({ phase: 'idle', attempt: 0, total: 0, source: 'relay', message: '' });
+      return items;
+    }catch(_){ /* 다음 경로 */ }
+
+    setYtRetryState({ phase: 'switch', source: 'rss2json', attempt: 0, total: 0, message: '다른 경로로 시도 중' });
+
+    // 2) rss2json (최대 2회). 워커가 안 될 때만 쓰는 대비책이다.
     try{
       const items = await withRetry(fetchRss2Json, {
-        tries: 3,
-        baseDelayMs: 1000,
+        tries: 2,
+        baseDelayMs: 800,
         onRetry: (attempt, total, delay) => {
           setYtRetryState({
             phase: 'retry',
             source: 'rss2json',
             attempt, total,
-            message: `rss2json 재시도 ${attempt}/${total} (대기 ${Math.round(delay/1000)}s)`
+            message: `다시 불러오는 중 ${attempt}/${total}`
           });
         }
       });
       setCacheRecord(YT_LAST_GOOD_CACHE_KEY, items);
       setYtRetryState({ phase: 'idle', attempt: 0, total: 0, source: 'rss2json', message: '' });
-      return items;
-    }catch(_){ /* 다음 경로 */ }
-
-    setYtRetryState({ phase: 'switch', source: 'allorigins', attempt: 0, total: 0, message: 'allorigins로 전환 중' });
-
-    // 2) allorigins 재시도 (최대 2회, 백오프 1s → 2s)
-    try{
-      const items = await withRetry(fetchAllOriginsXml, {
-        tries: 2,
-        baseDelayMs: 1000,
-        onRetry: (attempt, total, delay) => {
-          setYtRetryState({
-            phase: 'retry',
-            source: 'allorigins',
-            attempt, total,
-            message: `allorigins 재시도 ${attempt}/${total} (대기 ${Math.round(delay/1000)}s)`
-          });
-        }
-      });
-      setCacheRecord(YT_LAST_GOOD_CACHE_KEY, items);
-      setYtRetryState({ phase: 'idle', attempt: 0, total: 0, source: 'allorigins', message: '' });
       return items;
     }catch(_){ /* 마지막 fallback */ }
 
@@ -1363,13 +1379,13 @@ tailwind.config = {
       const spinner = '<i class="fa-solid fa-spinner fa-spin text-3xl text-red-500 mb-2"></i>';
       let body = '';
       if(isRetrying){
-        body = `${spinner}<span class="font-bold text-navy-800">Shorts 피드를 다시 불러오는 중</span><br><span class="text-navy-500 text-[11px] mt-1 inline-block">${escapeHtml(ytRetryState.message || '잠시만 기다려 주세요')}</span>`;
+        body = `${spinner}<span class="font-bold text-navy-800">예배 영상을 다시 불러오는 중</span><br><span class="text-navy-500 text-[11px] mt-1 inline-block">${escapeHtml(ytRetryState.message || '잠시만 기다려 주세요')}</span>`;
       } else if(isStale){
-        body = `${icon}<span>외부 서비스 일시 장애로 마지막 정상 Shorts를 표시 중입니다.</span>`;
+        body = `${icon}<span>외부 서비스 일시 장애로 마지막으로 받아 둔 예배 영상을 표시 중입니다.</span>`;
       } else if(isFailed){
-        body = `${icon}<span>Shorts 피드를 지금 불러오지 못했습니다.</span><button type="button" id="retryShortsBtn" class="mt-3 inline-flex items-center gap-2 bg-red-600 hover:bg-red-500 text-white text-xs font-bold px-4 py-2 rounded-lg"><i class="fa-solid fa-rotate-right"></i> 다시 시도</button>`;
+        body = `${icon}<span>예배 영상을 지금 불러오지 못했습니다.</span><button type="button" id="retryShortsBtn" class="mt-3 inline-flex items-center gap-2 bg-red-600 hover:bg-red-500 text-white text-xs font-bold px-4 py-2 rounded-lg"><i class="fa-solid fa-rotate-right"></i> 다시 시도</button>`;
       } else {
-        body = `${icon}<span>표시할 Shorts가 아직 없습니다.</span><br><span class="text-navy-500 text-[11px] mt-1 inline-block">채널에 새 영상이 올라오면 자동으로 표시됩니다.</span>`;
+        body = `${icon}<span>표시할 예배 영상이 아직 없습니다.</span><br><span class="text-navy-500 text-[11px] mt-1 inline-block">채널에 새 영상이 올라오면 자동으로 표시됩니다.</span>`;
       }
       grid.innerHTML = `<div id="shortsStatus" class="col-span-full aspect-[16/9] rounded-2xl border border-navy-200 bg-white flex flex-col items-center justify-center text-center p-6 text-navy-600 text-xs sm:text-sm">${body}</div>`;
       const retryBtn = document.getElementById('retryShortsBtn');
@@ -1394,7 +1410,7 @@ tailwind.config = {
             <img src="https://i.ytimg.com/vi/${s.id}/hqdefault.jpg" alt="${escapeHtml(s.title)}" loading="lazy" onerror="this.onerror=null;this.src='https://i.ytimg.com/vi/${s.id}/mqdefault.jpg'" />
             <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent"></div>
             <div class="absolute top-2 left-2 inline-flex items-center gap-1 bg-red-600/90 text-white text-[10px] sm:text-[11px] font-bold px-2 py-0.5 rounded">
-              <i class="fa-solid fa-bolt"></i> Shorts
+              <i class="fa-solid fa-tower-broadcast"></i> 예배
             </div>
             <div class="absolute inset-0 flex items-center justify-center">
               <span class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-red-600 text-white flex items-center justify-center shadow-xl">
