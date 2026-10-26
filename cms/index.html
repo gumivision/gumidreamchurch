@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex" />
+  <title>구미 꿈이 있는 교회 · 글쓰기</title>
+</head>
+<body>
+  <!--
+    진짜 관리자(글쓰기) 화면입니다.
+
+    원래 admin/index.html 자리에 이 내용이 있어야 했는데, 안내판 페이지가 그 자리를
+    덮어쓰면서 사라져 있었습니다. 그래서 "게시글 작성"을 눌러도 안내판이 다시 열릴
+    뿐이었습니다(화면만 새로고침되는 것처럼 보임).
+
+    안내판은 admin/ 에 그대로 두고, 글쓰기 화면은 여기 cms/ 에 둡니다.
+    이 화면은 Netlify 주소에서만 동작합니다 — 로그인(Netlify Identity)과
+    저장(Git Gateway)이 Netlify 서비스이기 때문입니다.
+      ✅ https://dreamchurch.netlify.app/cms/
+      ❌ https://gumivision.github.io/gumidreamchurch/cms/
+  -->
+  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+  <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+  <script>
+    // 로그인 직후 글쓰기 화면으로 들어가게 한다. 이게 없으면 로그인만 하고 멈춘다.
+    if (window.netlifyIdentity) {
+      window.netlifyIdentity.on('init', function (user) {
+        if (!user) {
+          window.netlifyIdentity.on('login', function () {
+            document.location.href = '/cms/';
+          });
+        }
+      });
+    }
+  </script>
+</body>
+</html>
