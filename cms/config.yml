@@ -1,0 +1,57 @@
+# 구미 꿈이 있는 교회 · 글쓰기 설정
+#
+# 예전 admin/config.yml 에는 편집기에서 복사된 잡다한 기록이 그대로 붙어 있었습니다.
+# 그 때문에 backend 키가 두 번 나오고 설정과 무관한 키가 섞여 YAML 이 깨져 있었습니다.
+# 이 파일은 그 기록을 걷어내고 실제 설정만 남긴 것입니다.
+
+backend:
+  name: git-gateway
+  repo: gumivision/gumidreamchurch
+  branch: main
+
+# 저장될 때 깃허브에 남는 메시지
+commit_messages:
+  create: "Create {{collection}} “{{slug}}”"
+  update: "Update {{collection}} “{{slug}}”"
+  delete: "Delete {{collection}} “{{slug}}”"
+  uploadMedia: "Upload “{{path}}”"
+  deleteMedia: "Delete “{{path}}”"
+
+show_preview_links: false
+
+# 이미지 저장 위치 = 저장소 루트 /images
+media_folder: "images"
+public_folder: "/images"
+
+collections:
+  # 1. 게시판 글
+  - name: "posts"
+    label: "게시판 글"
+    folder: "posts"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    extension: "md"
+    format: "frontmatter"
+    fields:
+      - { label: "제목", name: "title", widget: "string" }
+      - { label: "작성일자", name: "date", widget: "datetime" }
+      - { label: "대표/첨부 이미지", name: "image", widget: "image", required: false }
+      # 한글 IME 조합 오류를 피하려고 markdown 이 아닌 text 위젯을 씁니다.
+      # 순수 textarea 라서 "누"를 쳐도 "ㄴㅜ"로 갈라지지 않습니다.
+      - label: "내용"
+        name: "body"
+        widget: "text"
+        hint: "마크다운 사용 가능 · 이미지: ![설명](/images/파일명.jpg) · 굵게: **글자** · 소제목: ## 제목"
+
+  # 2. 함께한 순간들 (갤러리)
+  - name: "gallery"
+    label: "함께한 순간들 (갤러리)"
+    folder: "gallery"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    extension: "md"
+    format: "frontmatter"
+    fields:
+      - { label: "사진 제목", name: "title", widget: "string" }
+      - { label: "사진", name: "image", widget: "image" }
+      - { label: "촬영/등록 일자", name: "date", widget: "datetime", required: false, default: "" }
